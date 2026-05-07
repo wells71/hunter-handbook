@@ -1,0 +1,2016 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The best hunter on the wrong program earns less than a mediocre hunter on the right one — platform selection, target timing, and reputation compounding are the meta-game that determines long-term income.">
+      
+      
+        <meta name="author" content="Wellington Vumu">
+      
+      
+      
+        <link rel="prev" href="../part-11-reporting/">
+      
+      
+        <link rel="next" href="../part-13-tooling/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.39">
+    
+    
+      
+        <title>Platform - Hunter's handbook</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.1e981d71.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#platform" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-header__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hunter's handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Platform
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-nav__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    Hunter's handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-rocket" viewBox="0 0 24 24"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-recon/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reconnaissance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-authentication/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-round-key" viewBox="0 0 24 24"><path d="M19 11v6M19 13h2M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-access-control/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-lock" viewBox="0 0 24 24"><path d="M19 16v-2a2 2 0 0 0-4 0v2M9.5 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><rect width="8" height="5" x="13" y="16" rx=".899"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-injection/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-ssrf-xxe/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF & XXE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-business-logic/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain" viewBox="0 0 24 24"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Business Logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-api/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cog" viewBox="0 0 24 24"><path d="M11 10.27 7 3.34M11 13.73l-4 6.93M12 22v-2M12 2v2M14 12h8M17 20.66l-1-1.73M17 3.34l-1 1.73M2 12h2M20.66 17l-1.73-1M20.66 7l-1.73 1M3.34 17l1.73-1M3.34 7l1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    API Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-08-ai-llm/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain-circuit" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-09-cloud/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-10-mobile/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Mobile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-11-reporting/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Platform Selection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Platform Selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#platform-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Platform Comparison
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payout-logistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Payout Logistics
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Target Selection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Target Selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-new-program-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        The New Program Strategy
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#program-selection-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Program Selection Framework
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#depth-vs-breadth" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Depth vs. Breadth
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-scope-for-underexplored-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Reading Scope for Underexplored Surface
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avoiding-duplicates" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Avoiding Duplicates
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Avoiding Duplicates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smart-target-and-surface-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Smart Target and Surface Selection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-submission-duplicate-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Pre-Submission Duplicate Check
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reputation-and-private-invites" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Reputation and Private Invites
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reputation and Private Invites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-triggers-private-invites" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        What Triggers Private Invites
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-write-up-multiplier" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        The Write-Up Multiplier
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#community-presence" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Community Presence
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dry-spell-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Dry Spell Management
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-13-tooling/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-14-infrastructure/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server-cog" viewBox="0 0 24 24"><path d="m10.852 14.772-.383.923M13.148 14.772a3 3 0 1 0-2.296-5.544l-.383-.923M13.148 9.228l.383-.923"/><path d="m13.53 15.696-.382-.924a3 3 0 1 1-2.296-5.544M14.772 10.852l.923-.383M14.772 13.148l.923.383"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5M6 18h.01M6 6h.01M9.228 10.852l-.923-.383M9.228 13.148l-.923.383"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-text" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8M16 13H8M16 17H8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Platform Selection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Platform Selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#platform-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Platform Comparison
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payout-logistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Payout Logistics
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Target Selection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Target Selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-new-program-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        The New Program Strategy
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#program-selection-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Program Selection Framework
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#depth-vs-breadth" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Depth vs. Breadth
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-scope-for-underexplored-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Reading Scope for Underexplored Surface
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avoiding-duplicates" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Avoiding Duplicates
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Avoiding Duplicates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smart-target-and-surface-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Smart Target and Surface Selection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-submission-duplicate-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Pre-Submission Duplicate Check
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reputation-and-private-invites" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Reputation and Private Invites
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reputation and Private Invites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-triggers-private-invites" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        What Triggers Private Invites
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-write-up-multiplier" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        The Write-Up Multiplier
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#community-presence" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Community Presence
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dry-spell-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Dry Spell Management
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="platform">Platform<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h1>
+<p>Raw technical skill is not the ceiling on earnings — target selection is. A hunter who chases saturated programs, ignores new launches, and skips write-ups will earn a fraction of someone with less skill who plays the platform meta correctly. This section covers the decisions that determine return on time: which platforms to use, which programs to hunt, how to avoid duplicates, and how to build the reputation that unlocks private invites.</p>
+<hr />
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-5v2h5v13l-5-6v9h5a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m-9 15H5l5-6m0-9H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h5v2h2V1h-2z"/></svg></span> <strong>Platform Selection</strong></p>
+<hr />
+<p>Real differences between platforms, payout chains for Africa and Malawi, and the recommended start order for new hunters.</p>
+<p><a href="#platform-selection"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Platform selection</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 2v2.07A8 8 0 0 0 4.07 11H2v2h2.07A8 8 0 0 0 11 19.93V22h2v-2.07A8 8 0 0 0 19.93 13H22v-2h-2.07A8 8 0 0 0 13 4.07V2m-2 4.08V8h2V6.09c2.5.41 4.5 2.41 4.92 4.91H16v2h1.91c-.41 2.5-2.41 4.5-4.91 4.92V16h-2v1.91C8.5 17.5 6.5 15.5 6.08 13H8v-2H6.09C6.5 8.5 8.5 6.5 11 6.08M12 11a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1"/></svg></span> <strong>Target Selection</strong></p>
+<hr />
+<p>New program strategy, the program evaluation framework, depth vs. breadth, and finding the surfaces most hunters skip.</p>
+<p><a href="#target-selection"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Target selection</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 17H4a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h12v2H4v12h7v-2l4 3-4 3zm8 4V7H8v6H6V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-2h2v2z"/></svg></span> <strong>Avoiding Duplicates</strong></p>
+<hr />
+<p>Where to hunt to minimise duplicate rates and a five-minute pre-submission check that pays for itself.</p>
+<p><a href="#avoiding-duplicates"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Avoiding duplicates</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 2c-.9 0-2 1-2 2H8c0-1-1.1-2-2-2H2v9c0 1 1 2 2 2h2.2c.4 2 1.7 3.7 4.8 4v2.08C8 19.54 8 22 8 22h8s0-2.46-3-2.92V17c3.1-.3 4.4-2 4.8-4H20c1 0 2-1 2-2V2zM6 11H4V4h2zm14 0h-2V4h2z"/></svg></span> <strong>Reputation and Private Invites</strong></p>
+<hr />
+<p>The metrics that trigger invites, the write-up multiplier, community presence, and how to handle dry spells.</p>
+<p><a href="#reputation-and-private-invites"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Reputation and private invites</a></p>
+</li>
+</ul>
+</div>
+<h2 id="decision-flow">Decision Flow<a class="headerlink" href="#decision-flow" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Just starting out?
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>→ Create Bugcrowd + Payoneer first. Then YesWeHack + Wise. Add HackerOne after first valid bugs.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>New program just launched?
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>→ Read scope (10 min) → run subdomain enum in background → manual browse main app →
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  httpx + screenshots → test auth, IDOR, business logic → submit valid finding immediately.
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>Evaluating a program before committing time?
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>→ Check: launched recently? wide scope? P2 ≥ $500? response efficiency &gt; 80%? low disclosed report count?
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  If three or more red flags, skip it.
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>Deciding depth vs. breadth?
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>→ Breadth until 3–5 valid findings. Then: 1 deep target + 2–3 breadth targets at all times.
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>About to submit a finding?
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>→ Spend 5 minutes on duplicate check first: disclosed reports tab + HackerOne Hacktivity search.
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>Dry spell lasting more than 2 weeks?
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>→ Change one variable: target class, vulnerability class, or platform. Read 10 disclosed reports.
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>  Go back to PortSwigger labs for the class you&#39;re struggling with.
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>First interesting finding confirmed and paid?
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>→ Write it up on Medium / InfoSecWriteups after program approves disclosure.
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>Tracking private invite eligibility?
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>→ HackerOne: maintain Signal &gt; 80%, aim for 5–10 valid Medium+ reports.
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>  Bugcrowd: build HackerScore to 30–40. One clean P2 outweighs ten sloppy P4s.
+</span></code></pre></div>
+<hr />
+<h2 id="platform-selection">Platform Selection<a class="headerlink" href="#platform-selection" title="Permanent link">&para;</a></h2>
+<h3 id="platform-comparison">Platform Comparison<a class="headerlink" href="#platform-comparison" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Best For</th>
+<th>Competition</th>
+<th>Payout Methods</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bugcrowd</td>
+<td>Beginners, broad scope, VDPs</td>
+<td>Medium</td>
+<td>PayPal, Payoneer</td>
+<td>Best Payoneer support. HackerScore drives invites.</td>
+</tr>
+<tr>
+<td>HackerOne</td>
+<td>Largest program selection, highest payouts</td>
+<td>High</td>
+<td>USDC, bank wire, PayPal</td>
+<td>Most competitive publicly. Private programs are the prize.</td>
+</tr>
+<tr>
+<td>Intigriti</td>
+<td>EU programs, lower saturation</td>
+<td>Low–Medium</td>
+<td>SEPA via Wise, PayPal</td>
+<td>Fresh EU company programs. Quality triagers.</td>
+</tr>
+<tr>
+<td>YesWeHack</td>
+<td>EU/global, least known</td>
+<td>Low</td>
+<td>Wise, Payoneer, EUR</td>
+<td>Explicitly supports Wise. Least saturated of the four.</td>
+</tr>
+<tr>
+<td>Open Bug Bounty</td>
+<td>Practice only</td>
+<td>Low</td>
+<td>Voluntary / none</td>
+<td>No reliable income. Use for skill building only.</td>
+</tr>
+<tr>
+<td>Synack</td>
+<td>Elite, invitation only</td>
+<td>Low (curated)</td>
+<td>Wire (US/EU)</td>
+<td>Background check required. Skip until invited.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommended start order for a new hunter in 2026:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>1. Bugcrowd   — create account, configure Payoneer, start here
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>2. YesWeHack  — register, configure Wise, lower competition
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>3. Intigriti  — fresh EU programs, quality triage
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>4. HackerOne  — add after first valid bugs on the above
+</span></code></pre></div>
+<h3 id="payout-logistics">Payout Logistics<a class="headerlink" href="#payout-logistics" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Africa / Malawi context</p>
+<p>This section covers the practical payout chain for hunters in Malawi. The same chains apply across most of sub-Saharan Africa where direct bank wires are slow or unreliable.</p>
+</div>
+<div class="language-bash highlight"><span class="filename">payout_chains</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Primary:<span class="w">   </span>Bugcrowd<span class="w"> </span>→<span class="w"> </span>Payoneer<span class="w"> </span>→<span class="w"> </span><span class="nb">local</span><span class="w"> </span>bank<span class="w"> </span>or<span class="w"> </span>mobile<span class="w"> </span>money
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Secondary:<span class="w"> </span>YesWeHack<span class="w"> </span>/<span class="w"> </span>Intigriti<span class="w"> </span>→<span class="w"> </span>Wise<span class="w"> </span><span class="o">(</span>IBAN<span class="o">)</span><span class="w"> </span>→<span class="w"> </span><span class="nb">local</span><span class="w"> </span>bank
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Backup:<span class="w">    </span>HackerOne<span class="w"> </span>→<span class="w"> </span>USDC<span class="w"> </span>crypto<span class="w"> </span>→<span class="w"> </span>exchange<span class="w"> </span>to<span class="w"> </span><span class="nb">local</span><span class="w"> </span>currency
+</span></code></pre></div>
+<p><strong>Setup sequence — do this before your first submission:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>1. Register Payoneer at payoneer.com (free, 3–5 business days to approve)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>2. Register Wise at wise.com (free, IBAN account for EUR/USD)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>3. Link both to your bug bounty platform profiles
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>4. Test with a small transfer once approved — don&#39;t wait for first payout
+</span></code></pre></div>
+<p><strong>Fee comparison:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>FX Fee</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Payoneer</td>
+<td>~2%</td>
+<td>Widely supported, slower</td>
+</tr>
+<tr>
+<td>Wise</td>
+<td>~0.5–1%</td>
+<td>Significantly cheaper for large amounts</td>
+</tr>
+<tr>
+<td>USDC crypto</td>
+<td>~0.5–1%</td>
+<td>Exchange fees vary by platform</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Tax — Malawi Revenue Authority</p>
+<p>All foreign income is taxable as freelance/self-employment income. Set aside 25–30% from each payout before spending. Keep records: platform, payout date, amount, project description. Quarterly filing is recommended over annual for cash flow management.</p>
+</div>
+<hr />
+<h2 id="target-selection">Target Selection<a class="headerlink" href="#target-selection" title="Permanent link">&para;</a></h2>
+<h3 id="the-new-program-strategy">The New Program Strategy<a class="headerlink" href="#the-new-program-strategy" title="Permanent link">&para;</a></h3>
+<p>Being one of the first 50 hunters on a newly launched program is the single highest-leverage action in bug bounty. The low-hanging fruit hasn't been picked. The recon hasn't been done. The duplicate rate is near zero.</p>
+<p><strong>How to be notified first:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BountyNotifier alerts</td>
+<td>bountynotifier.com — push notification on new program launch</td>
+</tr>
+<tr>
+<td>Platform new programs pages</td>
+<td>bugcrowd.com/programs?sort_by=launched_at · hackerone.com/programs?order_field=launched_at</td>
+</tr>
+<tr>
+<td>Twitter/X accounts</td>
+<td>@Bugcrowd, @HackerOne, @intigriti, @yeswehack, @NahamSec, @jhaddix</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sprint order for the first 2 hours of a new program — this window matters most:</strong></p>
+<div class="language-bash highlight"><span class="filename">new_program_sprint</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Step<span class="w"> </span><span class="m">1</span>:<span class="w"> </span>Read<span class="w"> </span>scope<span class="w"> </span>rules<span class="w"> </span>completely<span class="w">                   </span><span class="o">(</span>~10<span class="w"> </span>min<span class="o">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Step<span class="w"> </span><span class="m">2</span>:<span class="w"> </span>Subdomain<span class="w"> </span>enumeration<span class="w">                         </span><span class="o">(</span>automated,<span class="w"> </span>run<span class="w"> </span><span class="k">in</span><span class="w"> </span>background<span class="o">)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Step<span class="w"> </span><span class="m">3</span>:<span class="w"> </span>Manual<span class="w"> </span>browse<span class="w"> </span>of<span class="w"> </span>main<span class="w"> </span>app<span class="w"> </span><span class="k">while</span><span class="w"> </span>enum<span class="w"> </span>runs<span class="w">     </span><span class="o">(</span>~20<span class="w"> </span>min<span class="o">)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Step<span class="w"> </span><span class="m">4</span>:<span class="w"> </span>httpx<span class="w"> </span>+<span class="w"> </span>screenshots<span class="w"> </span>of<span class="w"> </span>discovered<span class="w"> </span>subdomains<span class="w">  </span><span class="o">(</span>automated<span class="o">)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Step<span class="w"> </span><span class="m">5</span>:<span class="w"> </span>Test<span class="w"> </span>obvious<span class="w"> </span>surfaces<span class="w"> </span>manually<span class="w"> </span>—<span class="w"> </span>auth,<span class="w"> </span>IDOR,<span class="w"> </span>business<span class="w"> </span>logic
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>Step<span class="w"> </span><span class="m">6</span>:<span class="w"> </span>Submit<span class="w"> </span>any<span class="w"> </span>valid<span class="w"> </span>finding<span class="w"> </span>immediately,<span class="w"> </span>even<span class="w"> </span>Low<span class="w"> </span>severity
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>Step<span class="w"> </span><span class="m">7</span>:<span class="w"> </span>Continue<span class="w"> </span>deeper<span class="w"> </span><span class="k">while</span><span class="w"> </span>recon<span class="w"> </span>pipeline<span class="w"> </span>completes
+</span></code></pre></div>
+<h3 id="program-selection-framework">Program Selection Framework<a class="headerlink" href="#program-selection-framework" title="Permanent link">&para;</a></h3>
+<p><strong>Green flags — hunt here:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>□ Launched recently (&lt; 6 months)
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>□ Wide scope (*.target.com, not just www.target.com)
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>□ Reasonable payout range (P2 ≥ $500, P1 ≥ $2,000)
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>□ Active response (recent triage activity visible in stats)
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>□ Response efficiency &gt; 80%
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>□ Few disclosed reports (low saturation)
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>□ Technology stack you know well
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>□ Complex product (more attack surface)
+</span></code></pre></div>
+<p><strong>Red flags — avoid or de-prioritise:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>✗ Program has been public for 3+ years
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>✗ Narrow scope (only one subdomain in scope)
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>✗ No payout (VDP only) — unless for deliberate practice
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>✗ Response efficiency &lt; 60% (reports go to die)
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>✗ Hundreds of disclosed reports (heavily saturated)
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>✗ &quot;No bounties for Low/Medium&quot; — high bar, lower ROI for beginners
+</span></code></pre></div>
+<h3 id="depth-vs-breadth">Depth vs. Breadth<a class="headerlink" href="#depth-vs-breadth" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Breadth</label><label for="__tabbed_1_2">Depth</label><label for="__tabbed_1_3">Recommended balance</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Hunt many programs.
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>Pros:
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>- Higher chance of finding something while calibrating
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>- Portfolio diversification across programs
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>- Faster feedback loop on skill gaps
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>Cons:
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>- Never deep enough to find non-obvious bugs
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>- Always finding what everyone else finds
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>- High duplicate rate on obvious surfaces
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Master one or two programs.
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>Pros:
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>- Bugs that require deep application knowledge
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>- Lower duplicate rate on non-obvious chains
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>- Faster recon (you already know the surface)
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>- Better reports from understanding business logic
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>Cons:
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>- Dry spells if that program has been picked clean
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Beginners: start with breadth to find first bugs and calibrate skill.
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>After 3–5 valid findings: shift to depth.
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Ongoing: 1 deep target + 2–3 breadth targets at all times.
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>Sweet spot: depth on programs updated frequently.
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>New features = new attack surface = new bugs even on mature programs.
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="reading-scope-for-underexplored-surface">Reading Scope for Underexplored Surface<a class="headerlink" href="#reading-scope-for-underexplored-surface" title="Permanent link">&para;</a></h3>
+<p>Most hunters test the obvious. The money is in what they skip.</p>
+<table>
+<thead>
+<tr>
+<th>What everyone tests</th>
+<th>What most skip</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>www.target.com</code>, <code>/login</code>, <code>/api/v2/</code></td>
+<td>Mobile API endpoints listed in scope</td>
+</tr>
+<tr>
+<td>Main auth flows</td>
+<td><code>partner.target.com</code>, <code>vendor.target.com</code></td>
+</tr>
+<tr>
+<td>User profile IDOR</td>
+<td>API documentation portals (<code>/docs</code>, <code>/developer</code>)</td>
+</tr>
+<tr>
+<td>Standard POST endpoints</td>
+<td>Beta/preview features (<code>/beta</code>, <code>app.preview.target.com</code>)</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Help/support center (often on separate platform with IDOR)</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Integrations section (webhooks to third-party services)</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Old subdomains listed in scope but not on main nav</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How to read scope to find the underexplored surface:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>1. Read the full scope list — what&#39;s explicitly in scope?
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>2. Read the exclusions — what&#39;s explicitly out?
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>3. What&#39;s in scope but rarely mentioned in disclosed reports?
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>4. Are there scope expansions noted? (&quot;Added mobile API 3 months ago&quot;)
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>5. Is there an &quot;in the spirit of the program&quot; clause? Use it.
+</span></code></pre></div>
+<hr />
+<h2 id="avoiding-duplicates">Avoiding Duplicates<a class="headerlink" href="#avoiding-duplicates" title="Permanent link">&para;</a></h2>
+<h3 id="smart-target-and-surface-selection">Smart Target and Surface Selection<a class="headerlink" href="#smart-target-and-surface-selection" title="Permanent link">&para;</a></h3>
+<p>The best duplicate avoidance is going where others aren't.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">New programs</label><label for="__tabbed_2_2">New features on old programs</label><label for="__tabbed_2_3">Underexplored surfaces</label><label for="__tabbed_2_4">Second-order and chained bugs</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Covered in the New Program Strategy section above.
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>First 50 hunters = near-zero duplicate rate on standard surfaces.
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>- Follow the program&#39;s blog and changelog
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>- When a new feature ships → test it within 48 hours
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>- New code = new bugs the existing hunters haven&#39;t seen
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>- Mobile API endpoints (web hunters skip mobile)
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>- Partner/vendor portals
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>- Legacy subdomains
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>- GraphQL endpoints (many hunters don&#39;t test GraphQL)
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>- AI features (still underexplored in 2026)
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>- Non-English versions of the app (separate code paths)
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>- Less likely to be duplicates — they require connecting dots
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>- A standalone IDOR + a standalone password reset = a chain that&#39;s unique
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>- Less obvious classes: race conditions, business logic, SAML attacks
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="pre-submission-duplicate-check">Pre-Submission Duplicate Check<a class="headerlink" href="#pre-submission-duplicate-check" title="Permanent link">&para;</a></h3>
+<p>Five minutes before submitting saves thirty minutes writing a report that gets closed as duplicate.</p>
+<div class="language-bash highlight"><span class="filename">duplicate_check</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="m">1</span>.<span class="w"> </span>Check<span class="w"> </span>the<span class="w"> </span>program<span class="s1">&#39;s disclosed reports:</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="s1">   HackerOne: program page → Hacktivity tab → filter by program</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="s1">   Bugcrowd:  program page → Hall of Fame / Disclosed tab</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="s1">   Search for your vulnerability class + endpoint name</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="s1">2. Search HackerOne&#39;</span>s<span class="w"> </span>full<span class="w"> </span>disclosed<span class="w"> </span>report<span class="w"> </span>database:
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">   </span>https://hackerone.com/hacktivity?type<span class="o">=</span>public
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">   </span>Query:<span class="w"> </span><span class="s2">&quot;target.com IDOR&quot;</span><span class="w"> </span>or<span class="w"> </span><span class="s2">&quot;[endpoint name] XSS&quot;</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="m">3</span>.<span class="w"> </span>Check<span class="w"> </span><span class="k">if</span><span class="w"> </span>the<span class="w"> </span>exact<span class="w"> </span>endpoint<span class="w"> </span>has<span class="w"> </span>been<span class="w"> </span>reported:
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="w">   </span>If<span class="w"> </span>your<span class="w"> </span>bug<span class="w"> </span>is<span class="w"> </span>on<span class="w"> </span>/api/v1/users/<span class="o">{</span>id<span class="o">}</span><span class="w"> </span>and<span class="w"> </span>there<span class="err">&#39;</span>s<span class="w"> </span>a<span class="w"> </span>disclosed<span class="w"> </span>IDOR
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="w">   </span>on<span class="w"> </span>that<span class="w"> </span>endpoint<span class="w"> </span>→<span class="w"> </span>likely<span class="w"> </span>duplicate.
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="w">   </span>Unless:<span class="w"> </span>different<span class="w"> </span>parameter,<span class="w"> </span>different<span class="w"> </span>HTTP<span class="w"> </span>method,<span class="w"> </span>different<span class="w"> </span>auth<span class="w"> </span>context.
+</span></code></pre></div>
+<hr />
+<h2 id="reputation-and-private-invites">Reputation and Private Invites<a class="headerlink" href="#reputation-and-private-invites" title="Permanent link">&para;</a></h2>
+<h3 id="what-triggers-private-invites">What Triggers Private Invites<a class="headerlink" href="#what-triggers-private-invites" title="Permanent link">&para;</a></h3>
+<p>Private program invites are where the real earning is. The metrics that unlock them differ by platform.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">HackerOne</label><label for="__tabbed_3_2">Bugcrowd</label><label for="__tabbed_3_3">Intigriti / YesWeHack</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Signal (valid/invalid ratio)</td>
+<td>&gt; 80%</td>
+</tr>
+<tr>
+<td>Impact</td>
+<td>Severity-weighted valid report count</td>
+</tr>
+<tr>
+<td>Reputation</td>
+<td>Not penalised by N/A or duplicate flags</td>
+</tr>
+<tr>
+<td>Hall of Fame appearances</td>
+<td>Each one = positive signal</td>
+</tr>
+<tr>
+<td>Approximate threshold</td>
+<td>5–10 valid Medium+ reports with good signal</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HackerScore</td>
+<td>&gt; 30–40 (varies by program tier)</td>
+</tr>
+<tr>
+<td>Valid/invalid ratio</td>
+<td>As high as possible</td>
+</tr>
+<tr>
+<td>Unique programs</td>
+<td>Broad participation helps</td>
+</tr>
+<tr>
+<td>Approximate threshold</td>
+<td>HackerScore &gt; 30 with consistent valid findings</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Valid findings</td>
+<td>3–5 on the platform</td>
+</tr>
+<tr>
+<td>Triage feedback</td>
+<td>Positive interactions matter</td>
+</tr>
+<tr>
+<td>Approximate threshold</td>
+<td>Lower bar than HackerOne due to less competition</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Quality over volume</p>
+<p>One clean P2 with a great report generates more invite signals than ten P4s with sloppy reports that accumulate N/A flags. The ratio matters more than the count.</p>
+</div>
+<h3 id="the-write-up-multiplier">The Write-Up Multiplier<a class="headerlink" href="#the-write-up-multiplier" title="Permanent link">&para;</a></h3>
+<p>Public write-ups are the highest-leverage reputation action available to a hunter.</p>
+<p>A write-up proves you understand the bug deeply, not just that you found it. It gets shared in security communities, attracts DMs from program teams, builds a portfolio for employment, and compounds into more invites over time.</p>
+<p><strong>What makes a write-up worth sharing:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>What to include</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thought process</td>
+<td>How did you notice this? What made you look here?</td>
+</tr>
+<tr>
+<td>Failed attempts</td>
+<td>What didn't work before you found the path?</td>
+</tr>
+<tr>
+<td>The chain</td>
+<td>How does this connect to other vulnerabilities?</td>
+</tr>
+<tr>
+<td>Technical detail</td>
+<td>What exactly is the vulnerable code doing?</td>
+</tr>
+<tr>
+<td>The fix</td>
+<td>What did the vendor do and why does it work?</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><span class="filename">writeup_format</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="m">1</span>.<span class="w"> </span>Title<span class="w"> </span>+<span class="w"> </span>one-sentence<span class="w"> </span>summary
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="m">2</span>.<span class="w"> </span>Discovery<span class="w"> </span>story<span class="w"> </span>—<span class="w"> </span>the<span class="w"> </span>thought<span class="w"> </span>process,<span class="w"> </span>not<span class="w"> </span>just<span class="w"> </span>the<span class="w"> </span>steps
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="m">3</span>.<span class="w"> </span>Technical<span class="w"> </span>breakdown<span class="w"> </span>—<span class="w"> </span>what<span class="w"> </span>the<span class="w"> </span>vulnerability<span class="w"> </span>is<span class="w"> </span>doing<span class="w"> </span>at<span class="w"> </span>code<span class="w"> </span>level
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="m">4</span>.<span class="w"> </span>Remediation<span class="w"> </span>—<span class="w"> </span>what<span class="w"> </span>the<span class="w"> </span>fix<span class="w"> </span>was<span class="w"> </span>and<span class="w"> </span>why<span class="w"> </span>it<span class="w"> </span>works
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">What not to write</p>
+<p>"I found IDOR on <code>/api/users/{id}</code>. I changed the ID. I got another user's data." — this is a report, not a write-up. The technical steps alone are not the valuable part. The discovery thought process is what gets shared and remembered.</p>
+</div>
+<p>Publish on Medium / InfoSecWriteups after the program approves disclosure. One detailed write-up per interesting finding beats five brief ones.</p>
+<h3 id="community-presence">Community Presence<a class="headerlink" href="#community-presence" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Community</th>
+<th>Purpose</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bugcrowd Discord (~20k members)</td>
+<td>Program discussions, triage feedback, team hunting</td>
+<td>discord.gg/bugcrowd</td>
+</tr>
+<tr>
+<td>r/bugbounty</td>
+<td>Program reviews, tool discussions, dry spell support</td>
+<td>reddit.com/r/bugbounty</td>
+</tr>
+<tr>
+<td>Twitter/X</td>
+<td>Write-ups, tool tips, PoC demos, engagement</td>
+<td>@NahamSec @jhaddix @STÖK @TomNomNom @corbenleo @vickieli7</td>
+</tr>
+<tr>
+<td>HackerOne Community Forum</td>
+<td>Policy questions, platform updates</td>
+<td>discourse.hackerone.com</td>
+</tr>
+</tbody>
+</table>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>When to lurk:    First 3 months — absorb, learn, calibrate
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>When to post:    When you have something genuine — finding, technique, write-up
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>Don&#39;t post:      &quot;I&#39;m new, how do I start?&quot; — read the resources first
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>Do post:         &quot;Here&#39;s what I found when I tried X&quot; — experience is valuable
+</span></code></pre></div>
+<h3 id="dry-spell-management">Dry Spell Management<a class="headerlink" href="#dry-spell-management" title="Permanent link">&para;</a></h3>
+<p>Every hunter hits dry spells. The hunters who succeed treat them as data, not as verdicts on their ability.</p>
+<p><strong>When stuck, change one variable:</strong></p>
+<div class="language-bash highlight"><span class="filename">dry_spell_response</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>Target<span class="w"> </span>class:<span class="w">   </span>If<span class="w"> </span>web<span class="w"> </span>apps<span class="w"> </span>aren<span class="s1">&#39;t working → try mobile or API-only programs</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="s1">Vuln class:     If you only test IDOR → try SSRF or business logic</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="s1">Platform:       If HackerOne feels saturated → try Intigriti or YesWeHack</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="s1">Study mode:     Read disclosed reports for the programs you&#39;</span>re<span class="w"> </span>hunting.
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">                </span>What<span class="w"> </span>are<span class="w"> </span>others<span class="w"> </span>finding?<span class="w"> </span>What<span class="s1">&#39;s the pattern? What are you missing?</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="s1">Labs:           Return to PortSwigger labs for the class you&#39;</span>re<span class="w"> </span>struggling<span class="w"> </span>with
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>Write-up<span class="w"> </span>review:<span class="w"> </span>Read<span class="w"> </span><span class="m">10</span><span class="w"> </span>write-ups<span class="w"> </span>about<span class="w"> </span>bugs<span class="w"> </span>you<span class="w"> </span>haven<span class="err">&#39;</span>t<span class="w"> </span>found<span class="w"> </span>yet
+</span></code></pre></div>
+<p><strong>What dry spells usually are:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wrong target (saturated)</td>
+<td>Move to newer program or underexplored surface</td>
+</tr>
+<tr>
+<td>Over-automating, under-thinking</td>
+<td>Slow down, manual test for business logic</td>
+</tr>
+<tr>
+<td>Skill gap in a specific class</td>
+<td>PortSwigger labs for that class</td>
+</tr>
+<tr>
+<td>Timing (program was quiet)</td>
+<td>Wait or rotate targets — this passes</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 19v1H3v-1l2-2v-6c0-3.1 2.03-5.83 5-6.71V4a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.29c2.97.88 5 3.61 5 6.71v6zm-7 2a2 2 0 0 1-2 2 2 2 0 0 1-2-2m9.75-17.81-1.42 1.42A8.98 8.98 0 0 1 21 11h2c0-2.93-1.16-5.75-3.25-7.81M1 11h2c0-2.4.96-4.7 2.67-6.39L4.25 3.19A10.96 10.96 0 0 0 1 11"/></svg></span> <strong>New Program Alerts</strong></p>
+<hr />
+<p>BountyNotifier for real-time new program launch notifications.</p>
+<p><a href="https://bountynotifier.com"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> BountyNotifier</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.207 0q-.725.002-1.182.3c-.305.2-.46.463-.46.78v21.809q0 .414.476.76.472.351 1.166.351.663 0 1.168-.35.504-.346.506-.761V1.082c0-.32-.163-.577-.49-.782Q7.901.002 7.207 0m9.523 8.662q-.724-.001-1.168.3l-4.439 2.783c-.199.186-.284.469-.247.855q.052.575.524 1.09c.314.347.666.563 1.068.655q.596.134.896-.143l1.755-1.095v9.782q0 .414.461.76c.3.234.687.351 1.15.351q.695 0 1.199-.35c.337-.233.506-.484.506-.761V9.739q-.001-.48-.49-.776-.488-.303-1.215-.301"/></svg></span> <strong>Disclosed Reports</strong></p>
+<hr />
+<p>HackerOne Hacktivity for pre-submission duplicate checking and calibration.</p>
+<p><a href="https://hackerone.com/hacktivity"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Hacktivity</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 14v-3h3V9l4 3.5-4 3.5v-2zm-1-6.3V9H2V7.7L8 4zM7 10h2v5H7zm-4 0h2v5H3zm10 0v2.5l-2 1.8V10zm-3.9 6-.6.5 1.7 1.5H2v-2zm7.9-1v3h-3v2l-4-3.5 4-3.5v2z"/></svg></span> <strong>Payout Infrastructure</strong></p>
+<hr />
+<p>Payoneer and Wise for receiving bounty payments outside traditional banking corridors.</p>
+<p><a href="https://payoneer.com"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Payoneer</a> · <a href="https://wise.com"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Wise</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c-.34.34-.67.67-.68 1-.03.32.31.65.63.96.48.5.95.95.93 1.44s-.53 1-1.04 1.5l-4.13 4.14L15 14.66l4.25-4.24-.96-.96-1.42 1.41-3.75-3.75 3.84-3.83c.39-.39 1.04-.39 1.41 0l2.34 2.34c.39.37.39 1.02 0 1.41M3 17.25l9.56-9.57 3.75 3.75L6.75 21H3z"/></svg></span> <strong>Write-Up Community</strong></p>
+<hr />
+<p>InfoSecWriteups on Medium for publishing disclosures and building community reputation.</p>
+<p><a href="https://infosecwriteups.com"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> InfoSecWriteups</a></p>
+</li>
+</ul>
+</div>
+<hr />
+<details class="note">
+<summary>Expand full checklist</summary>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>SETUP (do once)
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>□ Bugcrowd account created, Payoneer linked
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>□ YesWeHack account created, Wise linked
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>□ Intigriti account created
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>□ HackerOne account created
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>□ BountyNotifier (or equivalent) configured for new program alerts
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>□ Twitter/X: following key hunters and platforms
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>□ Bugcrowd Discord joined
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>TARGET SELECTION (ongoing)
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>□ New program alerts checked daily
+</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>□ For each new program: read scope, assess green/red flags
+</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>□ Current target portfolio: 1 deep + 2–3 breadth
+</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>□ Deep target: tracking feature releases and changelog
+</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>□ Pre-submission duplicate check: 5 minutes per finding
+</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>
+</span><span id="__span-19-17"><a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>REPUTATION BUILDING (ongoing)
+</span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>□ Valid/invalid ratio tracked — maintain &gt; 80%
+</span><span id="__span-19-19"><a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>□ First write-up published after first interesting finding
+</span><span id="__span-19-20"><a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a>□ Hall of Fame appearances tracked per platform
+</span><span id="__span-19-21"><a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a>□ Community engagement: respond, share, contribute
+</span><span id="__span-19-22"><a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a>□ Private invite metrics checked monthly (HackerOne Signal, Bugcrowd HackerScore)
+</span></code></pre></div>
+</details>
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">bug-bounty</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">platforms</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">target-selection</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">reputation</span>
+      
+    
+  </nav>
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../part-11-reporting/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Reporting">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Reporting
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../part-13-tooling/" class="md-footer__link md-footer__link--next" aria-label="Next: Tooling">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Tooling
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Wellington Vumu
+
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dbc0afdc.min.js"></script>
+      
+    
+  </body>
+</html>

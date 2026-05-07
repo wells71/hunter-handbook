@@ -1,0 +1,2392 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A field reference for every tool in the workflow — what it does, the flags you'll actually use, and where it fits. Not a tutorial.">
+      
+      
+        <meta name="author" content="Wellington Vumu">
+      
+      
+      
+        <link rel="prev" href="../part-12-platform/">
+      
+      
+        <link rel="next" href="../part-14-infrastructure/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.39">
+    
+    
+      
+        <title>Tooling Reference - Hunter's handbook</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.1e981d71.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tooling-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-header__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hunter's handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tooling Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-nav__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    Hunter's handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-rocket" viewBox="0 0 24 24"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-recon/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reconnaissance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-authentication/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-round-key" viewBox="0 0 24 24"><path d="M19 11v6M19 13h2M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-access-control/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-lock" viewBox="0 0 24 24"><path d="M19 16v-2a2 2 0 0 0-4 0v2M9.5 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><rect width="8" height="5" x="13" y="16" rx=".899"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-injection/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-ssrf-xxe/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF & XXE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-business-logic/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain" viewBox="0 0 24 24"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Business Logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-api/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cog" viewBox="0 0 24 24"><path d="M11 10.27 7 3.34M11 13.73l-4 6.93M12 22v-2M12 2v2M14 12h8M17 20.66l-1-1.73M17 3.34l-1 1.73M2 12h2M20.66 17l-1.73-1M20.66 7l-1.73 1M3.34 17l1.73-1M3.34 7l1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    API Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-08-ai-llm/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain-circuit" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-09-cloud/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-10-mobile/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Mobile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-11-reporting/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-12-platform/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tooling
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recon-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Recon Tools
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recon Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subfinder" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Subfinder
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Amass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assetfinder" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Assetfinder
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#puredns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        puredns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dnsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        dnsx
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#httpx" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        httpx
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#naabu" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Naabu
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#katana" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Katana
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gau-waybackurls" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        gau / waybackurls
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alterx" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        AlterX
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anew" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        anew
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gowitness" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        gowitness
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exploitation-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exploitation Tools
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exploitation Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#burp-suite-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Burp Suite Community
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ffuf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        ffuf
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nuclei" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Nuclei
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sqlmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        sqlmap
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dalfox" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Dalfox
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jwt_tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        jwt_tool
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        interactsh
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiterunner" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Kiterunner
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arjun" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Arjun
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trufflehog" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        trufflehog
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mobile-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Mobile Tools
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mobile Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mobsf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        MobSF
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apktool" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        APKTool
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jadx" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        JADX
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frida" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Frida
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#objection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Objection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apk-mitm" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        apk-mitm
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wordlists-and-payload-banks" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Wordlists and Payload Banks
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wordlists and Payload Banks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quick-installation-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Quick Installation Script
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-14-infrastructure/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server-cog" viewBox="0 0 24 24"><path d="m10.852 14.772-.383.923M13.148 14.772a3 3 0 1 0-2.296-5.544l-.383-.923M13.148 9.228l.383-.923"/><path d="m13.53 15.696-.382-.924a3 3 0 1 1-2.296-5.544M14.772 10.852l.923-.383M14.772 13.148l.923.383"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5M6 18h.01M6 6h.01M9.228 10.852l-.923-.383M9.228 13.148l-.923.383"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-text" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8M16 13H8M16 17H8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recon-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Recon Tools
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recon Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subfinder" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Subfinder
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Amass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assetfinder" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Assetfinder
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#puredns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        puredns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dnsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        dnsx
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#httpx" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        httpx
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#naabu" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Naabu
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#katana" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Katana
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gau-waybackurls" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        gau / waybackurls
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alterx" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        AlterX
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anew" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        anew
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gowitness" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        gowitness
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exploitation-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exploitation Tools
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exploitation Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#burp-suite-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Burp Suite Community
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ffuf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        ffuf
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nuclei" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Nuclei
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sqlmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        sqlmap
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dalfox" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Dalfox
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jwt_tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        jwt_tool
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        interactsh
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiterunner" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Kiterunner
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arjun" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Arjun
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trufflehog" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        trufflehog
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mobile-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Mobile Tools
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mobile Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mobsf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        MobSF
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apktool" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        APKTool
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jadx" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        JADX
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frida" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Frida
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#objection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Objection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apk-mitm" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        apk-mitm
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wordlists-and-payload-banks" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Wordlists and Payload Banks
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wordlists and Payload Banks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quick-installation-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Quick Installation Script
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="tooling-reference">Tooling Reference<a class="headerlink" href="#tooling-reference" title="Permanent link">&para;</a></h1>
+<p>This is a reference, not a tutorial. Each entry answers three questions: what the tool does, the flags you'll actually use, and where it fits in the workflow. External docs handle the rest. Cross-referenced throughout the manual wherever the tool appears in context.</p>
+<hr />
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m19.07 4.93-1.41 1.41A8.01 8.01 0 0 1 20 12a8 8 0 0 1-8 8 8 8 0 0 1-8-8c0-4.08 3.05-7.44 7-7.93v2.02C8.16 6.57 6 9.03 6 12a6 6 0 0 0 6 6 6 6 0 0 0 6-6c0-1.66-.67-3.16-1.76-4.24l-1.41 1.41C15.55 9.9 16 10.9 16 12a4 4 0 0 1-4 4 4 4 0 0 1-4-4c0-1.86 1.28-3.41 3-3.86v2.14c-.6.35-1 .98-1 1.72a2 2 0 0 0 2 2 2 2 0 0 0 2-2c0-.74-.4-1.38-1-1.72V2h-1A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10c0-2.76-1.12-5.26-2.93-7.07"/></svg></span> <strong>Recon Tools</strong></p>
+<hr />
+<p>Subdomain enumeration, DNS resolution, HTTP probing, crawling, and URL discovery.</p>
+<p><a href="#recon-tools"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Recon tools</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 13h2v1h-2zm10-8v6c0 5.5-3.8 10.7-9 12-5.2-1.3-9-6.5-9-12V5l9-4zm-4 5h-2.2c-.2-.6-.6-1.1-1.1-1.5l1.2-1.2-.7-.7L12.8 8H12c-.2 0-.5 0-.7.1L9.9 6.6l-.8.8 1.2 1.2c-.5.3-.9.8-1.1 1.4H7v1h2v1H7v1h2v1H7v1h2.2c.4 1.2 1.5 2 2.8 2s2.4-.8 2.8-2H17v-1h-2v-1h2v-1h-2v-1h2zm-6 2h2v-1h-2z"/></svg></span> <strong>Exploitation Tools</strong></p>
+<hr />
+<p>Burp Suite and its extensions, fuzzers, scanners, and specialised attack tools.</p>
+<p><a href="#exploitation-tools"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Exploitation tools</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 19H7V5h10m0-4H7c-1.11 0-2 .89-2 2v18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2"/></svg></span> <strong>Mobile Tools</strong></p>
+<hr />
+<p>Static analysis, APK decompilation, dynamic instrumentation, and SSL pinning bypass.</p>
+<p><a href="#mobile-tools"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Mobile tools</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 5h14v2H7zm0 8v-2h14v2zM4 4.5A1.5 1.5 0 0 1 5.5 6 1.5 1.5 0 0 1 4 7.5 1.5 1.5 0 0 1 2.5 6 1.5 1.5 0 0 1 4 4.5m0 6A1.5 1.5 0 0 1 5.5 12 1.5 1.5 0 0 1 4 13.5 1.5 1.5 0 0 1 2.5 12 1.5 1.5 0 0 1 4 10.5M7 19v-2h14v2zm-3-2.5A1.5 1.5 0 0 1 5.5 18 1.5 1.5 0 0 1 4 19.5 1.5 1.5 0 0 1 2.5 18 1.5 1.5 0 0 1 4 16.5"/></svg></span> <strong>Wordlists and Payload Banks</strong></p>
+<hr />
+<p>SecLists, PayloadsAllTheThings, Assetnote, and the quick installation script.</p>
+<p><a href="#wordlists-and-payload-banks"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Wordlists</a></p>
+</li>
+</ul>
+</div>
+<h2 id="decision-flow">Decision Flow<a class="headerlink" href="#decision-flow" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Starting subdomain enumeration?
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>→ Run Subfinder first. Run Assetfinder in parallel. Merge outputs with anew.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  Use puredns for brute-force after passive enum completes.
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Need to identify live HTTP services?
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>→ Pipe resolved subdomains into httpx. Follow with Naabu for port scanning.
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  Use gowitness for visual triage on large host lists.
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Finding hidden endpoints or parameters?
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>→ ffuf for directory/path fuzzing. Arjun for hidden parameter discovery.
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  Kiterunner for API route discovery with framework-specific wordlists.
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>Testing for SQLi?
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>→ Manual confirmation in Burp first. Then sqlmap -r request.txt with level=1 risk=1 delay=2.
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>  Never submit sqlmap output directly — verify all findings manually.
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>Testing for XSS?
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>→ Dalfox for automated scanning. DOM Invader (Burp extension) for DOM XSS.
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>  interactsh for blind XSS callbacks.
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>Testing JWTs?
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>→ jwt_tool for algorithm confusion, alg:none, secret cracking, and claim tampering.
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>  JWT Editor extension in Burp for in-proxy testing.
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>Testing mobile apps?
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>→ MobSF for initial static analysis. JADX for readable source review.
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>  apk-mitm for standard SSL pinning bypass. Objection or Frida for runtime analysis.
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>Looking for secrets in source or repos?
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>→ trufflehog on filesystem, git history, or GitHub org. Use --only-verified to reduce noise.
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>Need OOB callbacks for SSRF, XXE, or blind injection?
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>→ interactsh-client. Gives you a callback domain. Shows DNS, HTTP, SMTP interactions.
+</span></code></pre></div>
+<hr />
+<h2 id="recon-tools">Recon Tools<a class="headerlink" href="#recon-tools" title="Permanent link">&para;</a></h2>
+<h3 id="subfinder">Subfinder<a class="headerlink" href="#subfinder" title="Permanent link">&para;</a></h3>
+<p>Passive subdomain enumeration from multiple API sources. Always run first in the subdomain pipeline.</p>
+<div class="language-bash highlight"><span class="filename">subfinder_usage</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>subfinder<span class="w"> </span>-d<span class="w"> </span>target.com<span class="w"> </span>-silent<span class="w"> </span>-o<span class="w"> </span>subs.txt
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>subfinder<span class="w"> </span>-dL<span class="w"> </span>domains.txt<span class="w"> </span>-all<span class="w"> </span>-o<span class="w"> </span>subs.txt<span class="w">   </span><span class="c1"># all sources, domain list</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>subfinder<span class="w"> </span>-d<span class="w"> </span>target.com<span class="w"> </span>-recursive<span class="w"> </span>-silent<span class="w">    </span><span class="c1"># recurse on found subdomains</span>
+</span></code></pre></div>
+<p>Configure API keys at <code>~/.config/subfinder/provider-config.yaml</code>. Sources worth configuring: <code>shodan</code>, <code>securitytrails</code>, <code>censys</code>, <code>virustotal</code>, <code>github</code>, <code>hunter</code>.</p>
+<hr />
+<h3 id="amass">Amass<a class="headerlink" href="#amass" title="Permanent link">&para;</a></h3>
+<p>Active and passive subdomain enumeration with ASN/CIDR mapping. Slower than Subfinder — use for thoroughness on high-value targets.</p>
+<div class="language-bash highlight"><span class="filename">amass_usage</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/owasp-amass/amass/v4/...@master
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>amass<span class="w"> </span>enum<span class="w"> </span>-passive<span class="w"> </span>-d<span class="w"> </span>target.com
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>amass<span class="w"> </span>enum<span class="w"> </span>-active<span class="w"> </span>-brute<span class="w"> </span>-w<span class="w"> </span>wordlist.txt<span class="w"> </span>-d<span class="w"> </span>target.com<span class="w"> </span>-o<span class="w"> </span>output.txt
+</span></code></pre></div>
+<p>Runs in parallel with Subfinder. Merge outputs with <code>anew</code>.</p>
+<hr />
+<h3 id="assetfinder">Assetfinder<a class="headerlink" href="#assetfinder" title="Permanent link">&para;</a></h3>
+<p>Fast passive subdomain enum with minimal setup. Fewer sources than Subfinder but faster. Good for quick passes.</p>
+<div class="language-bash highlight"><span class="filename">assetfinder_usage</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/tomnomnom/assetfinder@latest
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>assetfinder<span class="w"> </span>--subs-only<span class="w"> </span>target.com<span class="w"> </span><span class="p">|</span><span class="w"> </span>anew<span class="w"> </span>master_subs.txt
+</span></code></pre></div>
+<hr />
+<h3 id="puredns">puredns<a class="headerlink" href="#puredns" title="Permanent link">&para;</a></h3>
+<p>Mass DNS resolution with wildcard detection and filtering. Use instead of massdns for brute-force.</p>
+<div class="language-bash highlight"><span class="filename">puredns_usage</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/d3mondev/puredns/v2@latest
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>puredns<span class="w"> </span>bruteforce<span class="w"> </span>wordlist.txt<span class="w"> </span>target.com<span class="w"> </span>-r<span class="w"> </span>/opt/resolvers.txt<span class="w"> </span>-o<span class="w"> </span>resolved.txt
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>puredns<span class="w"> </span>resolve<span class="w"> </span>subdomains.txt<span class="w"> </span>-r<span class="w"> </span>/opt/resolvers.txt<span class="w"> </span>-o<span class="w"> </span>resolved.txt
+</span></code></pre></div>
+<p>Resolver list: <code>https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt</code></p>
+<hr />
+<h3 id="dnsx">dnsx<a class="headerlink" href="#dnsx" title="Permanent link">&para;</a></h3>
+<p>DNS resolution, CNAME extraction, and record queries. Feeds resolved hosts into httpx.</p>
+<div class="language-bash highlight"><span class="filename">dnsx_usage</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>cat<span class="w"> </span>subdomains.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>dnsx<span class="w"> </span>-silent<span class="w"> </span>-a<span class="w"> </span>-resp<span class="w"> </span>-o<span class="w"> </span>resolved.txt
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>cat<span class="w"> </span>subdomains.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>dnsx<span class="w"> </span>-silent<span class="w"> </span>-cname<span class="w"> </span>-o<span class="w"> </span>cnames.txt<span class="w">   </span><span class="c1"># CNAME for takeover hunting</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>cat<span class="w"> </span>subdomains.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>dnsx<span class="w"> </span>-silent<span class="w"> </span>-rc<span class="w"> </span>NXDOMAIN<span class="w">           </span><span class="c1"># filter by response code</span>
+</span></code></pre></div>
+<hr />
+<h3 id="httpx">httpx<a class="headerlink" href="#httpx" title="Permanent link">&para;</a></h3>
+<p>HTTP probing — status codes, titles, tech detection, favicon hashes. Core surface mapping tool.</p>
+<div class="language-bash highlight"><span class="filename">httpx_usage</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/httpx/cmd/httpx@latest
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>cat<span class="w"> </span>resolved.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>httpx<span class="w"> </span>-silent<span class="w"> </span>-status-code<span class="w"> </span>-title<span class="w"> </span>-tech-detect<span class="w"> </span>-web-server<span class="w"> </span>-o<span class="w"> </span>live.txt
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>cat<span class="w"> </span>resolved.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>httpx<span class="w"> </span>-silent<span class="w"> </span>-favicon<span class="w"> </span>-content-length<span class="w"> </span>-follow-redirects<span class="w"> </span>-json<span class="w"> </span>-o<span class="w"> </span>live.json
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>cat<span class="w"> </span>resolved.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>httpx<span class="w"> </span>-silent<span class="w"> </span>-mc<span class="w"> </span><span class="m">200</span>,403<span class="w">                 </span><span class="c1"># match specific status codes</span>
+</span></code></pre></div>
+<hr />
+<h3 id="naabu">Naabu<a class="headerlink" href="#naabu" title="Permanent link">&para;</a></h3>
+<p>Fast port scanning. Run after httpx on all live hosts.</p>
+<div class="language-bash highlight"><span class="filename">naabu_usage</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/naabu/cmd/naabu@latest
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>naabu<span class="w"> </span>-l<span class="w"> </span>live.txt<span class="w"> </span>-top-ports<span class="w"> </span><span class="m">1000</span><span class="w"> </span>-silent<span class="w"> </span>-o<span class="w"> </span>ports.txt
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>naabu<span class="w"> </span>-l<span class="w"> </span>live.txt<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>,443,8080,8443,9200<span class="w"> </span>-rate<span class="w"> </span><span class="m">1000</span><span class="w"> </span>-silent
+</span></code></pre></div>
+<hr />
+<h3 id="katana">Katana<a class="headerlink" href="#katana" title="Permanent link">&para;</a></h3>
+<p>Fast web crawler with JavaScript rendering and authenticated session support.</p>
+<div class="language-bash highlight"><span class="filename">katana_usage</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/projectdiscovery/katana/cmd/katana@latest
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>katana<span class="w"> </span>-u<span class="w"> </span>https://target.com<span class="w"> </span>-jc<span class="w"> </span>-silent<span class="w"> </span>-o<span class="w"> </span>crawl.txt<span class="w">          </span><span class="c1"># JS crawl</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>katana<span class="w"> </span>-u<span class="w"> </span>https://target.com<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=X&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="m">5</span><span class="w">       </span><span class="c1"># authenticated crawl</span>
+</span></code></pre></div>
+<hr />
+<h3 id="gau-waybackurls">gau / waybackurls<a class="headerlink" href="#gau-waybackurls" title="Permanent link">&para;</a></h3>
+<p>Historical URL discovery from archives and crawl data. Run before active crawling.</p>
+<div class="language-bash highlight"><span class="filename">historical_urls</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/lc/gau/v2/cmd/gau@latest
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/tomnomnom/waybackurls@latest
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>gau<span class="w"> </span>target.com<span class="w"> </span>--threads<span class="w"> </span><span class="m">5</span><span class="w"> </span>-o<span class="w"> </span>gau_urls.txt
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>waybackurls<span class="w"> </span>target.com<span class="w"> </span>&gt;<span class="w"> </span>wayback_urls.txt
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>cat<span class="w"> </span>gau_urls.txt<span class="w"> </span>wayback_urls.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>anew<span class="w"> </span>all_urls.txt
+</span></code></pre></div>
+<hr />
+<h3 id="alterx">AlterX<a class="headerlink" href="#alterx" title="Permanent link">&para;</a></h3>
+<p>Subdomain permutation generation from known subdomains. Runs after passive/active enum.</p>
+<div class="language-bash highlight"><span class="filename">alterx_usage</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/projectdiscovery/alterx/cmd/alterx@latest
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>cat<span class="w"> </span>subdomains.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>alterx<span class="w"> </span><span class="p">|</span><span class="w"> </span>dnsx<span class="w"> </span>-silent<span class="w"> </span>-o<span class="w"> </span>permutations_resolved.txt
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>cat<span class="w"> </span>subdomains.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>alterx<span class="w"> </span>-enrich<span class="w"> </span><span class="p">|</span><span class="w"> </span>dnsx<span class="w"> </span>-silent
+</span></code></pre></div>
+<hr />
+<h3 id="anew">anew<a class="headerlink" href="#anew" title="Permanent link">&para;</a></h3>
+<p>Append only new lines to a file — delta tracking for continuous recon pipelines. Prevents re-processing known data.</p>
+<div class="language-bash highlight"><span class="filename">anew_usage</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/tomnomnom/anew@latest
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>cat<span class="w"> </span>new_results.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>anew<span class="w"> </span>master.txt
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># Outputs ONLY new lines (not already in master.txt) to stdout</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c1"># Appends those new lines to master.txt</span>
+</span></code></pre></div>
+<hr />
+<h3 id="gowitness">gowitness<a class="headerlink" href="#gowitness" title="Permanent link">&para;</a></h3>
+<p>Automated screenshots of web pages for visual triage of large host lists.</p>
+<div class="language-bash highlight"><span class="filename">gowitness_usage</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/sensepost/gowitness@latest
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>gowitness<span class="w"> </span>file<span class="w"> </span>-f<span class="w"> </span>urls.txt<span class="w"> </span>--threads<span class="w"> </span><span class="m">10</span><span class="w"> </span>-P<span class="w"> </span>./screenshots/
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>gowitness<span class="w"> </span>report<span class="w"> </span>generate<span class="w">   </span><span class="c1"># generates browsable HTML report</span>
+</span></code></pre></div>
+<hr />
+<h2 id="exploitation-tools">Exploitation Tools<a class="headerlink" href="#exploitation-tools" title="Permanent link">&para;</a></h2>
+<h3 id="burp-suite-community">Burp Suite Community<a class="headerlink" href="#burp-suite-community" title="Permanent link">&para;</a></h3>
+<p>Core proxy, interceptor, intruder, and repeater. The hub every other tool feeds into.</p>
+<p><strong>Essential extensions (all free, BApp Store):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Extension</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Autorize</td>
+<td>Automated IDOR/access control testing</td>
+</tr>
+<tr>
+<td>ParamMiner</td>
+<td>Hidden parameter discovery</td>
+</tr>
+<tr>
+<td>JWT Editor</td>
+<td>JWT attack suite</td>
+</tr>
+<tr>
+<td>SAML Raider</td>
+<td>SAML/SSO attack suite</td>
+</tr>
+<tr>
+<td>InQL</td>
+<td>GraphQL schema discovery and testing</td>
+</tr>
+<tr>
+<td>HTTP Request Smuggler</td>
+<td>Request smuggling detection</td>
+</tr>
+<tr>
+<td>DOM Invader</td>
+<td>DOM XSS source/sink identification</td>
+</tr>
+<tr>
+<td>Turbo Intruder</td>
+<td>High-speed fuzzing and race conditions</td>
+</tr>
+<tr>
+<td>Logger++</td>
+<td>Enhanced request logging</td>
+</tr>
+<tr>
+<td>Hackvertor</td>
+<td>Encoding/decoding transforms</td>
+</tr>
+<tr>
+<td>Active Scan++</td>
+<td>Enhanced active scanning rules</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key shortcuts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl+R</code></td>
+<td>Send to Repeater</td>
+</tr>
+<tr>
+<td><code>Ctrl+I</code></td>
+<td>Send to Intruder</td>
+</tr>
+<tr>
+<td><code>Ctrl+F</code></td>
+<td>Search in current view</td>
+</tr>
+</tbody>
+</table>
+<p>Download: <code>https://portswigger.net/burp/communitydownload</code></p>
+<hr />
+<h3 id="ffuf">ffuf<a class="headerlink" href="#ffuf" title="Permanent link">&para;</a></h3>
+<p>Fast web fuzzer for directory, parameter, and virtual host discovery.</p>
+<div class="language-bash highlight"><span class="filename">ffuf_usage</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/ffuf/ffuf/v2@latest
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="c1"># Directory fuzzing</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>ffuf<span class="w"> </span>-u<span class="w"> </span>https://target.com/FUZZ<span class="w"> </span>-w<span class="w"> </span>/opt/SecLists/Discovery/Web-Content/raft-large-directories.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span>-mc<span class="w"> </span><span class="m">200</span>,301,302,403<span class="w"> </span>-fs<span class="w"> </span>&lt;noise_size&gt;<span class="w"> </span>-t<span class="w"> </span><span class="m">40</span><span class="w"> </span>-o<span class="w"> </span>output.json<span class="w"> </span>-of<span class="w"> </span>json
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="c1"># Parameter fuzzing (POST)</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>ffuf<span class="w"> </span>-u<span class="w"> </span>https://target.com/api/endpoint<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;FUZZ=test&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">  </span>-w<span class="w"> </span>/opt/SecLists/Discovery/Web-Content/burp-parameter-names.txt<span class="w"> </span>-mc<span class="w"> </span><span class="m">200</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="c1"># Virtual host discovery</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>ffuf<span class="w"> </span>-u<span class="w"> </span>https://target.com<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Host: FUZZ.target.com&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">  </span>-w<span class="w"> </span>/opt/SecLists/Discovery/DNS/subdomains-top1million-110000.txt<span class="w"> </span>-fs<span class="w"> </span>&lt;noise_size&gt;
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Always calibrate before running</p>
+<p>Run once without filters to identify the noise response size. Add <code>-fs &lt;noise_size&gt;</code> to every subsequent run. Skipping this step makes output useless.</p>
+</div>
+<hr />
+<h3 id="nuclei">Nuclei<a class="headerlink" href="#nuclei" title="Permanent link">&para;</a></h3>
+<p>Template-based vulnerability scanner. Run across all live hosts for broad coverage.</p>
+<div class="language-bash highlight"><span class="filename">nuclei_usage</span><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>nuclei<span class="w"> </span>-update-templates<span class="w">   </span><span class="c1"># run regularly</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>nuclei<span class="w"> </span>-l<span class="w"> </span>live.txt<span class="w"> </span>-t<span class="w"> </span>cves/<span class="w"> </span>-t<span class="w"> </span>exposures/<span class="w"> </span>-t<span class="w"> </span>takeovers/<span class="w"> </span>-severity<span class="w"> </span>medium,high,critical<span class="w"> </span>-o<span class="w"> </span>findings.txt
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>nuclei<span class="w"> </span>-l<span class="w"> </span>live.txt<span class="w"> </span>-t<span class="w"> </span>misconfiguration/<span class="w"> </span>-t<span class="w"> </span>technologies/<span class="w"> </span>-silent<span class="w"> </span>-json<span class="w"> </span>-o<span class="w"> </span>findings.json
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Always verify before reporting</p>
+<p>Nuclei's false positive rate is real. Never submit Nuclei output directly to a program. Every finding requires manual confirmation in Burp before reporting.</p>
+</div>
+<hr />
+<h3 id="sqlmap">sqlmap<a class="headerlink" href="#sqlmap" title="Permanent link">&para;</a></h3>
+<p>Automated SQL injection detection and exploitation.</p>
+<div class="language-bash highlight"><span class="filename">sqlmap_usage</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>pip<span class="w"> </span>install<span class="w"> </span>sqlmap<span class="w"> </span>--break-system-packages
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="c1"># From saved Burp request (preferred)</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>sqlmap<span class="w"> </span>-r<span class="w"> </span>request.txt<span class="w"> </span>--level<span class="o">=</span><span class="m">1</span><span class="w"> </span>--risk<span class="o">=</span><span class="m">1</span><span class="w"> </span>--batch<span class="w"> </span>--delay<span class="o">=</span><span class="m">2</span><span class="w"> </span>--threads<span class="o">=</span><span class="m">1</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="c1"># URL target</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>sqlmap<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;https://target.com/search?q=test&quot;</span><span class="w"> </span>--cookie<span class="w"> </span><span class="s2">&quot;session=X&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">  </span>--level<span class="o">=</span><span class="m">1</span><span class="w"> </span>--risk<span class="o">=</span><span class="m">1</span><span class="w"> </span>--batch<span class="w"> </span>--delay<span class="o">=</span><span class="m">2</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="c1"># After detection: enumerate</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>sqlmap<span class="w"> </span>-r<span class="w"> </span>request.txt<span class="w"> </span>--dbs<span class="w">                           </span><span class="c1"># list databases</span>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>sqlmap<span class="w"> </span>-r<span class="w"> </span>request.txt<span class="w"> </span>-D<span class="w"> </span>dbname<span class="w"> </span>--tables<span class="w">              </span><span class="c1"># list tables</span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>sqlmap<span class="w"> </span>-r<span class="w"> </span>request.txt<span class="w"> </span>-D<span class="w"> </span>dbname<span class="w"> </span>-T<span class="w"> </span>tablename<span class="w"> </span>--dump<span class="w">   </span><span class="c1"># dump (2–3 rows max on live targets)</span>
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Live target rules</p>
+<p>Always use <code>--level=1 --risk=1 --delay=2 --threads=1</code> on live targets. Never use <code>--os-shell</code>. Dump 2–3 rows maximum to demonstrate impact — do not perform a full data dump.</p>
+</div>
+<hr />
+<h3 id="dalfox">Dalfox<a class="headerlink" href="#dalfox" title="Permanent link">&para;</a></h3>
+<p>XSS scanner — fast, accurate, context-aware.</p>
+<div class="language-bash highlight"><span class="filename">dalfox_usage</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/hahwul/dalfox/v2@latest
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>dalfox<span class="w"> </span>url<span class="w"> </span><span class="s2">&quot;https://target.com/search?q=FUZZ&quot;</span><span class="w"> </span>--cookie<span class="w"> </span><span class="s2">&quot;session=X&quot;</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>dalfox<span class="w"> </span>file<span class="w"> </span>urls.txt<span class="w"> </span>--cookie<span class="w"> </span><span class="s2">&quot;session=X&quot;</span><span class="w"> </span>--output<span class="w"> </span>results.txt
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>cat<span class="w"> </span>urls.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>dalfox<span class="w"> </span>pipe<span class="w"> </span>--blind<span class="w"> </span>https://your.interactsh.com
+</span></code></pre></div>
+<hr />
+<h3 id="jwt_tool">jwt_tool<a class="headerlink" href="#jwt_tool" title="Permanent link">&para;</a></h3>
+<p>JWT analysis and attack suite — algorithm confusion, alg:none, secret cracking, claim tampering.</p>
+<div class="language-bash highlight"><span class="filename">jwt_tool_usage</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ticarpi/jwt_tool
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>jwt_tool/requirements.txt
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w">                             </span><span class="c1"># analyze token</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-X<span class="w"> </span>a<span class="w"> </span>-pk<span class="w"> </span>public.pem<span class="w">         </span><span class="c1"># algorithm confusion</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-X<span class="w"> </span>n<span class="w">                        </span><span class="c1"># alg:none attack</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-C<span class="w"> </span>-d<span class="w"> </span>/opt/SecLists/Passwords/Leaked-Databases/rockyou.txt
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-I<span class="w"> </span>-pc<span class="w"> </span>role<span class="w"> </span>-pv<span class="w"> </span>admin<span class="w">       </span><span class="c1"># tamper claim</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-M<span class="w"> </span>at<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="w">  </span>-t<span class="w"> </span><span class="s2">&quot;https://target.com/api&quot;</span><span class="w"> </span>-rh<span class="w"> </span><span class="s2">&quot;Authorization: Bearer JWT_HERE&quot;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="interactsh">interactsh<a class="headerlink" href="#interactsh" title="Permanent link">&para;</a></h3>
+<p>OOB interaction server for DNS/HTTP/SMTP callbacks. Use as the callback in SSRF, XXE, blind SQLi, blind XSS, and command injection.</p>
+<div class="language-bash highlight"><span class="filename">interactsh_usage</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>interactsh-client
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># → Generates: abc123.interactsh.com</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1"># → Use this domain as the callback URL in payloads</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="c1"># → Client shows all incoming DNS, HTTP, SMTP interactions in real-time</span>
+</span></code></pre></div>
+<hr />
+<h3 id="kiterunner">Kiterunner<a class="headerlink" href="#kiterunner" title="Permanent link">&para;</a></h3>
+<p>API endpoint discovery using framework-specific wordlists in <code>.kite</code> format.</p>
+<div class="language-bash highlight"><span class="filename">kiterunner_usage</span><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Download binary: https://github.com/assetnote/kiterunner/releases</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>kr<span class="w"> </span>scan<span class="w"> </span>https://target.com/api/<span class="w"> </span>-w<span class="w"> </span>routes-large.kite<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer X&quot;</span><span class="w"> </span>-o<span class="w"> </span>results.txt
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>kr<span class="w"> </span>scan<span class="w"> </span>https://target.com/api/<span class="w"> </span>-w<span class="w"> </span>/opt/wordlists/api-endpoints.txt<span class="w"> </span>--max-connection-errors<span class="w"> </span><span class="m">3</span>
+</span></code></pre></div>
+<p>Wordlists: <code>https://wordlists.assetnote.io</code> — download <code>httparchive_apiroutes_*.kite</code>.</p>
+<hr />
+<h3 id="arjun">Arjun<a class="headerlink" href="#arjun" title="Permanent link">&para;</a></h3>
+<p>Hidden parameter discovery via brute-force.</p>
+<div class="language-bash highlight"><span class="filename">arjun_usage</span><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>pip<span class="w"> </span>install<span class="w"> </span>arjun<span class="w"> </span>--break-system-packages
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>arjun<span class="w"> </span>-u<span class="w"> </span>https://target.com/api/endpoint<span class="w"> </span>-m<span class="w"> </span>GET<span class="w"> </span>--stable
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>arjun<span class="w"> </span>-u<span class="w"> </span>https://target.com/api/endpoint<span class="w"> </span>-m<span class="w"> </span>POST<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer X&quot;</span><span class="w"> </span>-o<span class="w"> </span>results.json
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>arjun<span class="w"> </span>-u<span class="w"> </span>https://target.com/api/endpoint<span class="w"> </span>-m<span class="w"> </span>JSON
+</span></code></pre></div>
+<hr />
+<h3 id="trufflehog">trufflehog<a class="headerlink" href="#trufflehog" title="Permanent link">&para;</a></h3>
+<p>Secret detection in code, files, git history, and cloud storage.</p>
+<div class="language-bash highlight"><span class="filename">trufflehog_usage</span><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/trufflesecurity/trufflehog/v3@latest
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>trufflehog<span class="w"> </span>filesystem<span class="w"> </span>./target_dir/<span class="w"> </span>--only-verified
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>trufflehog<span class="w"> </span>git<span class="w"> </span>https://github.com/org/repo<span class="w"> </span>--only-verified
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>trufflehog<span class="w"> </span>github<span class="w"> </span>--org<span class="o">=</span>targetcompany<span class="w"> </span>--only-verified<span class="w"> </span>--json
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>trufflehog<span class="w"> </span>s3<span class="w"> </span>--bucket<span class="o">=</span>target-bucket<span class="w"> </span>--only-verified
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Use --only-verified</p>
+<p>Without <code>--only-verified</code>, output volume is high and mostly noise. Use it for initial passes, then remove it for a thorough sweep if nothing surfaces.</p>
+</div>
+<hr />
+<h2 id="mobile-tools">Mobile Tools<a class="headerlink" href="#mobile-tools" title="Permanent link">&para;</a></h2>
+<h3 id="mobsf">MobSF<a class="headerlink" href="#mobsf" title="Permanent link">&para;</a></h3>
+<p>Automated static and dynamic analysis for Android and iOS. First stop for any mobile target.</p>
+<div class="language-bash highlight"><span class="filename">mobsf_usage</span><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>opensecurity/mobile-security-framework-mobsf
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="c1"># Upload APK or IPA at http://localhost:8000</span>
+</span></code></pre></div>
+<p><strong>Output covers:</strong> hardcoded secrets, insecure API endpoints, manifest issues, exported components, Firebase config, dangerous permissions, SSL pinning status.</p>
+<hr />
+<h3 id="apktool">APKTool<a class="headerlink" href="#apktool" title="Permanent link">&para;</a></h3>
+<p>APK decoding to resources, manifest, and smali bytecode.</p>
+<div class="language-bash highlight"><span class="filename">apktool_usage</span><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>apktool<span class="w"> </span>d<span class="w"> </span>target.apk<span class="w"> </span>-o<span class="w"> </span>decoded/<span class="w">    </span><span class="c1"># decode</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>apktool<span class="w"> </span>b<span class="w"> </span>decoded/<span class="w"> </span>-o<span class="w"> </span>rebuilt.apk<span class="w">   </span><span class="c1"># rebuild (for patching)</span>
+</span></code></pre></div>
+<p><strong>Key files after decoding:</strong></p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What to look for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AndroidManifest.xml</code></td>
+<td>Permissions, exported components, deep links</td>
+</tr>
+<tr>
+<td><code>res/values/strings.xml</code></td>
+<td>Hardcoded URLs, API keys, credentials</td>
+</tr>
+<tr>
+<td><code>smali/</code></td>
+<td>Disassembled bytecode — readable but not Java</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="jadx">JADX<a class="headerlink" href="#jadx" title="Permanent link">&para;</a></h3>
+<p>APK decompilation to readable Java/Kotlin source. Best tool for code review.</p>
+<div class="language-bash highlight"><span class="filename">jadx_usage</span><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># GUI (recommended for exploration)</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>jadx-gui<span class="w"> </span>target.apk
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="c1"># CLI</span>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>jadx<span class="w"> </span>target.apk<span class="w"> </span>-d<span class="w"> </span>output/
+</span></code></pre></div>
+<p><code>Ctrl+Shift+F</code> in the GUI runs a global text search across all decompiled code. Use it to find API endpoints, hardcoded secrets, and auth logic.</p>
+<hr />
+<h3 id="frida">Frida<a class="headerlink" href="#frida" title="Permanent link">&para;</a></h3>
+<p>Dynamic instrumentation — hook methods, bypass SSL pinning, analyse runtime behaviour.</p>
+<div class="language-bash highlight"><span class="filename">frida_usage</span><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>pip<span class="w"> </span>install<span class="w"> </span>frida<span class="w"> </span>frida-tools<span class="w"> </span>--break-system-packages
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="c1"># Push frida-server to device: https://github.com/frida/frida/releases</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>frida<span class="w"> </span>-U<span class="w"> </span>-f<span class="w"> </span>com.target.app<span class="w"> </span>-l<span class="w"> </span>script.js<span class="w">    </span><span class="c1"># spawn and instrument</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>frida<span class="w"> </span>-U<span class="w"> </span>com.target.app<span class="w"> </span>-l<span class="w"> </span>script.js<span class="w">       </span><span class="c1"># attach to running app</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>frida-ps<span class="w"> </span>-Ua<span class="w">                               </span><span class="c1"># list running apps on device</span>
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a>
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="c1"># Universal SSL pinning bypass (no custom script needed)</span>
+</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a>frida<span class="w"> </span>-U<span class="w"> </span>-f<span class="w"> </span>com.target.app<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-10"><a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a><span class="w">  </span>--codeshare<span class="w"> </span>pcipolloni/universal-android-ssl-pinning-bypass-with-frida
+</span></code></pre></div>
+<hr />
+<h3 id="objection">Objection<a class="headerlink" href="#objection" title="Permanent link">&para;</a></h3>
+<p>Frida-based runtime exploration framework. Simpler than raw Frida for common tasks.</p>
+<div class="language-bash highlight"><span class="filename">objection_usage</span><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>pip<span class="w"> </span>install<span class="w"> </span>objection<span class="w"> </span>--break-system-packages
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>objection<span class="w"> </span>-g<span class="w"> </span>com.target.app<span class="w"> </span>explore
+</span></code></pre></div>
+<p><strong>Key commands inside the Objection shell:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>android sslpinning disable</code></td>
+<td>Bypass SSL pinning</td>
+</tr>
+<tr>
+<td><code>android root disable</code></td>
+<td>Bypass root detection</td>
+</tr>
+<tr>
+<td><code>android hooking list classes</code></td>
+<td>List all app classes</td>
+</tr>
+<tr>
+<td><code>android filesystem ls</code></td>
+<td>Browse app filesystem</td>
+</tr>
+<tr>
+<td><code>android filesystem download &lt;path&gt;</code></td>
+<td>Download a file from device</td>
+</tr>
+<tr>
+<td><code>ios keychain dump</code></td>
+<td>Dump iOS keychain</td>
+</tr>
+<tr>
+<td><code>ios nsuserdefaults get all</code></td>
+<td>Read iOS preferences</td>
+</tr>
+<tr>
+<td><code>env</code></td>
+<td>Show data directory paths</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="apk-mitm">apk-mitm<a class="headerlink" href="#apk-mitm" title="Permanent link">&para;</a></h3>
+<p>Patches an APK to disable SSL pinning and trust user certificates. No root required. Easiest SSL pinning bypass for standard apps.</p>
+<div class="language-bash highlight"><span class="filename">apk_mitm_usage</span><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>apk-mitm
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>apk-mitm<span class="w"> </span>target.apk
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="c1"># Output: target-patched.apk</span>
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>adb<span class="w"> </span>install<span class="w"> </span>target-patched.apk
+</span></code></pre></div>
+<hr />
+<h2 id="wordlists-and-payload-banks">Wordlists and Payload Banks<a class="headerlink" href="#wordlists-and-payload-banks" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Best For</th>
+<th>Location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SecLists</td>
+<td>Standard wordlists for all phases</td>
+<td><code>git clone https://github.com/danielmiessler/SecLists /opt/SecLists</code></td>
+</tr>
+<tr>
+<td>PayloadsAllTheThings</td>
+<td>Payload reference for every vulnerability class</td>
+<td><code>https://github.com/swisskyrepo/PayloadsAllTheThings</code></td>
+</tr>
+<tr>
+<td>Assetnote Wordlists</td>
+<td>Framework-specific API route discovery</td>
+<td><code>https://wordlists.assetnote.io</code></td>
+</tr>
+<tr>
+<td>jhaddix all.txt</td>
+<td>Best subdomain brute-force list (~2M entries)</td>
+<td>See install script below</td>
+</tr>
+<tr>
+<td>fuzz.txt</td>
+<td>ffuf-specific path fuzzing</td>
+<td><code>https://github.com/Bo0oM/fuzz.txt</code></td>
+</tr>
+<tr>
+<td>PortSwigger XSS Cheat Sheet</td>
+<td>Filterable XSS payload reference</td>
+<td><code>https://portswigger.net/web-security/cross-site-scripting/cheat-sheet</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key SecLists paths:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>/opt/SecLists/Discovery/DNS/subdomains-top1million-110000.txt     subdomain brute-force
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>/opt/SecLists/Discovery/Web-Content/raft-large-directories.txt    directory fuzzing
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>/opt/SecLists/Discovery/Web-Content/raft-large-files.txt          file fuzzing
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>/opt/SecLists/Discovery/Web-Content/api-endpoints.txt             API route fuzzing
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>/opt/SecLists/Discovery/Web-Content/burp-parameter-names.txt      parameter fuzzing
+</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>/opt/SecLists/Passwords/Leaked-Databases/rockyou.txt              JWT/password cracking
+</span></code></pre></div>
+<h3 id="quick-installation-script">Quick Installation Script<a class="headerlink" href="#quick-installation-script" title="Permanent link">&para;</a></h3>
+<p>Installs the full toolkit on Kali, Ubuntu, or Debian. Run once on a fresh machine.</p>
+<div class="language-bash highlight"><span class="filename">install_tools.sh</span><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="ch">#!/bin/bash</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="c1"># chmod +x install_tools.sh &amp;&amp; ./install_tools.sh</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[*] Setting up Go environment...&quot;</span>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/usr/local/go/bin:<span class="nv">$HOME</span>/go/bin
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">GOPATH</span><span class="o">=</span><span class="nv">$HOME</span>/go
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>
+</span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[*] Installing Go recon tools...&quot;</span>
+</span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+</span><span id="__span-29-10"><a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/tomnomnom/assetfinder@latest
+</span><span id="__span-29-11"><a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/d3mondev/puredns/v2@latest
+</span><span id="__span-29-12"><a id="__codelineno-29-12" name="__codelineno-29-12" href="#__codelineno-29-12"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+</span><span id="__span-29-13"><a id="__codelineno-29-13" name="__codelineno-29-13" href="#__codelineno-29-13"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/httpx/cmd/httpx@latest
+</span><span id="__span-29-14"><a id="__codelineno-29-14" name="__codelineno-29-14" href="#__codelineno-29-14"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/naabu/cmd/naabu@latest
+</span><span id="__span-29-15"><a id="__codelineno-29-15" name="__codelineno-29-15" href="#__codelineno-29-15"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/projectdiscovery/katana/cmd/katana@latest
+</span><span id="__span-29-16"><a id="__codelineno-29-16" name="__codelineno-29-16" href="#__codelineno-29-16"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/lc/gau/v2/cmd/gau@latest
+</span><span id="__span-29-17"><a id="__codelineno-29-17" name="__codelineno-29-17" href="#__codelineno-29-17"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/tomnomnom/waybackurls@latest
+</span><span id="__span-29-18"><a id="__codelineno-29-18" name="__codelineno-29-18" href="#__codelineno-29-18"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/projectdiscovery/alterx/cmd/alterx@latest
+</span><span id="__span-29-19"><a id="__codelineno-29-19" name="__codelineno-29-19" href="#__codelineno-29-19"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/tomnomnom/anew@latest
+</span><span id="__span-29-20"><a id="__codelineno-29-20" name="__codelineno-29-20" href="#__codelineno-29-20"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/sensepost/gowitness@latest
+</span><span id="__span-29-21"><a id="__codelineno-29-21" name="__codelineno-29-21" href="#__codelineno-29-21"></a>
+</span><span id="__span-29-22"><a id="__codelineno-29-22" name="__codelineno-29-22" href="#__codelineno-29-22"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[*] Installing Go scanning tools...&quot;</span>
+</span><span id="__span-29-23"><a id="__codelineno-29-23" name="__codelineno-29-23" href="#__codelineno-29-23"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/ffuf/ffuf/v2@latest
+</span><span id="__span-29-24"><a id="__codelineno-29-24" name="__codelineno-29-24" href="#__codelineno-29-24"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+</span><span id="__span-29-25"><a id="__codelineno-29-25" name="__codelineno-29-25" href="#__codelineno-29-25"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/hahwul/dalfox/v2@latest
+</span><span id="__span-29-26"><a id="__codelineno-29-26" name="__codelineno-29-26" href="#__codelineno-29-26"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest
+</span><span id="__span-29-27"><a id="__codelineno-29-27" name="__codelineno-29-27" href="#__codelineno-29-27"></a>go<span class="w"> </span>install<span class="w"> </span>github.com/haccer/subjack@latest
+</span><span id="__span-29-28"><a id="__codelineno-29-28" name="__codelineno-29-28" href="#__codelineno-29-28"></a>go<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>github.com/projectdiscovery/notify/cmd/notify@latest
+</span><span id="__span-29-29"><a id="__codelineno-29-29" name="__codelineno-29-29" href="#__codelineno-29-29"></a>
+</span><span id="__span-29-30"><a id="__codelineno-29-30" name="__codelineno-29-30" href="#__codelineno-29-30"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[*] Installing Python tools...&quot;</span>
+</span><span id="__span-29-31"><a id="__codelineno-29-31" name="__codelineno-29-31" href="#__codelineno-29-31"></a>pip<span class="w"> </span>install<span class="w"> </span>sqlmap<span class="w"> </span>trufflehog3<span class="w"> </span>arjun<span class="w"> </span>objection<span class="w"> </span>frida<span class="w"> </span>frida-tools<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-32"><a id="__codelineno-29-32" name="__codelineno-29-32" href="#__codelineno-29-32"></a><span class="w">  </span>--break-system-packages
+</span><span id="__span-29-33"><a id="__codelineno-29-33" name="__codelineno-29-33" href="#__codelineno-29-33"></a>
+</span><span id="__span-29-34"><a id="__codelineno-29-34" name="__codelineno-29-34" href="#__codelineno-29-34"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[*] Updating Nuclei templates...&quot;</span>
+</span><span id="__span-29-35"><a id="__codelineno-29-35" name="__codelineno-29-35" href="#__codelineno-29-35"></a>nuclei<span class="w"> </span>-update-templates
+</span><span id="__span-29-36"><a id="__codelineno-29-36" name="__codelineno-29-36" href="#__codelineno-29-36"></a>
+</span><span id="__span-29-37"><a id="__codelineno-29-37" name="__codelineno-29-37" href="#__codelineno-29-37"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[*] Cloning wordlists...&quot;</span>
+</span><span id="__span-29-38"><a id="__codelineno-29-38" name="__codelineno-29-38" href="#__codelineno-29-38"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/danielmiessler/SecLists<span class="w"> </span>/opt/SecLists<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-29-39"><a id="__codelineno-29-39" name="__codelineno-29-39" href="#__codelineno-29-39"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/swisskyrepo/PayloadsAllTheThings<span class="w"> </span>/opt/PayloadsAllTheThings<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-29-40"><a id="__codelineno-29-40" name="__codelineno-29-40" href="#__codelineno-29-40"></a>
+</span><span id="__span-29-41"><a id="__codelineno-29-41" name="__codelineno-29-41" href="#__codelineno-29-41"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[*] Downloading jhaddix all.txt...&quot;</span>
+</span><span id="__span-29-42"><a id="__codelineno-29-42" name="__codelineno-29-42" href="#__codelineno-29-42"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>/opt/wordlists
+</span><span id="__span-29-43"><a id="__codelineno-29-43" name="__codelineno-29-43" href="#__codelineno-29-43"></a>wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>/opt/wordlists/all.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-44"><a id="__codelineno-29-44" name="__codelineno-29-44" href="#__codelineno-29-44"></a><span class="w">  </span><span class="s2">&quot;https://gist.githubusercontent.com/jhaddix/86a06c5dc309d08580a018c66354a056/raw/all.txt&quot;</span>
+</span><span id="__span-29-45"><a id="__codelineno-29-45" name="__codelineno-29-45" href="#__codelineno-29-45"></a>
+</span><span id="__span-29-46"><a id="__codelineno-29-46" name="__codelineno-29-46" href="#__codelineno-29-46"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[*] Fetching DNS resolvers...&quot;</span>
+</span><span id="__span-29-47"><a id="__codelineno-29-47" name="__codelineno-29-47" href="#__codelineno-29-47"></a>wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>/opt/resolvers.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-48"><a id="__codelineno-29-48" name="__codelineno-29-48" href="#__codelineno-29-48"></a><span class="w">  </span><span class="s2">&quot;https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt&quot;</span>
+</span><span id="__span-29-49"><a id="__codelineno-29-49" name="__codelineno-29-49" href="#__codelineno-29-49"></a>
+</span><span id="__span-29-50"><a id="__codelineno-29-50" name="__codelineno-29-50" href="#__codelineno-29-50"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[+] Done. Add ~/go/bin to PATH if not already set.&quot;</span>
+</span><span id="__span-29-51"><a id="__codelineno-29-51" name="__codelineno-29-51" href="#__codelineno-29-51"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[+] Install manually: Burp Suite (portswigger.net), JADX (github.com/skylot/jadx)&quot;</span>
+</span></code></pre></div>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M1.811 10.231c-.047 0-.058-.023-.035-.059l.246-.315c.023-.035.081-.058.128-.058h4.172c.046 0 .058.035.035.07l-.199.303c-.023.036-.082.07-.117.07zM.047 11.306c-.047 0-.059-.023-.035-.058l.245-.316c.023-.035.082-.058.129-.058h5.328c.047 0 .07.035.058.07l-.093.28c-.012.047-.058.07-.105.07zm2.828 1.075c-.047 0-.059-.035-.035-.07l.163-.292c.023-.035.07-.07.117-.07h2.337c.047 0 .07.035.07.082l-.023.28c0 .047-.047.082-.082.082zm12.129-2.36c-.736.187-1.239.327-1.963.514-.176.046-.187.058-.34-.117-.174-.199-.303-.327-.548-.444-.737-.362-1.45-.257-2.115.175-.795.514-1.204 1.274-1.192 2.22.011.935.654 1.706 1.577 1.835.795.105 1.46-.175 1.987-.77.105-.13.198-.27.315-.434H10.47c-.245 0-.304-.152-.222-.35.152-.362.432-.97.596-1.274a.32.32 0 0 1 .292-.187h4.253c-.023.316-.023.631-.07.947a5 5 0 0 1-.958 2.29c-.841 1.11-1.94 1.8-3.33 1.986-1.145.152-2.209-.07-3.143-.77-.865-.655-1.356-1.52-1.484-2.595-.152-1.274.222-2.419.993-3.424.83-1.086 1.928-1.776 3.272-2.02 1.098-.2 2.15-.07 3.096.571.62.41 1.063.97 1.356 1.648.07.105.023.164-.117.2m3.868 6.461c-1.064-.024-2.034-.328-2.852-1.029a3.67 3.67 0 0 1-1.262-2.255c-.21-1.32.152-2.489.947-3.529.853-1.122 1.881-1.706 3.272-1.95 1.192-.21 2.314-.095 3.33.595.923.63 1.496 1.484 1.648 2.605.198 1.578-.257 2.863-1.344 3.962-.771.783-1.718 1.273-2.805 1.495-.315.06-.63.07-.934.106m2.78-4.72c-.011-.153-.011-.27-.034-.387-.21-1.157-1.274-1.81-2.384-1.554-1.087.245-1.788.935-2.045 2.033-.21.912.234 1.835 1.075 2.21.643.28 1.285.244 1.905-.07.923-.48 1.425-1.228 1.484-2.233z"/></svg></span> <strong>ProjectDiscovery Tools</strong></p>
+<hr />
+<p>Subfinder, httpx, dnsx, Naabu, Katana, Nuclei, interactsh, AlterX, and Notify.</p>
+<p><a href="https://projectdiscovery.io"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> projectdiscovery.io</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0v24h10.718v-3.805l3.496-4.272h-3.496v-5.205H4.427l6.291-7.767V0Zm13.282 0v3.884L9.786 8.155h3.496v5.205h6.291l-6.291 7.767V24H24V0Z"/></svg></span> <strong>Burp Suite and Extensions</strong></p>
+<hr />
+<p>Community edition download and the BApp Store for all extensions.</p>
+<p><a href="https://portswigger.net/burp/communitydownload"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Burp download</a> · <a href="https://portswigger.net/bappstore"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> BApp Store</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 14h6v6H2M16 8h-6v2h6M2 10h6V4H2m8 0v2h12V4M10 20h6v-2h-6m0-2h12v-2H10"/></svg></span> <strong>Wordlist Resources</strong></p>
+<hr />
+<p>SecLists, PayloadsAllTheThings, and Assetnote framework wordlists.</p>
+<p><a href="https://github.com/danielmiessler/SecLists"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> SecLists</a> · <a href="https://wordlists.assetnote.io"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Assetnote</a> · <a href="https://github.com/swisskyrepo/PayloadsAllTheThings"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> PayloadsAllTheThings</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 1H7a2 2 0 0 0-2 2v3h2V4h10v16H7v-2H5v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2M8.8 11V9.5C8.8 8.1 7.4 7 6 7S3.2 8.1 3.2 9.5V11c-.6 0-1.2.6-1.2 1.2v3.5c0 .7.6 1.3 1.2 1.3h5.5c.7 0 1.3-.6 1.3-1.2v-3.5c0-.7-.6-1.3-1.2-1.3m-1.3 0h-3V9.5c0-.8.7-1.3 1.5-1.3s1.5.5 1.5 1.3z"/></svg></span> <strong>Mobile Testing</strong></p>
+<hr />
+<p>MobSF, JADX, Frida, and Objection documentation.</p>
+<p><a href="https://github.com/MobSF/Mobile-Security-Framework-MobSF"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> MobSF</a> · <a href="https://frida.re"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Frida</a> · <a href="https://github.com/skylot/jadx"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> JADX</a></p>
+</li>
+</ul>
+</div>
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">bug-bounty</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">tools</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">recon</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">exploitation</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">mobile</span>
+      
+    
+  </nav>
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../part-12-platform/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Platform">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Platform
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../part-14-infrastructure/" class="md-footer__link md-footer__link--next" aria-label="Next: Infrastructure">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Infrastructure
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Wellington Vumu
+
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dbc0afdc.min.js"></script>
+      
+    
+  </body>
+</html>

